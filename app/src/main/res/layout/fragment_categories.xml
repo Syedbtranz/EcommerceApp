@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:background="@color/color_text"
     tools:context="com.btranz.ecommerceapp.fragment.HomeFragment">
     <ScrollView
         android:layout_width="match_parent"
@@ -26,7 +27,7 @@
             android:gravity="center">
             <ProgressBar
                 android:id="@+id/progressbar"
-                style="@style/Widget.AppCompat.ProgressBar"
+                style="?android:attr/progressBarStyleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:indeterminate="true"

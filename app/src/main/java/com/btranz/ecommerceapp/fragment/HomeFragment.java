@@ -222,10 +222,11 @@ public class HomeFragment extends Fragment  {
     }
     private void findViewById(View view) {
 
-        progressLL=(LinearLayout)view.findViewById(R.id.progress_ll);
-        glanceProgressLL=(LinearLayout)view.findViewById(R.id.glance_progress_ll);
+
+        glanceProgressLL=(LinearLayout)view.findViewById(R.id.progress_ll);
         popProgressLL=(LinearLayout)view.findViewById(R.id.pop_progress_ll);
-        pb=(ProgressBar) view.findViewById(R.id.progressbar);
+        progressLL=(LinearLayout)view.findViewById(R.id.brand_progress_ll);
+        pb=(ProgressBar) view.findViewById(R.id.brand_progressbar);
 //        DisplayMetrics metrics = new DisplayMetrics();
 //        activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
         horizontalList = (RecyclerView)view.findViewById(R.id.glance_horizontal_recycler);

@@ -8,20 +8,20 @@
     tools:context="com.btranz.ecommerceapp.fragment.HomeFragment"
     android:background="@color/color_text">
 
-   <!-- <LinearLayout
+    <LinearLayout
         android:id="@+id/progress_ll"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        >
+        android:gravity="center">
         <ProgressBar
             android:id="@+id/progressbar"
-            style="?android:attr/progressBarStyleLarge"
+            style="?android:attr/progressBarStyleSmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:indeterminate="true"
            />
-    </LinearLayout>-->
+    </LinearLayout>
    <!-- <android.support.v7.widget.RecyclerView
         android:id="@+id/glance_horizontal_recycler"
         android:layout_width="match_parent"
@@ -116,7 +116,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         card_view:cardCornerRadius="4dp">
-        <LinearLayout
+       <!-- <LinearLayout
             android:id="@+id/glance_progress_ll"
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -128,7 +128,7 @@
                 android:layout_height="wrap_content"
                 android:indeterminate="true"
                 />
-        </LinearLayout>
+        </LinearLayout>-->
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -146,31 +146,7 @@
                 android:id="@+id/glance_horizontal_recycler"
                 android:layout_width="match_parent"
                 android:layout_height="230dp" />
-            <!-- <Gallery
-                 android:layout_width="match_parent"
-                 android:layout_height="wrap_content"
-                 android:layout_gravity="start"
-                 android:gravity="start"
-                 android:spacing="1dip"
-                 android:id="@+id/grid"
-                 />-->
-         <!--   <org.lucasr.twowayview.TwoWayView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/grid"
-                style="@style/TwoWayView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:drawSelectorOnTop="false"
-                tools:context=".MainActivity" />-->
-            <!--<ListView
 
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:id="@+id/grid"
-                />-->
       </LinearLayout>
         <View
             android:layout_width="wrap_content"
@@ -225,10 +201,11 @@
             android:layout_height="match_parent"
             android:gravity="center">
             <ProgressBar
-                style="@style/Widget.AppCompat.ProgressBar"
+                style="?android:attr/progressBarStyleSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:indeterminate="true"
+
                 />
         </LinearLayout>
         <LinearLayout
@@ -299,14 +276,14 @@
             android:layout_margin="8dp"
             card_view:cardCornerRadius="4dp">
             <LinearLayout
-                android:id="@+id/progress_ll"
+                android:id="@+id/brand_progress_ll"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center">
                 <ProgressBar
-                    android:id="@+id/progressbar"
-                    style="?android:attr/progressBarStyle"
+                    android:id="@+id/brand_progressbar"
+                    style="?android:attr/progressBarStyleSmallInverse"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:indeterminate="true"

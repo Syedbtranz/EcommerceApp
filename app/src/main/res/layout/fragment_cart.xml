@@ -24,12 +24,12 @@
             android:text="CONTINUE SHOPING"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/color_login"
+            android:textColor="?attr/colorPrimary"
+            android:background="@drawable/button_bg_primary_barder"
             android:textSize="15dp"
             android:layout_margin="20dp"
             android:layout_gravity="bottom"
             android:drawableLeft="@drawable/back_checkout_btn"
-            android:background="@drawable/button_bg_login"
             android:id="@+id/continue_shoping_btn" />
     </LinearLayout>
     <!--<android.support.v7.widget.Toolbar

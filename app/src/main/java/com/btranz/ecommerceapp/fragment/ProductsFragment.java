@@ -88,7 +88,7 @@ public class ProductsFragment extends Fragment implements NavigationView.OnNavig
     ListView filterList;
     TextView sortSubTxt;
     GridView ProductsGrid;
-    ArrayList<ProductModel> services= new ArrayList<ProductModel>();
+    ArrayList<ProductModel> services;
     FragmentActivity activity;
     ProductGridAdapter adapter;
     AsyncHttpTask task;
@@ -116,7 +116,7 @@ public class ProductsFragment extends Fragment implements NavigationView.OnNavig
         super.onCreate(savedInstanceState);
         activity=getActivity();
 
-        initList();
+//        initList();
 //        sendRequest();
 //        Log.e("onCreate","test");
         Bundle bundle = this.getArguments();
@@ -136,7 +136,7 @@ public class ProductsFragment extends Fragment implements NavigationView.OnNavig
             prdtsTitle=activity.getIntent().getStringExtra("prdtsTitle");
             Log.d("intent", "product1");
         }
-        sendRequest();
+//        sendRequest();
 
     }
 
@@ -162,8 +162,8 @@ public class ProductsFragment extends Fragment implements NavigationView.OnNavig
             ProductsGrid = (GridView) rootView.findViewById(R.id.products_grid);
             sortBtn = (LinearLayout) rootView.findViewById(R.id.sort_btn);
             filterBtn = (LinearLayout) rootView.findViewById(R.id.filter_btn);
-            adapter = new ProductGridAdapter(activity, services);
-            ProductsGrid.setAdapter(adapter);
+//            adapter = new ProductGridAdapter(activity, services);
+//            ProductsGrid.setAdapter(adapter);
             ProductsGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -258,16 +258,16 @@ public class ProductsFragment extends Fragment implements NavigationView.OnNavig
 
 
         if (services == null) {
-//            sendRequest();
-//            initList();
+            sendRequest();
+            initList();
 //            Log.e("onResume","test");
 ////            adapter = new ServicesRecyclerAdapter(activity, services);
 //            Log.e("onResume", "onResume");
         } else {
             Log.e("onResume else", "onResume else");
-//            ProductsGrid.setAdapter(new ProductGridAdapter(activity, services));
+            ProductsGrid.setAdapter(new ProductGridAdapter(activity, services));
             progressLL.setVisibility(View.GONE);
-            pb.setVisibility(View.GONE);
+//            pb.setVisibility(View.GONE);
 //            recyclerView.scrollToPosition(0);
         }
 
@@ -791,7 +791,7 @@ public void showSortDialog() {
 //            setProgressBarIndeterminateVisibility(true);
             try {
                 progressLL.setVisibility(View.VISIBLE);
-                pb.setVisibility(View.VISIBLE);
+//                pb.setVisibility(View.VISIBLE);
             }catch(Exception e){
 
             }
@@ -848,11 +848,11 @@ public void showSortDialog() {
             /* Download complete. Lets update UI */
             if (result == 1) {
                 Log.e("onPostExecute", "onPostExecute");
-//                adapter = new ProductGridAdapter(activity, services);
-//                ProductsGrid.setAdapter(adapter);
+                adapter = new ProductGridAdapter(activity, services);
+                ProductsGrid.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
                 progressLL.setVisibility(View.GONE);
-                pb.setVisibility(View.GONE);
+//                pb.setVisibility(View.GONE);
 
 //                recyclerView.setAdapter(new ServicesRecyclerAdapter(activity, services));
             } else {

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include
+        layout="@layout/toolbar"
+        />
+    <!--<LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:gravity="start">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/back_btn"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/back_btn"
+            android:padding="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textStyle="bold"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/profile_name"
+            android:textColor="@color/color_text"
+            android:layout_gravity="center_vertical"/>
+
+
+
+    </LinearLayout>-->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:layout_margin="20dp">
+        <FrameLayout
+            android:orientation="vertical"
+            android:layout_width="200dp"
+            android:layout_margin="20dp"
+            android:layout_height="210dp"
+            android:gravity="center">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="10dp"
+            android:id="@+id/imageView4"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/loading"/>
+            <ImageView
+                android:id="@+id/fabButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:src="@drawable/add_pic_btn"
+                android:layout_marginRight="30dp"
+                />
+        </FrameLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Profile"
+            android:textColor="?attr/colorPrimary"
+            android:layout_gravity="start"
+            android:textStyle="bold"
+            />
+       <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="NAME"
+           android:layout_gravity="start"
+            android:textStyle="bold"
+            />
+        <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Mahboob"
+        android:id="@+id/pr_name"
+        android:layout_gravity="start"/>
+       <!-- <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:padding="10dp"
+            android:background="@drawable/edittext_bg"
+            android:ems="10"
+            android:id="@+id/editText4" />-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="EMAIL"
+            android:textStyle="bold"
+            android:layout_gravity="start"
+            android:id="@+id/textView6" />
+       <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="guest@example.com"
+        android:id="@+id/pr_email"
+        android:layout_gravity="start"/>
+
+       <!-- <EditText
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:inputType="textEmailAddress"
+            android:ems="10"
+            android:padding="10dp"
+            android:background="@drawable/edittext_bg"
+            android:id="@+id/editText3"
+            android:hint="Enter Your Email Or Mobile Number"
+            android:textColorHint="@color/view_divider_color"
+            android:gravity="center" />-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="CONTACT"
+            android:textStyle="bold"
+            android:layout_gravity="start"
+            android:id="@+id/textView7" />
+
+      <!--  <EditText
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:id="@+id/editText5"
+            android:layout_marginTop="20dp"
+            android:padding="10dp"
+            android:hint="Enter Password"
+            android:textColorHint="@color/view_divider_color"
+            android:background="@drawable/edittext_bg"
+            android:gravity="center" />-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="9701434715"
+            android:id="@+id/pr_contact"
+            android:layout_gravity="start"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="CARDS"
+            android:textStyle="bold"
+            android:layout_gravity="start"
+            />
+
+        <!--  <EditText
+              android:layout_width="match_parent"
+              android:layout_height="60dp"
+              android:inputType="textPassword"
+              android:ems="10"
+              android:id="@+id/editText5"
+              android:layout_marginTop="20dp"
+              android:padding="10dp"
+              android:hint="Enter Password"
+              android:textColorHint="@color/view_divider_color"
+              android:background="@drawable/edittext_bg"
+              android:gravity="center" />-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="xxxxxxxxxx1234"
+            android:id="@+id/pr_cards"
+            android:layout_gravity="start"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="LOGOUT"
+            android:textColor="?attr/colorPrimary"
+            android:background="@drawable/button_bg_primary_barder"
+            android:paddingRight="10dp"
+            android:layout_margin="30dp"
+            android:id="@+id/logout_btn"
+             />
+    </LinearLayout>
+</ScrollView>
+
+
+
+</LinearLayout>

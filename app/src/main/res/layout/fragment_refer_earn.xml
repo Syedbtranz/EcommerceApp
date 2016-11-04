@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <include
+        layout="@layout/toolbar"
+        />
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/refernearn_empty_bg"
+        android:id="@+id/imageView5"
+        android:layout_weight="1" />
+
+    <TextView
+        android:text="Refer a Friend and both get a reward"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView8"
+        android:gravity="center"
+        android:layout_weight="0.41" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/edittext_bg"
+        android:layout_margin="20dp"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:text="Share your invite code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView9" />
+
+            <TextView
+                android:text="btFFanzQtr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/refer_code" />
+
+
+        </LinearLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_menu_share"
+            android:layout_marginLeft="50dp"
+            android:padding="5dp"
+            android:layout_weight="1.99"
+            android:gravity="right"
+            android:id="@+id/refer_ern_share" />
+    </LinearLayout>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="INVITE FRIENDS"
+        android:textColor="@color/color_invite"
+        android:background="@drawable/button_bg_invite"
+        android:layout_margin="30dp"
+        android:id="@+id/invite_btn"
+        />
+</LinearLayout>

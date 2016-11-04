@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "50509693043",
+    "project_id": "marketplace1-145411"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:50509693043:android:dba13fdce080d222",
+        "android_client_info": {
+          "package_name": "com.btranz.ecommerceapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "50509693043-tuekef4ssvkf11ssfnkfcl02oras5hkq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.btranz.ecommerceapp",
+            "certificate_hash": "471ACA0D561B12E614DEE1A83EE8497A3DFFDB4C"
+          }
+        },
+        {
+          "client_id": "50509693043-ni7k0gbpd0se8oajmfqbia7n5308ct20.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCL6M1oltBr1A4txgs0GHoMfV5cdsxJack"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

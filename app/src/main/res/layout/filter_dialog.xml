@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+    <LinearLayout
+
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:gravity="center">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/cross_small"
+            android:padding="5dp"
+            android:layout_weight="1"
+            android:id="@+id/filter_close" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:text="RESET"
+            android:textSize="12dp"
+            android:textColor="@color/color_text"
+            android:background="@drawable/button_bg_blue"
+            android:id="@+id/reset_btn"
+            android:layout_weight="1"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginRight="20dp"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:text="APPLY"
+            android:textSize="12dp"
+            android:textColor="@color/color_text"
+            android:background="@drawable/button_bg_colorprimary"
+            android:layout_weight="1"
+            android:id="@+id/filter_apply" />
+        </LinearLayout>
+
+
+
+    <LinearLayout
+
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+    <LinearLayout
+        android:id="@+id/sort_dis_ll"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@color/color_text"
+        >
+        <!--<TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="New Text"
+            android:textColor="@color/colorPrimary"
+            android:gravity="center"
+            android:drawableLeft="@mipmap/catg_icon"
+            android:drawableRight="@mipmap/filterarrow_inactive"
+           />-->
+        <android.support.design.widget.NavigationView
+            style="@style/NavigationTheme"
+            android:id="@+id/filter_nav_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="fill_vertical"
+            app:menu="@menu/filter_dialog_menu" />
+    </LinearLayout>
+
+
+
+        <LinearLayout
+        android:id="@+id/filter_list_ll"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        >
+            <include android:id="@+id/filter_brand_list"
+                layout="@layout/filter_brand_inflate"
+                />
+            <include android:id="@+id/filter_price_list"
+                layout="@layout/filter_price_inflate"
+                android:visibility="gone"/>
+            <include android:id="@+id/filter_rating_list"
+                layout="@layout/filter_rating_inflate"
+                android:visibility="gone"/>
+            <include android:id="@+id/filter_discount_list"
+                layout="@layout/filter_disount_inflate"
+                android:visibility="gone"/>
+    </LinearLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>

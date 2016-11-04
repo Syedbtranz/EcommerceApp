@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+   <LinearLayout
+        android:id="@+id/container_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <include
+            layout="@layout/toolbar" />
+
+    </LinearLayout>
+   <!-- <include
+        layout="@layout/app_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"/>-->
+    <LinearLayout
+        layout="@+id/search_bar"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/search_bar"
+            android:id="@+id/search_text"
+            android:layout_weight="1" />
+
+        <!--<EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/search_text"
+            android:drawableRight="@drawable/search_icon"
+            android:hint="@string/abc_search_hint"
+            android:singleLine="true"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:imeOptions="actionSearch"
+            android:background="@drawable/layout_bg"
+            android:windowSoftInputMode="stateHidden"
+            android:layout_weight="1" />-->
+
+        <!--<SearchView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/searchView"
+            android:layout_weight="1" />-->
+
+
+    </LinearLayout>
+    <!--   <ScrollView
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:id="@+id/main_scrollView" >-->
+    <FrameLayout
+        android:id="@+id/container_second"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        >
+     <!--   <LinearLayout
+            android:id="@+id/container_to"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:orientation="vertical">
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fabButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:layout_marginBottom="16dp"
+                android:layout_marginRight="16dp"
+                android:src="@mipmap/ic_grade_white_24dp"
+
+                />
+            &lt;!&ndash;<ImageButton
+                android:id="@+id/fabButton"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_gravity="bottom|right"
+                android:layout_marginBottom="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@drawable/fab_bcg"
+                android:src="@mipmap/ic_grade_white_24dp"
+                android:contentDescription="@string/fab_description"/>&ndash;&gt;
+        </LinearLayout>-->
+    </FrameLayout>
+    <!--</ScrollView>-->
+</LinearLayout>
+<!--
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container_services"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/container_to"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:orientation="vertical">
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fabButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:layout_marginBottom="16dp"
+                android:layout_marginRight="16dp"
+                android:src="@mipmap/ic_grade_white_24dp"
+                />
+            &lt;!&ndash;<ImageButton
+                android:id="@+id/fabButton"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_gravity="bottom|right"
+                android:layout_marginBottom="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@drawable/fab_bcg"
+                android:src="@mipmap/ic_grade_white_24dp"
+                android:contentDescription="@string/fab_description"/>&ndash;&gt;
+        </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/toolbarContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="?attr/colorPrimary">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"/>
+
+    </LinearLayout>
+</FrameLayout>-->

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group android:id="@+id/grp1" android:checkableBehavior="single"
+        >
+        <item
+            android:id="@+id/filter_brand"
+            android:icon="@drawable/catg_icon"
+            app:actionLayout="@layout/arrow"
+            android:title="BRAND" />
+        <item
+            android:id="@+id/filter_price"
+            android:icon="@drawable/filterpricetag"
+            app:actionLayout="@layout/arrow"
+            android:title="PRICE" />
+        <item
+            android:id="@+id/filter_rating"
+            android:icon="@drawable/filterrating"
+            app:actionLayout="@layout/arrow"
+            android:title="RATING" />
+        <item
+            android:id="@+id/filter_dicount"
+            android:icon="@drawable/filterdiscount"
+            app:actionLayout="@layout/arrow"
+            android:title="DISCOUNT" />
+    </group>
+   <!-- <group android:id="@+id/grp2" android:checkableBehavior="single"
+        >
+        <item
+            android:id="@+id/filter_price"
+            android:icon="@mipmap/filterpricetag"
+            app:actionLayout="@layout/arrow"
+            android:title="PRICE" />
+    </group>
+    <group android:id="@+id/grp3" android:checkableBehavior="single"
+        >
+        <item
+            android:id="@+id/nav_ref_ern"
+            android:icon="@drawable/ic_menu_refer_earn"
+            app:actionLayout="@layout/arrow"
+            android:title="@string/nav_ref_ern" />
+    </group>
+    <group android:id="@+id/grp4" android:checkableBehavior="single"
+        >
+        <item
+            android:id="@+id/nav_order_hist"
+            android:icon="@drawable/ic_menu_order_hist"
+            app:actionLayout="@layout/arrow"
+            android:title="@string/nav_order_hist" />
+    </group>
+    <group android:id="@+id/grp5" android:checkableBehavior="single"
+        >
+        <item
+            android:id="@+id/nav_help"
+            android:icon="@drawable/ic_menu_help"
+            app:actionLayout="@layout/arrow"
+            android:title="@string/nav_help" />
+    </group>
+    <group android:id="@+id/grp6" android:checkableBehavior="single"
+        >
+        <item
+            android:id="@+id/nav_cards"
+            android:icon="@drawable/ic_menu_cards"
+            app:actionLayout="@layout/arrow"
+            android:title="@string/nav_cards" />
+    </group>-->
+
+   <!-- <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Share" />
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Send" />
+        </menu>
+    </item>-->
+
+</menu>

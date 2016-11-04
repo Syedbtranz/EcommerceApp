@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true">
+        <layer-list>
+            <item>
+                <shape android:shape="oval"
+                   >
+                    <solid android:color="?attr/colorPrimary"
+                        />
+                    <size
+                        android:width="20dp"
+                        android:height="20dp" />
+                </shape>
+            </item>
+          <!--  <item>
+                <shape android:shape="oval"
+                    >
+                    <solid android:color="@drawable/back_checkout_btn"
+                        />
+                    <size
+                        android:width="15dp"
+                        android:height="15dp" />
+                </shape>
+                </item>-->
+               <item android:left="9dp">
+                   <rotate
+                       android:fromDegrees="30"
+                       android:pivotX="-30%"
+                       android:pivotY="-3%">
+                       <shape android:shape="line">
+                           <stroke
+                               android:width="2dp"
+                               android:color="#ffffff" />
+                       </shape>
+                   </rotate>
+               </item>
+               <item >
+                   <rotate
+                       android:fromDegrees="-60"
+                       android:pivotX="57%"
+                       android:pivotY="43%">
+                       <shape android:shape="line">
+                           <stroke
+                               android:width="2dp"
+                               android:color="#ffffff" />
+                       </shape>
+                   </rotate>
+               </item>
+        </layer-list>
+    </item>
+    <item android:state_checked="false">
+        <shape android:shape="oval">
+            <solid android:color="#CCC" />
+            <size
+                android:width="20dp"
+                android:height="20dp" />
+        </shape>
+    </item>
+</selector>

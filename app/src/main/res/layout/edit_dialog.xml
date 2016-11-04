@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/color_text"
+    android:weightSum="1"
+    android:id="@+id/reveal_view" >
+    <android.support.v7.widget.CardView
+        android:id="@+id/empty_cart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="@drawable/emptycart_bg"
+        >
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/splash"
+        android:gravity="center"
+        android:background="@drawable/emptycart_bg"
+        android:orientation="vertical"/>
+    </android.support.v7.widget.CardView>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:gravity="start">
+
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/cross_black"
+            android:padding="20dp"
+            android:gravity="start"
+            android:id="@+id/close_edit" />
+        <TextView
+            android:text="Edit"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="100dp"
+            android:textStyle="bold"
+            android:id="@+id/textView4" />
+    </LinearLayout>
+    <android.support.v7.widget.CardView
+        android:id="@+id/checout_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+       >
+   <!-- <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">-->
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:id="@+id/edit"
+            android:padding="10dp"
+            android:background="@drawable/edittext_bg"
+            android:layout_gravity="center_horizontal" />
+
+   <!-- </LinearLayout>-->
+    </android.support.v7.widget.CardView>
+
+
+
+
+</LinearLayout>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Price Range:"
+        android:textStyle="bold"
+        />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp"
+       >
+
+        <com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
+            android:id="@+id/rangeSeekbar1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:min_value="0"
+            app:max_value="50000"
+            app:steps="100"
+            app:bar_color="@color/view_divider_color"
+            app:bar_highlight_color="?attr/colorPrimary"
+            app:left_thumb_color="?attr/colorPrimary"
+            app:left_thumb_color_pressed="@color/color_primary_light"
+            app:right_thumb_color="?attr/colorPrimary"
+            app:right_thumb_color_pressed="@color/color_primary_light"
+            app:data_type="_integer"/>
+       <!-- <com.crystal.crystalrangeseekbar.widgets.BubbleThumbRangeSeekbar
+            android:id="@+id/rangeSeekbar5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:corner_radius="10"
+            app:min_value="0"
+            app:max_value="100"
+            app:steps="5"
+            app:bar_color="#F7BB88"
+            app:bar_highlight_color="#E07416"
+            app:left_thumb_image="@drawable/empty"
+            app:right_thumb_image="@drawable/empty"
+            app:left_thumb_image_pressed="@drawable/checked"
+            app:right_thumb_image_pressed="@drawable/checked"
+            app:data_type="_integer"/>-->
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+       <!-- <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Min :"
+            android:textStyle="bold"
+            />-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/rupee_symbol"
+            android:textStyle="bold"
+            />
+        <TextView
+            android:id="@+id/textMin1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="500"
+            >
+        </TextView>
+            </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right">
+        <!--<TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Max :"
+            android:textStyle="bold"
+            />-->
+        <TextView
+            android:id="@+id/grd_t"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/rupee_symbol"
+            android:textStyle="bold"
+            />
+        <TextView
+            android:id="@+id/textMax1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="500"
+            >
+        </TextView>
+            </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

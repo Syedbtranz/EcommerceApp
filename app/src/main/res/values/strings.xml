@@ -1,0 +1,67 @@
+<resources>
+    <string name="app_name">ECOMMERCE STORE</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="action_re_faqs">FAQs</string>
+    <string name="txt_image_slider">Image Slideshow</string>
+    <string name="product_name">Product Name</string>
+    <string name="no_internet_connection">No Internet Connection</string>
+    <string name="time_out">Time Out</string>
+    <string name="error_occured">Error Occurred</string>
+    <!-- Navigation Items -->
+    <string name="nav_home">Home</string>
+    <string name="nav_catg">Categories</string>
+    <string name="nav_ref_ern">Refer &amp; Earn</string>
+    <string name="nav_order_hist">Order History</string>
+    <string name="nav_help">Help Center</string>
+    <string name="nav_cards">Cards</string>
+    <string name="nav_wishlist">Wishlist</string>
+    <!--Navigation Items end-->
+    <!--Items Titles-->
+    <string name="title_home">ECOMMERCE STORE</string>
+    <string name="title_catg">PRODUCT CATEGORIES</string>
+    <string name="title_ref_ern">REFER &amp; EARN</string>
+    <string name="title_ref_faqs">FAQs</string>
+    <string name="title_orders">ORDER HISTORY</string>
+    <string name="title_help_center">HELP CENTER</string>
+    <string name="title_cards">SAVED CARDS</string>
+    <string name="title_card_details">CARD DETAILS</string>
+    <string name="title_wislist">WISHLIST</string>
+    <string name="title_cart">SHOPPING CART</string>
+    <string name="title_products">PRODUCTS</string>
+    <string name="title_offer">OFFER DETAILS</string>
+    <string name="title_product_details">PRODUCTS DETAILS</string>
+    <string name="title_profile">PROFILE</string>
+
+    <string name="dummy_txt">Just to let you know that Jacob has added you as a collaborator on the project Ecommerce</string>
+    <string name="product_glance">Product At Glance</string>
+    <string name="pop_prdts">Top Buying Products</string>
+    <string name="top_brand">Top Brands</string>
+    <string name="search_header_txt">Trending Now</string>
+    <string name="search_hint">Searching for...</string>
+    <string name="recent_search_header_txt">Recent Searches</string>
+    <string name="recent_search_clear">Clear History</string>
+    <string name="similar_prdts">SIMILAR PRODUCTS</string>
+    <string name="rupee_symbol">\u20B9</string>
+    <string name="pincode">PinCode</string>
+    <string name="pincode_check_btn">Check</string>
+    <string name="delivery_option_txt">DELIVERY OPTIONS</string>
+    <string name="cash_on_delivery">Cash On Delivery Available</string>
+    <string name="delivery_standard_txt">Standard Delivery</string>
+    <string name="delivery_express_txt">Express Delivery</string>
+    <string name="item_details_txt">ITEM DETAILS</string>
+    <string name="authentic_txt">Authentic Items</string>
+    <string name="return_txt">7 Days Easy Return</string>
+    <string name="pay_protation_txt">Payment Protection</string>
+    <string name="cust_review_txt">CUSTOMER REVIEW &amp; QA</string>
+    <string name="qa_txt">Questions &amp; Answers</string>
+
+    <string name="total_cart_txt">TOTAL PAYABLE AMOUNT : \u20B9  </string>
+    <string name="spinner_title">Select Type</string>
+    <!--Facebook ApI ID-->
+    <string name="facebook_app_id">311360952577362</string>
+
+</resources>

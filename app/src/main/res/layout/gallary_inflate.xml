@@ -1,0 +1,151 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="120dp"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+
+    >
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+
+        android:gravity="right">
+
+        <ImageView
+            android:id="@+id/prdt_share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/share_icon"
+            android:layout_marginRight="20dp">
+        </ImageView>
+        <ImageView
+            android:id="@+id/prdt_like"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/like_icon">
+        </ImageView>
+    </LinearLayout>
+    <RelativeLayout
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:gravity="center">
+    <ImageView
+        android:id="@+id/grid_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="10dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/loading">
+    </ImageView>
+
+        <Button
+            android:layout_width="60dp"
+            android:layout_height="20dp"
+
+            android:background="@color/color_blue"
+            android:text="best offer"
+            android:textSize="9sp"
+            android:textColor="@color/color_text"
+            android:id="@+id/offer_tag_btn"
+
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+       >
+    <TextView
+        android:id="@+id/grid_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="dddddd"
+        android:textSize="9sp" >
+    </TextView>
+    <RatingBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:attr/ratingBarStyleSmall"
+        android:progressTint="@color/color_rating"
+        android:id="@+id/ratingBar" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+        <!--<View android:id="@+id/separator"
+            android:background="@color/view_divider_color"
+            android:layout_width = "fill_parent"
+            android:layout_height="1dip"
+            android:layout_centerVertical ="true"
+            android:layout_alignParentTop="true"/>-->
+    <TextView
+        android:id="@+id/grid_xt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/color_shadow"
+        android:text="@string/rupee_symbol"
+        android:textSize="9sp" />
+        <TextView
+            android:id="@+id/price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_shadow"
+            android:textStyle="bold"
+            android:text="300"
+            android:textSize="9sp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/grid_xt"
+            android:layout_toEndOf="@+id/grid_xt">
+        </TextView>
+           <!-- <View
+                android:id="@+id/div_a"
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="@color/view_divider_color"
+
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true">
+                </View>-->
+
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <TextView
+            android:id="@+id/grd_t"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/rupee_symbol"
+            android:textStyle="bold"
+            />
+    <TextView
+        android:id="@+id/final_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:text="500"
+         >
+    </TextView>
+        </LinearLayout>
+    <!--<ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="false"
+        android:max="100"
+        android:layout_gravity="bottom"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal" />-->
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group android:id="@+id/grp1" android:checkableBehavior="single"
+        >
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/home_icon"
+            app:actionLayout="@layout/arrow"
+            android:title="@string/nav_home" />
+    </group>
+    <group android:id="@+id/grp2" android:checkableBehavior="single"
+        >
+        <item
+            android:id="@+id/nav_catg"
+            android:icon="@drawable/catg_icon"
+            app:actionLayout="@layout/arrow"
+            android:title="@string/nav_catg" />
+    </group>
+    <group android:id="@+id/grp3" android:checkableBehavior="single"
+        >
+        <item
+            android:id="@+id/nav_ref_ern"
+            android:icon="@drawable/referearn_icon"
+            app:actionLayout="@layout/arrow"
+            android:title="@string/nav_ref_ern" />
+    </group>
+    <group android:id="@+id/grp4" android:checkableBehavior="single"
+        >
+        <item
+            android:id="@+id/nav_orders"
+            android:icon="@drawable/orders_icon"
+            app:actionLayout="@layout/arrow"
+            android:title="@string/nav_order_hist" />
+    </group>
+    <group android:id="@+id/grp5" android:checkableBehavior="single"
+        >
+        <item
+            android:id="@+id/nav_help"
+            android:icon="@drawable/help_icon"
+            app:actionLayout="@layout/arrow"
+            android:title="@string/nav_help" />
+    </group>
+    <group android:id="@+id/grp6" android:checkableBehavior="single"
+        >
+        <item
+            android:id="@+id/nav_cards"
+            android:icon="@drawable/cards_icon"
+            app:actionLayout="@layout/arrow"
+            android:title="@string/nav_cards" />
+    </group>
+    <group android:id="@+id/grp7" android:checkableBehavior="single"
+        >
+        <item
+            android:id="@+id/nav_wishlist"
+            android:icon="@drawable/wishlist_icon"
+            app:actionLayout="@layout/arrow"
+            android:title="@string/nav_wishlist" />
+    </group>
+   <!-- <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Share" />
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Send" />
+        </menu>
+    </item>-->
+
+</menu>

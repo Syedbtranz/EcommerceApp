@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_margin="5dp">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical">
+            <TextView
+                android:text="brand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/filter_brand_name"
+                />
+
+        <TextView
+            android:text="("
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+        <TextView
+            android:text="0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/filter_brand_no"
+             />
+        <TextView
+            android:text=")"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+            </LinearLayout>
+       <!-- <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_gravity="right"
+            android:id="@+id/checkBox"
+            />-->
+        <com.btranz.ecommerceapp.utils.CircleCheckBox
+            android:id="@+id/chbx"
+            android:layout_width="30dp"
+            android:layout_height="25dp"
+            android:paddingLeft="5dp"
+            app:borderThickness="2dp"
+            app:circleBorderColor="?attr/colorPrimary"
+            app:innerCircleColor="?attr/colorPrimary"
+            app:innerCircleRadius="8dp"
+            app:outerCircleColor="@color/color_primary_light"
+            app:outerCircleRadius="3dp"
+            app:showOuterCircle="true"
+            app:textColor="#000000"
+            app:tickColor="#ffffff"
+            app:tickThickness="1dp"
+            android:layout_gravity="right" />
+
+    </LinearLayout>
+
+</LinearLayout>

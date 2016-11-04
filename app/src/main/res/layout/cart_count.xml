@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent"
+    android:gravity="center" >
+
+    <!-- Menu Item Image -->
+    <ImageView  android:id="@+id/cart_count_img"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:src="@drawable/cart" />
+
+    <!-- Badge Count -->
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center|right"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+        <TextView
+            android:id="@+id/cart_count_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="8dp"
+            android:background="@drawable/cart_count_bg"
+            android:layout_marginBottom="13dp"
+            android:layout_marginLeft="11dp"
+            android:textStyle="bold"
+            android:padding="2dp"
+            android:visibility="invisible"
+            android:textColor="?attr/colorAccent"
+            android:gravity="center" />
+    </LinearLayout>
+
+</RelativeLayout>

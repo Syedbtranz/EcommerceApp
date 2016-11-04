@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:padding="20dp">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView8"
+            android:src="@drawable/checkout_billing"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Enter Your Card Details"
+            android:textStyle="bold"
+            />
+
+        <RadioGroup
+            android:id="@+id/radioGroup1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <RadioButton
+                    android:id="@+id/radio0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_btn_radio"
+                    android:button="@null"
+                    android:layout_marginRight="10dp"
+                    android:checked="false" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/master_card" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginLeft="20dp"
+                android:gravity="center">
+
+                <RadioButton
+                    android:id="@+id/radio01"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_btn_radio"
+                    android:button="@null"
+                    android:layout_marginRight="10dp"
+                    android:checked="true" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/visa_card" />
+            </LinearLayout>
+</LinearLayout>
+
+        </RadioGroup>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/edittext_bg"
+            android:layout_marginTop="20dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView7"
+                android:layout_margin="20dp"
+                android:src="@drawable/mastercard_title"
+                android:layout_gravity="right" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="20dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CARD NUMBER"
+                    android:textStyle="bold"
+                    />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:padding="5dp"
+                    android:hint="1234567890123"
+                    android:textColorHint="@color/view_divider_color"
+                    android:background="@drawable/edittext_bg"
+                    android:ems="10"
+                    android:id="@+id/card_no_et" />
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="EXPIRY DATE"
+
+                    android:textStyle="bold"
+                    android:layout_weight="1"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="date"
+                    android:padding="5dp"
+                    android:hint="09/2016"
+                    android:textColorHint="@color/view_divider_color"
+                    android:background="@drawable/edittext_bg"
+                    android:ems="10"
+                    android:id="@+id/expiry_et"
+                    android:layout_weight="0.9"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:text="CVV"
+                    android:textStyle="bold"
+                    android:layout_weight="1.2"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:padding="5dp"
+                    android:hint="123"
+                    android:textColorHint="@color/view_divider_color"
+                    android:background="@drawable/edittext_bg"
+                    android:ems="10"
+                    android:id="@+id/cvv_et"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="CARD HOLDER NAME"
+                    android:textStyle="bold"
+                    />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:padding="5dp"
+                    android:hint="BTRANZ"
+                    android:textColorHint="@color/view_divider_color"
+                    android:background="@drawable/edittext_bg"
+                    android:ems="10"
+                    android:id="@+id/name_et" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Enter Promo Code(if any)"
+            android:textStyle="bold"
+            />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:padding="5dp"
+            android:background="@drawable/edittext_bg"
+            android:ems="10"
+            android:id="@+id/prome_et" />
+
+
+        <!--<EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:padding="10dp"
+            android:lines="8"
+            android:gravity="start"
+            android:background="@drawable/edittext_bg"
+            android:ems="10"
+            android:id="@+id/editText4" />-->
+       <!-- <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Email Address"
+            android:textStyle="bold"
+            android:id="@+id/textView6" />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:ems="10"
+            android:padding="10dp"
+            android:background="@drawable/edittext_bg"
+            android:id="@+id/editText3"
+            android:layout_gravity="center_horizontal" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Mobile No.(Your first point of contact)"
+            android:textStyle="bold"
+            android:id="@+id/textView7" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="phone"
+            android:ems="10"
+            android:id="@+id/editText5"
+            android:padding="10dp"
+            android:background="@drawable/edittext_bg"
+            android:layout_gravity="center_horizontal" />
+-->
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp"
+            android:gravity="right">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="BACK"
+                android:textColor="@color/color_text"
+                android:background="@color/color_green"
+                android:drawableLeft="@drawable/back_checkout_btn"
+                android:padding="10dp"
+                android:textSize="12dp"
+                android:layout_marginRight="5dp"
+                android:id="@+id/back_btn"
+                android:layout_gravity="right|center" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NEXT"
+                android:textColor="@color/color_text"
+                android:background="@color/color_green"
+                android:drawableRight="@drawable/next_checkout_btn"
+                android:padding="10dp"
+                android:textSize="12dp"
+                android:id="@+id/next_btn"
+                android:layout_gravity="right" />
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>
+
+
+</LinearLayout>

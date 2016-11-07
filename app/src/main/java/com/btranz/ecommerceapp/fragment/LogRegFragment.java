@@ -68,6 +68,7 @@ import java.util.regex.Pattern;
  */
 public class LogRegFragment extends Fragment {
     private Dialog loadingDialog;
+    String mahboob="asr";
     Handler handler;
     EditText emailET,pswET,forgetPswEt;
      String email,password;

@@ -2,13 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/color_text">
     <LinearLayout
         android:id="@+id/progress_ll"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
+        android:visibility="gone"
         android:gravity="center">
         <ProgressBar
             android:id="@+id/progressbar"
@@ -31,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginRight="5dp"
-            android:background="@drawable/button_bg_colorprimary"
+            android:background="?button_bg_primary"
             android:layout_weight="1" >
 
             <ImageView
@@ -72,7 +74,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="5dp"
-            android:background="@drawable/button_bg_blue"
+            android:background="?button_bg_accent"
             android:layout_weight="1" >
 
             <ImageView
@@ -117,7 +119,7 @@
             android:drawableLeft="@mipmap/backbtn"
             android:textColor="@color/color_text"
             android:layout_weight="1"
-            android:background="@drawable/button_bg_colorprimary"
+            android:background="@drawable/button_bg_default_primary"
             android:id="@+id/sort_btn" />
 
         <Button
@@ -131,7 +133,7 @@
             android:drawableLeft="@mipmap/backbtn"
             android:textColor="@color/color_text"
             android:layout_weight="1"
-            android:background="@drawable/button_bg_blue"
+            android:background="@drawable/button_bg_blue_primary"
             android:id="@+id/filter_btn" />-->
 
         <ImageView
@@ -152,8 +154,8 @@
     <GridView
         android:numColumns="2"
         android:gravity="center"
-        android:columnWidth="100dp"
-        android:stretchMode="columnWidth"
+        android:layout_margin="5dp"
+        android:horizontalSpacing="5dp"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/products_grid"

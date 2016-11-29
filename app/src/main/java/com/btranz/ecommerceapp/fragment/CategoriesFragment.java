@@ -207,6 +207,9 @@ public class CategoriesFragment extends Fragment {
             }
         });
         if (services == null) {
+            services = new ArrayList<ProductModel>();
+            gadServices = new ArrayList<ProductModel>();
+            hlServices = new ArrayList<ProductModel>();
             sendRequest();
 //            adapter = new ServicesRecyclerAdapter(activity, services);
             Log.e("onResume", "onResume");
@@ -302,17 +305,21 @@ public class CategoriesFragment extends Fragment {
             progressLL.setVisibility(View.GONE);
             /* Download complete. Lets update UI */
             if (result == 1) {
-                Log.e("onPostExecute", "onPostExecute");
-                adapter = new CategoryGridAdapter(activity, services);
-                gadAdapter = new CategoryGridAdapter(activity, gadServices);
-                hlAdapter = new CategoryGridAdapter(activity, hlServices);
-                fagrid.setAdapter(adapter);
-                gegrid.setAdapter(gadAdapter);
-                hlgrid.setAdapter(hlAdapter);
-                adapter.notifyDataSetChanged();
-                gadAdapter.notifyDataSetChanged();
-                hlAdapter.notifyDataSetChanged();
+                try {
+                    Log.e("onPostExecute", "onPostExecute");
+                    adapter = new CategoryGridAdapter(activity, services);
+                    gadAdapter = new CategoryGridAdapter(activity, gadServices);
+                    hlAdapter = new CategoryGridAdapter(activity, hlServices);
+                    fagrid.setAdapter(adapter);
+                    gegrid.setAdapter(gadAdapter);
+                    hlgrid.setAdapter(hlAdapter);
+                    adapter.notifyDataSetChanged();
+                    gadAdapter.notifyDataSetChanged();
+                    hlAdapter.notifyDataSetChanged();
 //                recyclerView.setAdapter(new ServicesRecyclerAdapter(activity, services));
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             } else {
                 Log.e("hello", "Failed to fetch data!");
             }
@@ -349,7 +356,8 @@ public class CategoriesFragment extends Fragment {
                                 services = new ArrayList<ProductModel>();
                             }
                          JSONObject post = posts.optJSONObject(i);
-//                            faTxt.setText(post.getString(TagName.KEY_CAT_NAME));
+//                            String fasTxt=post.optString("category_name");
+                            faTxt.setText(post.getString(TagName.KEY_CAT_NAME));
                         JSONArray jArrySub=post.optJSONArray(TagName.KEY_SUB_CAT);
                         for (int j = 0; j < jArrySub.length(); j++) {
                                 JSONObject job = jArrySub.optJSONObject(j);
@@ -371,7 +379,7 @@ public class CategoriesFragment extends Fragment {
                                 gadServices = new ArrayList<ProductModel>();
                             }
                             JSONObject post = posts.optJSONObject(i);
-//                            gadEleTxt.setText(post.getString(TagName.KEY_CAT_NAME));
+                            gadEleTxt.setText(post.getString(TagName.KEY_CAT_NAME));
                             JSONArray jArrySub=post.optJSONArray(TagName.KEY_SUB_CAT);
                             for (int j = 0; j < jArrySub.length(); j++) {
                                 JSONObject job = jArrySub.optJSONObject(j);
@@ -395,7 +403,7 @@ public class CategoriesFragment extends Fragment {
                                     hlServices = new ArrayList<ProductModel>();
                                 }
                                 JSONObject post = posts.optJSONObject(i);
-//                            gadEleTxt.setText(post.getString(TagName.KEY_CAT_NAME));
+                            homeLiveTxt.setText(post.getString(TagName.KEY_CAT_NAME));
                                 JSONArray jArrySub = post.optJSONArray(TagName.KEY_SUB_CAT);
                                 for (int j = 0; j < jArrySub.length(); j++) {
                                     JSONObject job = jArrySub.optJSONObject(j);

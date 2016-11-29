@@ -137,7 +137,7 @@
          android:textSize="12dp"
         android:textColor="@color/color_text"
         android:id="@+id/sort_apply_btn"
-        android:background="@drawable/button_bg_colorprimary"
+        android:background="?button_bg_primary"
         android:layout_gravity="center_horizontal" />
   <!--  <Button
         android:layout_width="wrap_content"

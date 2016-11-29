@@ -51,7 +51,7 @@ public class HorizontalListAdapter extends RecyclerView.Adapter<HorizontalListAd
         this.layout=layout;
         ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(activity));
         options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.loading)
+                .showImageOnLoading(R.drawable.preloader_product)
                 .showImageForEmptyUri(R.drawable.ic_empty)
                 .showImageOnFail(R.drawable.ic_error)
                 .cacheInMemory(true)
@@ -102,7 +102,7 @@ public class HorizontalListAdapter extends RecyclerView.Adapter<HorizontalListAd
         }
 //        holder.ratingBar.setProgress(Integer.valueOf(modelItem.getRating()));
 //        Log.e("horizalAdapter","onBind");
-        Log.e("horizalAdapter",modelItem.getTitle());
+//        Log.e("horizalAdapter",modelItem.getTitle());
 //        holder.desc.setText(modelList.get(position).getDescription());
         imageLoader.displayImage(((ProductModel)modelItem).getThumbnail(), holder.image, options, imageListener);
         //Share Action

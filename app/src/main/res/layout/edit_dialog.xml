@@ -63,13 +63,29 @@
             android:ems="10"
             android:id="@+id/edit"
             android:padding="10dp"
+            android:visibility="gone"
             android:background="@drawable/edittext_bg"
             android:layout_gravity="center_horizontal" />
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinner"
+            android:padding="10dp"
+            android:background="@drawable/edittext_bg"
+            android:prompt="@string/spinner_title"/>
 
    <!-- </LinearLayout>-->
     </android.support.v7.widget.CardView>
 
-
+    <Button
+        android:text="SUBMIT"
+        android:background="@color/color_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/submit"
+        android:layout_margin="10dp"
+        android:textColor="?attr/colorAccent"
+        android:layout_gravity="center"/>
 
 
 </LinearLayout>

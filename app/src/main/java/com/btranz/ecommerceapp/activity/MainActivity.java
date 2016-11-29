@@ -3,15 +3,20 @@ package com.btranz.ecommerceapp.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -45,12 +50,38 @@ import com.btranz.ecommerceapp.fragment.HomeFragment;
 import com.btranz.ecommerceapp.fragment.OrdersFragment;
 import com.btranz.ecommerceapp.fragment.ReferEarnFragment;
 import com.btranz.ecommerceapp.fragment.WishlistFragment;
+import com.btranz.ecommerceapp.modal.Product;
+import com.btranz.ecommerceapp.modal.ProductModel;
 import com.btranz.ecommerceapp.utils.AppData;
+import com.btranz.ecommerceapp.utils.CheckNetworkConnection;
 import com.btranz.ecommerceapp.utils.TagName;
 import com.btranz.ecommerceapp.utils.TypefaceSpan;
 import com.btranz.ecommerceapp.utils.Utils;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static android.R.id.message;
 //import com.btranz.ecamarceapp.utils.AppData;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
@@ -61,17 +92,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public Toolbar toolbar;
     int key=R.id.nav_home;
     Fragment fragment = null;
-    String customerEmail, cartBadge;
+    String userEmail, cartBadge;
     // shared preference
     SharedPreferences sharedpreferences;
     String PREFS_NAME = "MyPrefs";
     public TextView viewTxt, toolbar_title;
     MenuItem item;
+    public List<ProductModel> products;
+    public ArrayList<ProductModel> dummyServices;
+    public ArrayList<ProductModel> services;
+    public ArrayList<ProductModel> popServices;
+    public ArrayList<ProductModel> brandServices;
+    String message;
+    HomeAsyncHttpTask taskHome;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
+        sendRequest();
         setContentView(R.layout.activity_main);
 
 
@@ -88,6 +127,66 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             }
             splashTxt.setText(s1);
+
+            //Theme
+            Resources res = getResources();
+            String theme_id = res.getString(R.string.theme);
+            switch (theme_id)
+            {
+                case "Default":
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+
+                        //  splash.setBackground(res.getDrawable(R.drawable.splash));
+                        //splash.setBackground(res.getDrawable(R.drawable.splash));
+                        splash.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.splash, null));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            splash.setBackground(getDrawable(R.drawable.splash));
+                        }
+                    }else {
+                        // splash.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.splash, null));
+                        splash.setBackgroundDrawable(getResources().getDrawable(R.drawable.splash));
+                    }
+
+                    break;
+
+                case "Blue":
+
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+
+                        //  splash.setBackground(res.getDrawable(R.drawable.splash));
+                        //splash.setBackground(res.getDrawable(R.drawable.splash));
+                        splash.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.splash_blue, null));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            splash.setBackground(getDrawable(R.drawable.splash_blue));
+                        }
+                    }else {
+                        // splash.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.splash, null));
+                        splash.setBackgroundDrawable(getResources().getDrawable(R.drawable.splash_blue));
+                    }
+
+                    break;
+                case "Yellow":
+
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+
+                        //  splash.setBackground(res.getDrawable(R.drawable.splash));
+                        //splash.setBackground(res.getDrawable(R.drawable.splash));
+                        splash.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.splash_yellow, null));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            splash.setBackground(getDrawable(R.drawable.splash_yellow));
+                        }
+                    }else {
+                        // splash.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.splash, null));
+                        splash.setBackgroundDrawable(getResources().getDrawable(R.drawable.splash_yellow));
+                    }
+
+                    break;
+
+            }
+
 //            Drawable mDrawable = getApplicationContext().getResources().getDrawable(R.drawable.splash);
 //            mDrawable.setColorFilter(new
 //                    PorterDuffColorFilter(0xffff00, PorterDuff.Mode.SRC_IN));
@@ -106,16 +205,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         public void onAnimationEnd(Animator animation) {
                             splash.setVisibility(View.GONE);
                             initToolbar();
-                            doInitialize();
+//                            doInitialize();
                             AppData.currentFlag=true;
                         }
-                    }).setDuration(5000).start();
+                    }).setDuration(10000).start();
 
                 }
             }, 0);
         }else{
             initToolbar();
-            doInitialize();
+//            doInitialize();
         }
 
 //        init();
@@ -156,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        try {
+//        try {
             super.onCreateOptionsMenu(menu);
             getMenuInflater().inflate(R.menu.menu, menu);
             item = menu.findItem(R.id.action_cart);
@@ -169,9 +268,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             } else {
                 writeBadge(Integer.parseInt(cartBadge));
             }
-        }catch (InflateException e){
-
-        }
+//        }catch (InflateException e){
+//
+//        }
        /* MenuItemCompat.setActionView(item, R.layout.cart_count);
         RelativeLayout notifCount = (RelativeLayout) MenuItemCompat.getActionView(item);
 
@@ -303,19 +402,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void init(){
 
                 try {
-                    customerEmail = sharedpreferences.getString("customerEmail", "");
+                    userEmail = sharedpreferences.getString("userEmail", "");
                     LinearLayout slideLL = (LinearLayout) findViewById(R.id.slide);
                     TextView emailTxt = (TextView) findViewById(R.id.email_txt);
 
                     viewTxt = (TextView) findViewById(R.id.view_profile);
-                    if (customerEmail.equals("")) {
-                        customerEmail = "guest@example.com";
+                    if (userEmail.equals("")) {
+                        userEmail = "guest@example.com";
                         viewTxt.setVisibility(View.GONE);
                     } else {
                         viewTxt.setVisibility(View.VISIBLE);
                     }
 
-                    emailTxt.setText(customerEmail);
+                    emailTxt.setText(userEmail);
 
                     viewTxt.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -402,7 +501,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.nav_home:
                 fragment = new HomeFragment();
-                title = getString(R.string.title_home);
+//                title = getString(R.string.title_home);
                 break;
             case R.id.nav_catg:
 //                fragment = new CategoriesFragment();
@@ -424,11 +523,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_orders:
                 fragment = new OrdersFragment();
-                title = getString(R.string.title_orders);
+//                title = getString(R.string.title_orders);
                 break;
             case R.id.nav_help:
                 fragment = new HelpCenterFragment();
-                title = getString(R.string.title_help_center);
+//                title = getString(R.string.title_help_center);
                 break;
             case R.id.nav_cards:
 //                fragment = new CardsFragment();
@@ -476,5 +575,372 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
     }
+    private void sendRequest() {
+        if (CheckNetworkConnection.isConnectionAvailable(getApplicationContext())) {
+            //Home
+            taskHome = new HomeAsyncHttpTask();
+            taskHome.execute(Utils.homeUrl);
+//            //offer banner
+//            task = new RequestImgTask(activity);
+//            task.execute(Utils.bannerUrl);
+//            //Product on Glance
+//            taskAsynk = new AsyncHttpTask();
+//            taskAsynk.execute(Utils.prdtGlanceUrl);
+//            //Popular Products
+//            taskPop = new PopAsyncHttpTask();
+//            taskPop.execute(Utils.popPrdtUrl);
+//            //Brands
+//            taskBrand = new BrandAsyncHttpTask();
+//            taskBrand.execute(Utils.brandUrl);
+        } else {
+            message = getResources().getString(R.string.no_internet_connection);
+//            showAlertDialog(message, true);
+        }
+    }
+    public void showAlertDialog(String message, final boolean finish) {
+        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+        alertDialog.setMessage(message);
+        alertDialog.setCancelable(false);
 
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        if (finish)
+                            finish();
+                    }
+                });
+        alertDialog.show();
+    }
+     //Products on Home
+    public class HomeAsyncHttpTask extends AsyncTask<String, Void, Integer> {
+
+
+        @Override
+        protected void onPreExecute() {
+//
+//            glanceProgressLL.setVisibility(View.VISIBLE);
+//            progressLL.setVisibility(View.VISIBLE);
+//            pb.setVisibility(View.VISIBLE);
+//
+//            progressBar.setVisibility(View.VISIBLE);
+//            layout.setVisibility(View.VISIBLE);
+
+        }
+
+        @Override
+        protected Integer doInBackground(String... params) {
+            InputStream inputStream = null;
+            Integer result = 0;
+            HttpURLConnection urlConnection = null;
+
+            try {
+                /* forming th java.net.URL object */
+                URL url = new URL(params[0]);
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+
+                /* for Get request */
+//                urlConnection.setReadTimeout(15000);
+//                urlConnection.setConnectTimeout(15000);
+                urlConnection.setRequestMethod("GET");
+                urlConnection.setDoInput(true);
+                urlConnection.setDoOutput(true);
+
+//                List<NameValuePair> param = new ArrayList<NameValuePair>();
+//                param.add(new BasicNameValuePair("tag", "home"));
+//                param.add(new BasicNameValuePair("sellerid", "2"));
+//                param.add(new BasicNameValuePair("thirdParam", paramValue3));
+//                HashMap<String, String> param = new HashMap<String, String>();
+//                param.put("tag", "home");
+//                param.put("sellerid", "2");
+//
+//                OutputStream os = urlConnection.getOutputStream();
+//                BufferedWriter writer = new BufferedWriter(
+//                        new OutputStreamWriter(os, "UTF-8"));
+//                writer.write(getPostDataString(param));
+//                writer.flush();
+//                writer.close();
+//                os.close();
+
+//                urlConnection.connect();
+                int statusCode = urlConnection.getResponseCode();
+
+                /* 200 represents HTTP OK */
+                if (statusCode ==  200) {
+
+                    BufferedReader r = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = r.readLine()) != null) {
+                        response.append(line);
+                    }
+                    Log.e("response.toString()", response.toString());
+                    parseHomeResult(response.toString());
+                    result = 1; // Successful
+                }else{
+                    result = 0; //"Failed to fetch data!";
+                }
+
+            } catch (Exception e) {
+                Log.d("hello", e.getLocalizedMessage());
+            }
+
+            return result; //"Failed to fetch data!";
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+
+//            glanceProgressLL.setVisibility(View.GONE);
+//            popProgressLL.setVisibility(View.GONE);
+//            progressLL.setVisibility(View.GONE);
+//            layout.setVisibility(View.GONE);
+
+            /* Download complete. Lets update UI */
+            if (result == 1) {
+                doInitialize();
+//                Log.e("onPostExecute", "Asyntask");
+//                scroll.fullScroll(ScrollView.FOCUS_UP);
+              /*  if(services!=null&&services.size()!=0) {
+                    //Glance
+                    horizontalAdapter = new HorizontalListAdapter(activity, services, R.layout.gallary_inflate);
+                    horizontalList.setAdapter(horizontalAdapter);
+                    horizontalAdapter.notifyDataSetChanged();
+//                    scroll.fullScroll(ScrollView.FOCUS_UP);
+                }
+                if(popServices!=null&&popServices.size()!=0) {
+                    //POP
+                    horizontalAdapter = new HorizontalListAdapter(activity, popServices, R.layout.gallary_inflate);
+                    popHorizontalList.setAdapter(horizontalAdapter);
+                    horizontalAdapter.notifyDataSetChanged();
+//                    scroll.fullScroll(ScrollView.FOCUS_UP);
+                }
+
+                if(brandServices!=null&&brandServices.size()!=0) {
+                    //Brand
+                    brandAdapter = new BrandGridAdapter(activity, brandServices);
+                    brandGrid.setAdapter(brandAdapter);
+                    brandAdapter.notifyDataSetChanged();
+//                    scroll.fullScroll(ScrollView.FOCUS_UP);
+
+                }
+
+                if(products!=null&&products.size()!=0){
+                    mViewPager.setAdapter(new ImageSlideAdapter(
+                            activity, products, HomeFragment.this));
+
+                    mIndicator.setViewPager(mViewPager);
+//                            imgNameTxt.setText(""
+//                                    + ((Product) products.get(mViewPager
+//                                    .getCurrentItem())).getName());
+                    runnable(products.size());
+                    handler.postDelayed(animateViewPager,
+                            ANIM_VIEWPAGER_DELAY);
+                    scroll.fullScroll(ScrollView.FOCUS_UP);
+                    scroll.requestFocus();
+                }*/
+
+//                recyclerView.setAdapter(new ServicesRecyclerAdapter(activity, services));
+            } else {
+                Log.e("hello", "Failed to fetch data!");
+                showAlertDialog("Something is went wrong!", true);
+            }
+        }
+    }
+    /*private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException
+    {
+        StringBuilder result = new StringBuilder();
+        boolean first = true;
+
+        for (NameValuePair pair : params)
+        {
+            if (first)
+                first = false;
+            else
+                result.append("&");
+
+            result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
+            result.append("=");
+            result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
+        }
+
+        return result.toString();
+    }*/
+    private String getPostDataString(HashMap<String, String> params) throws UnsupportedEncodingException{
+        StringBuilder result = new StringBuilder();
+        boolean first = true;
+        for(Map.Entry<String, String> entry : params.entrySet()){
+            if (first)
+                first = false;
+            else
+                result.append("&");
+
+            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+            result.append("=");
+            result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+        }
+
+        return result.toString();
+    }
+    private void parseHomeResult(String result) {
+        try {
+//            JSONArray response = new JSONArray(result);
+            JSONObject jsonObject=new JSONObject(result);
+
+            if (jsonObject != null) {
+                JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+                 message = jobstatus.optString(TagName.TAG_MSG);
+
+//                if (message.equals("success")) {
+//            boolean status = response.getBoolean(TagName.TAG_STATUS);
+
+                    if (status!=0) {
+//                JSONObject jsonData = jsonObject
+//                        .getJSONObject(TagName.TAG_PRODUCT);
+//                    }
+                    JSONArray posts = jsonObject.optJSONArray(TagName.TAG_HOME);
+
+
+
+                    for (int i = 0; i < posts.length(); i++) {
+                        JSONObject post = posts.optJSONObject(i);
+                        if(i==0) {
+
+
+                            //BRAND
+                            JSONArray jsonArrayBrand = post.optJSONArray(TagName.TAG_BRAND);
+
+            /*Initialize array if null*/
+                            if (null == brandServices) {
+                                brandServices = new ArrayList<ProductModel>();
+                            }
+
+                            for (int j = 0; j < jsonArrayBrand.length(); j++) {
+                                JSONObject jobjBrand = jsonArrayBrand.optJSONObject(j);
+
+                                ProductModel item = new ProductModel();
+                                item.setId(jobjBrand.optInt(TagName.KEY_ID));
+//                        item.setTitle(post.optString("name"));
+//                        item.setDescription(post.optString("description"));
+//                        item.setCost(post.optDouble("price"));
+//                        item.setFinalPrice(post.optDouble("finalPrice"));
+//                    item.setCount(post.optInt("finalPrice"));
+//                                Log.e("name", "name"+ jobjBrand.optInt("id"));
+                                item.setThumbnail(jobjBrand.optString(TagName.KEY_IMG_URL));
+                                brandServices.add(item);
+                            }
+                            //POPULAR PRODUCTS
+                            JSONArray jsonArrayBestBuys = post.optJSONArray(TagName.TAG_TOP_PRODUCT);
+
+            /*Initialize array if null*/
+                            if (null == popServices) {
+                                popServices = new ArrayList<ProductModel>();
+                            }
+
+                            for (int j = 0; j < jsonArrayBestBuys.length(); j++) {
+                                JSONObject jobjPop = jsonArrayBestBuys.optJSONObject(j);
+
+                                ProductModel item = new ProductModel();
+                                item.setId(jobjPop.optInt(TagName.KEY_ID));
+                                item.setTitle(jobjPop.optString(TagName.KEY_NAME));
+                                item.setDescription(jobjPop.optString(TagName.KEY_DES));
+                                item.setCost(jobjPop.optDouble(TagName.KEY_PRICE));
+                                item.setFinalPrice(jobjPop.optDouble(TagName.KEY_FINAL_PRICE));
+//                    item.setCount(post.optInt("finalPrice"));
+//                                Log.e("name", "name"+ jobjPop.optDouble("finalPrice"));
+                                item.setThumbnail(jobjPop.optString(TagName.KEY_THUMB));
+                                JSONObject post1 = jobjPop.optJSONObject(TagName.TAG_OFFER_ALL);
+                                item.setShare(post1.optString(TagName.KEY_SHARE));
+                                item.setTag(post1.optString(TagName.KEY_TAG));
+                                item.setDiscount(post1.optInt(TagName.KEY_DISC));
+                                item.setRating(post1.optInt(TagName.KEY_RATING));
+                                popServices.add(item);
+                            }
+                            //GLANCE PRODUCTS
+                            JSONArray jsonArrayGlance = post.optJSONArray(TagName.TAG_PRODUCT);
+
+            /*Initialize array if null*/
+                            if (null == services) {
+                                services = new ArrayList<ProductModel>();
+                            }
+
+                            for (int j = 0; j < jsonArrayGlance.length(); j++) {
+                                JSONObject jobjGlance = jsonArrayGlance.optJSONObject(j);
+
+                                ProductModel item = new ProductModel();
+                                item.setId(jobjGlance.optInt(TagName.KEY_ID));
+                                item.setTitle(jobjGlance.optString(TagName.KEY_NAME));
+                                item.setDescription(jobjGlance.optString(TagName.KEY_DES));
+                                item.setCost(jobjGlance.optDouble(TagName.KEY_PRICE));
+                                item.setFinalPrice(jobjGlance.optDouble(TagName.KEY_FINAL_PRICE));
+//                    item.setCount(post.optInt("finalPrice"));
+//                                Log.e("name", "name"+ jobjGlance.optDouble("finalPrice"));
+                                item.setThumbnail(jobjGlance.optString(TagName.KEY_THUMB));
+                                JSONObject post1 = jobjGlance.optJSONObject(TagName.TAG_OFFER_ALL);
+                                item.setShare(post1.optString(TagName.KEY_SHARE));
+                                item.setTag(post1.optString(TagName.KEY_TAG));
+                                item.setDiscount(post1.optInt(TagName.KEY_DISC));
+                                item.setRating(post1.optInt(TagName.KEY_RATING));
+                                services.add(item);
+                            }
+                            //Banner
+                            JSONArray jsonArrayBanner = post.getJSONArray(TagName.TAG_OFFER_BANNER);
+                             /*Initialize array if null*/
+                            if (null == products) {
+//                                products = new ArrayList<Product>();
+                                products = new ArrayList<ProductModel>();
+                            }
+                            Product product;
+                            for (int j = 0; j < jsonArrayBanner.length(); j++) {
+//                                product = new Product();
+                                JSONObject productObj = jsonArrayBanner.getJSONObject(j);
+                                ProductModel item = new ProductModel();
+                                item.setId(productObj.optInt(TagName.KEY_ID));
+////
+//                                Log.e("name", "name"+ productObj.optInt("id"));
+                                item.setThumbnail(productObj.optString(TagName.KEY_IMG_URL));
+//                                product.setId(productObj.getInt(TagName.KEY_ID));
+//			product.setName(productObj.getString(TagName.KEY_NAME));
+//                                product.setImageUrl(productObj.getString(TagName.KEY_IMG_URL));
+
+                                products.add(item);
+                            }
+                        }
+
+                    }
+                } else {
+                    message = jsonObject.getString(TagName.TAG_MSG);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public Resources.Theme getTheme() {
+        Resources res = getResources();
+        Resources.Theme theme = super.getTheme();
+
+        String theme_id = res.getString(R.string.theme);
+        switch (theme_id)
+        {
+            case "Default":
+
+                theme.applyStyle(R.style.AppTheme, true);
+                break;
+
+            case "Blue":
+
+                theme.applyStyle(R.style.AppTheme_blue, true);
+                break;
+            case "Yellow":
+
+                theme.applyStyle(R.style.AppTheme_yellow, true);
+                break;
+        }
+        // you could also use a switch if you have many themes that could apply
+        return theme;
+    }
 }

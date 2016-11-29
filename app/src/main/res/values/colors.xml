@@ -1,10 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimaryDark">#f85040</color>
-    <color name="colorPrimary">#f85040</color>
+    <!--Default Theme Color-->
+    <color name="theme_default_colorPrimaryDark">#f85040</color>
+    <color name="theme_default_colorPrimary">#f85040</color>
+    <color name="theme_default_colorAccent">#26ace2</color>
+    <!--end-->
+
+    <!--Blue Theme Color-->
+    <color name="theme_blue_colorPrimaryDark">#3366cc</color>
+    <color name="theme_blue_colorPrimary">#3366cc</color>
+    <color name="theme_blue_colorAccent">#339999</color>
+    <!--end-->
+    <!--Yellow Theme Color-->
+    <color name="theme_yellow_colorPrimaryDark">#ffcc00</color>
+    <color name="theme_yellow_colorPrimary">#ffcc00</color>
+    <color name="theme_yellow_colorAccent">#26ace2</color>
+    <!--end-->
+
+    <color name="view_all_button_color">#277ac8</color>
+    <color name="best_offer_tag_color">#26ace2</color>
+    <color name="new_tag_color">#00a651</color>
+    <color name="discount_tag_color">#ff0000</color>
+    <color name="rating_bar_color">#f7941e</color>
+
+    <color name="sort_button_color">#f85040</color>
+    <color name="filter_button_color">#26ace2</color>
+
+    <color name="invite_button_border_color">#f85040</color>
+    <color name="invite_button_text_color">#f85040</color>
+
+    <color name="continue_shoping_button_border_color">#00ffff</color>
+    <color name="continue_shoping_button_text_color">#00ffff</color>
+
+    <color name="enter_card_details_button_color">#00a651</color>
+    <color name="enter_card_details_text_color">#ffffff</color>
+
+    <color name="card_details_submit_button_border_color">#00ffff</color>
+    <color name="card_details_submit_button_text_color">#00ffff</color>
+
+
     <color name="color_primary_light">#99f85040</color>
-    <color name="colorAccent">#26ace2</color>
     <color name="color_accent_amber">#ffc107</color>
+    <color name="color_off_gray">#f8f8f8</color>
     <color name="color_blue">#26ace2</color>
     <color name="color_login">#00ffff</color>
     <color name="color_dark_blue">#277ac8</color>
@@ -19,25 +56,25 @@
     <color name="color_guest">#999966</color>
     <color name="color_invite">#ff0033</color>
 
-    <!--menu text color--> <!--font type Helvetica-->
+    <!--&lt;!&ndash;menu text color&ndash;&gt; &lt;!&ndash;font type Helvetica&ndash;&gt;
     <color name="menu_text_color">#666666</color>
-    <!--menu header text color-->
+    &lt;!&ndash;menu header text color&ndash;&gt;
     <color name="menu_header_text_color">#ffffff</color>
-    <!--home action bar text color--> <!--Font : Hallo Sans Black,UpperCase-->
+    &lt;!&ndash;home action bar text color&ndash;&gt; &lt;!&ndash;Font : Hallo Sans Black,UpperCase&ndash;&gt;
     <color name="home_acitonbar_text_color">#ffffff</color>
-    <!--home button colours-->
-    <!--product at glance-->
+    &lt;!&ndash;home button colours&ndash;&gt;
+    &lt;!&ndash;product at glance&ndash;&gt;
     <color name="view_all_button_color">#26ace2</color>
     <color name="view_all_text_color">#ffffff</color>
 
-    <!--top buying-->
+    &lt;!&ndash;top buying&ndash;&gt;
     <color name="tp_view_all_button_color">#f85040</color>
     <color name="tp_view_all_text_color">#ffffff</color>
 
-    <!--top brands-->
+    &lt;!&ndash;top brands&ndash;&gt;
     <color name="tb_view_all_button_color">#26ace2</color>
     <color name="tb_view_all_text_color">#ffffff</color>
-
+-->
     <!--here all buttons colors are same in all secrees-->
 
 </resources>

@@ -5,6 +5,7 @@
     android:orientation="vertical"
     android:background="@color/color_text"
     android:weightSum="1">
+
     <LinearLayout
         android:id="@+id/empty_cart"
         android:layout_width="match_parent"
@@ -25,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="?attr/colorPrimary"
-            android:background="@drawable/button_bg_primary_barder"
+            android:background="?button_bg_primary_border"
             android:textSize="15dp"
             android:layout_margin="20dp"
             android:layout_gravity="bottom"

@@ -29,6 +29,7 @@ import com.btranz.ecommerceapp.adapter.CartServicesRecyclerAdapter;
 import com.btranz.ecommerceapp.adapter.HorizontalListAdapter;
 import com.btranz.ecommerceapp.adapter.OrdersRecyclerAdapter;
 import com.btranz.ecommerceapp.adapter.ProductGridAdapter;
+import com.btranz.ecommerceapp.modal.OrdersModel;
 import com.btranz.ecommerceapp.modal.ProductModel;
 import com.btranz.ecommerceapp.utils.CheckNetworkConnection;
 import com.btranz.ecommerceapp.utils.DatabaseHandler;
@@ -52,7 +53,7 @@ import java.util.List;
  * Created by Ravi on 29/07/15.
  */
 public class OrdersFragment extends Fragment {
-    ArrayList<ProductModel> services;// = new ArrayList<ProductModel>();
+    ArrayList<OrdersModel> services;// = new ArrayList<ProductModel>();
     List<String> cartList= new ArrayList<String>();
     FragmentActivity activity;
     private RecyclerView recyclerView;
@@ -61,7 +62,7 @@ public class OrdersFragment extends Fragment {
     AlertDialog alertDialog;
     AsyncHttpTask task;
     boolean stopSliding = false;
-    String message, customerId;
+    String message, userId;
     // shared preference
     SharedPreferences sharedpreferences;
     String PREFS_NAME = "MyPrefs";
@@ -77,7 +78,7 @@ public class OrdersFragment extends Fragment {
         activity=getActivity();
         sharedpreferences = activity.getSharedPreferences(PREFS_NAME,
                 Context.MODE_PRIVATE);
-        customerId = sharedpreferences.getString("customerID", "");
+        userId = sharedpreferences.getString("userID", "");
     }
 
     @Override
@@ -170,7 +171,7 @@ public class OrdersFragment extends Fragment {
 //            task = new RequestImgTask(activity);
 //            task.execute(url);
             task = new AsyncHttpTask();
-            task.execute(Utils.getcartUrl+customerId);
+            task.execute(Utils.ordersUrl+userId);
 //            task.execute(prdtsUrl);
             Log.e("sendrequest","sendrequest");
         } else {
@@ -282,33 +283,38 @@ public class OrdersFragment extends Fragment {
             if (jsonObject != null) {
                 JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
                 int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+                String message = jobstatus.optString(TagName.TAG_MSG);
 
-                if (status==1) {
+//                if (status==1) {
 //            boolean status = response.getBoolean(TagName.TAG_STATUS);
 
-//                    if (status) {
+                    if (message.equalsIgnoreCase("Success")) {
 //                JSONObject jsonData = jsonObject
 //                        .getJSONObject(TagName.TAG_PRODUCT);
 //                    }
-                    JSONArray posts = jsonObject.optJSONArray(TagName.TAG_PRODUCT);
+                    JSONArray posts = jsonObject.optJSONArray(TagName.TAG_ORDER);
 
             /*Initialize array if null*/
                     if (null == services) {
-                        services = new ArrayList<ProductModel>();
+                        services = new ArrayList<OrdersModel>();
                     }
 
                     for (int i = 0; i < posts.length(); i++) {
                         JSONObject post = posts.optJSONObject(i);
 
-                        ProductModel item = new ProductModel();
-                        item.setId(post.optInt(TagName.KEY_ID));
-                        item.setTitle(post.optString(TagName.KEY_NAME));
-                        item.setDescription(post.optString(TagName.KEY_DES));
-                        item.setCost(post.optDouble(TagName.KEY_PRICE));
-                        item.setFinalPrice(post.optDouble(TagName.KEY_FINAL_PRICE));
-                        item.setCount(post.optInt(TagName.KEY_COUNT));
-//                    Log.e("name", "name");
-                        item.setThumbnail(post.optString(TagName.KEY_THUMB));
+                        OrdersModel item = new OrdersModel();
+                        item.setId(post.optInt("increment_id"));
+                        item.setDate(post.optString("created_at"));
+                        item.setStatus(post.optString("status"));
+                        item.setCost(post.optDouble("grand_total"));
+                        item.setQnty(post.optInt("total_qty_ordered"));
+//                        item.setTitle(post.optString(TagName.KEY_NAME));
+//                        item.setDescription(post.optString(TagName.KEY_DES));
+//                        item.setCost(post.optDouble(TagName.KEY_PRICE));
+//                        item.setFinalPrice(post.optDouble(TagName.KEY_FINAL_PRICE));
+//                        item.setCount(post.optInt(TagName.KEY_COUNT));
+////                    Log.e("name", "name");
+//                        item.setThumbnail(post.optString(TagName.KEY_THUMB));
                         services.add(item);
                     }
                 } else {

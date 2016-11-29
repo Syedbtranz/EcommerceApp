@@ -5,7 +5,7 @@
     <size
         android:width="15dp"
         android:height="15dp" />
-    <stroke android:width="1dip" android:color="?attr/colorAccent" />
+    <stroke android:width="1dip" android:color="@color/theme_blue_colorAccent" />
     <!--<corners android:radius="20dip"/>-->
     <padding android:left="0dip" android:top="0dip" android:right="0dip" android:bottom="0dip" />
 </shape>

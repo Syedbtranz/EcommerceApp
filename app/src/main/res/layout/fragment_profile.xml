@@ -186,7 +186,7 @@
             android:layout_height="wrap_content"
             android:text="LOGOUT"
             android:textColor="?attr/colorPrimary"
-            android:background="@drawable/button_bg_primary_barder"
+            android:background="?button_bg_primary_border"
             android:paddingRight="10dp"
             android:layout_margin="30dp"
             android:id="@+id/logout_btn"

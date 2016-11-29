@@ -90,7 +90,7 @@ public class CartFragment extends Fragment {
     double  tempAmt;
     AsyncHttpTask task;
     boolean stopSliding = false;
-    String message, customerId;
+    String message, userId;
     // shared preference
     SharedPreferences sharedpreferences;
     String PREFS_NAME = "MyPrefs";
@@ -111,7 +111,7 @@ public class CartFragment extends Fragment {
         editor = sharedpreferences.edit();
         handler = new Handler();
 //        customerName = sharedpreferences.getString("customerName", "");
-//        customerId = sharedpreferences.getString("customerID", "");
+//        userId = sharedpreferences.getString("customerID", "");
     }
 
     @Override
@@ -148,33 +148,33 @@ public class CartFragment extends Fragment {
 
             }
         });
-//        if (services == null) {
+        if (services == null) {
 //            sendRequest();
 //            emptyCart.setVisibility(View.VISIBLE);
             tempCount=0;
             tempAmt=0;
-        customerId = sharedpreferences.getString("customerID", "");
-            if(customerId.equals("")) {
+        userId = sharedpreferences.getString("userID", "");
+            if(userId.equals("")) {
                 getCartList();
             }else {
                 sendRequest();
             }
 //            adapter = new ServicesRecyclerAdapter(activity, services);
             Log.e("onResume", "onResume");
-//        } else {
+        } else {
 //            Log.e("onResume else", "onResume else");
 //            System.out.println(services);
-//            recyclerView.setAdapter(new CartServicesRecyclerAdapter(CartFragment.this, services));
-//            recyclerView.scrollToPosition(0);
-////            emptyCart.setVisibility(View.GONE);
-//        }
+            recyclerView.setAdapter(new CartServicesRecyclerAdapter(CartFragment.this, services));
+            recyclerView.scrollToPosition(0);
+            emptyCart.setVisibility(View.GONE);
+        }
         super.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        services.clear();
+//        services.clear();
     }
 
     public void runnable(final int size) {
@@ -253,7 +253,7 @@ public class CartFragment extends Fragment {
 //            task = new RequestImgTask(activity);
 //            task.execute(url);
             task = new AsyncHttpTask();
-            task.execute(Utils.getcartUrl+customerId);
+            task.execute(Utils.getcartUrl+userId);
             Log.e("sendrequest","sendrequest");
         } else {
             message = getResources().getString(R.string.no_internet_connection);
@@ -385,27 +385,24 @@ public class CartFragment extends Fragment {
     public void afterDelete(int PrdtId,double amt, int count){
 //        showViews();
 //        int count1=count;
-        if(customerId.equals("")) {
+        if(userId.equals("")) {
             db.removeCartItem(String.valueOf(PrdtId));
         }else {
 //            sendRequest();
-            deletecartData(String.valueOf(PrdtId),customerId);
+            deletecartData(String.valueOf(PrdtId),userId);
         }
 
         int count1=tempCount-count;
         double amt1=tempAmt-(amt * count);
-
-        if(count1!=0) {
-            coutTxt.setText(String.valueOf(count1));
-            ((SecondActivity) getActivity()).writeBadge(services.size());
-            editor.putString("cartBadge", String.valueOf(services.size()));
-            editor.commit();
-            amtTxt.setText(String.valueOf(amt1));
-            tempCount = count1;
-            tempAmt = amt1;
-        }else {
+        coutTxt.setText(String.valueOf(count1));
+        ((SecondActivity) getActivity()).writeBadge(services.size());
+        editor.putString("cartBadge", String.valueOf(services.size()));
+        editor.commit();
+        amtTxt.setText(String.valueOf(amt1));
+        tempCount = count1;
+        tempAmt = amt1;
+        if(count1==0) {
             emptyCart.setVisibility(View.VISIBLE);
-//            ((SecondActivity) getActivity()).cartCountTv.setText(count1);
         }
     }
     public void checkOutAdd(double amt){
@@ -436,12 +433,12 @@ public class CartFragment extends Fragment {
         }
     }
     public void updateData(int PrdtId, int quantity){
-        if(customerId.equals("")) {
+        if(userId.equals("")) {
 //            db.removeCartItem(String.valueOf(PrdtId));
             db.updateCartItem(String.valueOf(PrdtId),String.valueOf(quantity));
         }else {
 //            sendRequest();
-            updateCartPrdtData(String.valueOf(PrdtId),String.valueOf(quantity),customerId);
+            updateCartPrdtData(String.valueOf(PrdtId),String.valueOf(quantity),userId);
         }
     }
     public class AsyncHttpTask extends AsyncTask<String, Void, Integer> {
@@ -549,6 +546,10 @@ public class CartFragment extends Fragment {
 //                        .getJSONObject(TagName.TAG_PRODUCT);
 //                    }
                     JSONArray posts = jsonObject.optJSONArray(TagName.TAG_PRODUCT);
+                    String quoteId=jsonObject.optString("quoteid");
+                    Log.e("quoteId", quoteId);
+                    editor.putString("quoteId",quoteId);
+                    editor.commit();
 
             /*Initialize array if null*/
             if (null == services) {
@@ -649,22 +650,7 @@ public class CartFragment extends Fragment {
 
                         if (status==1) {
                             Toast.makeText(activity, "Product deleted", Toast.LENGTH_LONG).show();
-//            boolean status = response.getBoolean(TagName.TAG_STATUS);
-//                if(message.equalsIgnoreCase("success")){
-//                            JSONObject jobcust=jsonObject.getJSONObject(TagName.TAG_CUSTMER);
-//                            editor = sharedpreferences.edit();
-//                            editor.putString("customerID", jobcust.optString("id"));
-//                            editor.putString("customerEmail", jobcust.optString("username"));
-//                            editor.putString("password", jobcust.optString("password"));
-////                          editor.putString("customerName",jobcust.optString("name"));
-//                            editor.putString("logged", "logged");
-//                            editor.commit();
-//                            activity.finish();
-//                            Intent in=new Intent(getActivity(), BookNowActivity.class);
-//                            in.putExtra("buynowKey", TagName.BUYNOW_USER_DETAILS);
-//                            activity.startActivity(in);
-//                            activity.overridePendingTransition(android.R.anim.fade_in,
-//                                    android.R.anim.fade_out);
+
                         }else {
                             Toast.makeText(activity, "Network Error", Toast.LENGTH_LONG).show();
                         }

@@ -16,6 +16,7 @@ import com.btranz.ecommerceapp.modal.ProductModel;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
@@ -38,13 +39,17 @@ public class SummaryRecyclerAdapter extends RecyclerView.Adapter<SummaryRecycler
         this.feedItemList = feedItemList;
         this.acti = context;
         this.layout=layout;
-//        options = new DisplayImageOptions.Builder()
-//                .showImageOnFail(R.mipmap.ic_error)
-//                .showStubImage(R.mipmap.ic_empty)
-//                .showImageForEmptyUri(R.mipmap.ic_empty).cacheInMemory()
-//                .cacheOnDisc().build();
-//
-//        imageListener = new ImageDisplayListener();
+        options = new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.drawable.preloader_product)
+                .showImageForEmptyUri(R.drawable.ic_empty)
+                .showImageOnFail(R.drawable.ic_error)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .considerExifParams(true)
+                .bitmapConfig(Bitmap.Config.RGB_565)
+                .displayer(new RoundedBitmapDisplayer(5))
+                .build();
+        imageListener = new ImageDisplayListener();
     }
 
     @Override

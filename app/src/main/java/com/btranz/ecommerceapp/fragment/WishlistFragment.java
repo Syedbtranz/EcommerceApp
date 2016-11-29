@@ -1,5 +1,6 @@
 package com.btranz.ecommerceapp.fragment;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -9,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -24,10 +26,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.btranz.ecommerceapp.R;
 import com.btranz.ecommerceapp.activity.SecondActivity;
+import com.btranz.ecommerceapp.adapter.CartServicesRecyclerAdapter;
 import com.btranz.ecommerceapp.adapter.OrdersRecyclerAdapter;
 import com.btranz.ecommerceapp.adapter.WislistRecyclerAdapter;
 import com.btranz.ecommerceapp.modal.ProductModel;
@@ -48,15 +59,17 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 
 /**
  * Created by Ravi on 29/07/15.
  */
 public class WishlistFragment extends Fragment {
+    LinearLayout emptyWishlist;
     Button cardDetailsBtn, contShopingBtn;
     ArrayList<ProductModel> services;// = new ArrayList<ProductModel>();
-    List<String> cartList= new ArrayList<String>();
+    List<String> wishList= new ArrayList<String>();
     FragmentActivity activity;
     private RecyclerView recyclerView;
     public TextView coutTxt,amtTxt,checkoutTxt;
@@ -64,7 +77,7 @@ public class WishlistFragment extends Fragment {
     AlertDialog alertDialog;
     AsyncHttpTask task;
     boolean stopSliding = false;
-    String message, customerId;
+    String message, userId;
     // shared preference
     SharedPreferences sharedpreferences;
     String PREFS_NAME = "MyPrefs";
@@ -80,7 +93,7 @@ public class WishlistFragment extends Fragment {
         activity=getActivity();
         sharedpreferences = activity.getSharedPreferences(PREFS_NAME,
                 Context.MODE_PRIVATE);
-        customerId = sharedpreferences.getString("customerID", "");
+        userId = sharedpreferences.getString("userID", "");
     }
 
     @Override
@@ -119,20 +132,24 @@ public class WishlistFragment extends Fragment {
         });
 
         if (services == null) {
-            sendRequest();
-
+            if(userId.equals("")) {
+                getWishList();
+            }else {
+                sendRequest();
+            }
 //            Log.e("onResume","test");
 ////            adapter = new ServicesRecyclerAdapter(activity, services);
 //            Log.e("onResume", "onResume");
         } else {
             Log.e("onResume else", "onResume else");
-            recyclerView.setAdapter(new WislistRecyclerAdapter(activity, services, R.layout.wishlist_inflate));
+            recyclerView.setAdapter(new WislistRecyclerAdapter(WishlistFragment.this, services, R.layout.wishlist_inflate));
 //            progressLL.setVisibility(View.GONE);
 //            pb.setVisibility(View.GONE);
 //            recyclerView.scrollToPosition(0);
         }
     }
     private void initRecyclerView(View view) {
+        emptyWishlist=(LinearLayout) view.findViewById(R.id.empty_wishlist);
         contShopingBtn=(Button)view.findViewById(R.id.continue_shoping_btn);
 
         //continue Shoping Action
@@ -167,7 +184,7 @@ public class WishlistFragment extends Fragment {
 //        recyclerView.setPadding(recyclerView.getPaddingLeft(), recyclerView.getPaddingTop(), recyclerView.getPaddingRight(), paddingBottom);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
-        adapter = new WislistRecyclerAdapter(activity, services, R.layout.wishlist_inflate);
+        adapter = new WislistRecyclerAdapter(WishlistFragment.this, services, R.layout.wishlist_inflate);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 //
@@ -186,12 +203,66 @@ public class WishlistFragment extends Fragment {
 //        hideViews();
 //        showViews();
     }
+    public void getWishList(){
+        wishList=db.getWishlist();
+          /*Initialize array if null*/
+        if (null == services) {
+            services = new ArrayList<ProductModel>();
+        }
+        for(int i=0;i<wishList.size();i++){
+            String wishListStr=wishList.get(i);
+            String wishListArr[]=wishListStr.split(Pattern.quote("***"));
+            ProductModel item = new ProductModel();
+            item.setId(Integer.valueOf(wishListArr[0]));
+            item.setTitle(wishListArr[1]);
+            item.setCost(Double.valueOf(wishListArr[2]));
+            item.setFinalPrice(Double.valueOf(wishListArr[3]));
+            item.setThumbnail(wishListArr[4]);
+            item.setCount(Integer.valueOf(wishListArr[5]));
+//            Log.e("name","name");
+
+            services.add(item);
+
+
+        }
+        if(services.size()!=0) {
+//            for (int i = 0; i < services.size(); i++) {
+//                ProductModel item = services.get(i);
+//                int count1 = tempCount + item.getCount();
+//                double amt1 = tempAmt + (item.getFinalPrice() * item.getCount());
+////            Log.e("onPostExecute", " " + item.getCount());
+//
+//
+//                coutTxt.setText(String.valueOf(count1));
+//                amtTxt.setText(String.valueOf(amt1));
+//                tempCount = count1;
+//                tempAmt = amt1;
+//            }
+//            //cart badge
+//            handler.postDelayed(new Runnable() {
+//                @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
+//                @Override
+//                public void run() {
+//
+//                    ((SecondActivity) getActivity()).writeBadge(services.size());
+//                    editor.putString("cartBadge", String.valueOf(services.size()));
+//                    editor.commit();
+//                }
+//            }, 1000);
+//            emptyCart.setVisibility(View.GONE);
+            adapter = new WislistRecyclerAdapter(WishlistFragment.this, services, R.layout.wishlist_inflate);
+            recyclerView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        }else{
+//            emptyCart.setVisibility(View.VISIBLE);
+        }
+    }
     private void sendRequest() {
         if (CheckNetworkConnection.isConnectionAvailable(activity)) {
 //            task = new RequestImgTask(activity);
 //            task.execute(url);
             task = new AsyncHttpTask();
-            task.execute(Utils.getcartUrl+customerId);
+            task.execute(Utils.getwishlistUrl+userId);
 //            task.execute(prdtsUrl);
             Log.e("sendrequest","sendrequest");
         } else {
@@ -281,8 +352,8 @@ public class WishlistFragment extends Fragment {
 //                        tempCount = count1;
 //                        tempAmt = amt1;
 //                    }
-//                    emptyCart.setVisibility(View.GONE);
-                    adapter = new WislistRecyclerAdapter(activity, services, R.layout.wishlist_inflate);
+                    emptyWishlist.setVisibility(View.GONE);
+                    adapter = new WislistRecyclerAdapter(WishlistFragment.this, services, R.layout.wishlist_inflate);
                     recyclerView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
 //                recyclerView.setAdapter(new ServicesRecyclerAdapter(activity, services));
@@ -291,7 +362,7 @@ public class WishlistFragment extends Fragment {
 //                }
             } else {
                 Log.e("hello", "Failed to fetch data!");
-//                emptyCart.setVisibility(View.VISIBLE);
+                emptyWishlist.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -327,16 +398,107 @@ public class WishlistFragment extends Fragment {
                         item.setDescription(post.optString(TagName.KEY_DES));
                         item.setCost(post.optDouble(TagName.KEY_PRICE));
                         item.setFinalPrice(post.optDouble(TagName.KEY_FINAL_PRICE));
-                        item.setCount(post.optInt(TagName.KEY_COUNT));
+//                        item.setCount(post.optInt(TagName.KEY_COUNT));
 //                    Log.e("name", "name");
                         item.setThumbnail(post.optString(TagName.KEY_THUMB));
                         services.add(item);
                     }
                 } else {
-                    message = jsonObject.getString(TagName.TAG_PRODUCT);
+                    message = jobstatus.getString(TagName.TAG_MSG);
                 }
             }
         } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void reomvewishlistItem(int prdtId){
+        if(userId.equals("")) {
+            db.removeWishlistItem(String.valueOf(prdtId));
+        }else {
+//            sendRequest();
+            deleteWishlistItem(String.valueOf(prdtId),userId);
+        }
+
+    }
+    public void deleteWishlistItem(String prdtId,String userId){
+        try {
+            RequestQueue requestQueue = Volley.newRequestQueue(activity);
+            String URL = "http://...";
+//            JSONObject jsonBody = new JSONObject();
+//            jsonBody.put("reference_id", "1");
+//            jsonBody.put("service_id", "1");
+//            jsonBody.put("client_id", userId);
+//            jsonBody.put("service_type", "1");
+//            final String mRequestBody = jsonBody.toString();
+
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, Utils.itemremovewishlistUrl+userId+"/"+prdtId, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.i("VOLLEY", response);
+
+                   /* try {
+                        JSONObject jsonObject=new JSONObject(response);
+                        if(jsonObject!=null) {
+                            String status=jsonObject.optString(TagName.TAG_STATUS);
+                            if(status.equalsIgnoreCase("success")){
+//                                String status=jsonObject.optString(TagName.KEY_MSG);
+                                Toast.makeText(activity,jsonObject.optString(TagName.KEY_MSG),Toast.LENGTH_SHORT).show();
+                                activity.finish();
+                            }
+//                            JSONObject job=jsonObject.optJSONObject(TagName.TAG_DATA);
+//                            editor = sharedpreferences.edit();
+//                            editor.putString("userId", job.optString("user_id"));
+//                            editor.putString("userName", job.optString("user_name"));
+////                            editor.putString("password", jsonObject.optString("password"));
+////                            editor.putString("userName",jobcust.optString("name"));
+//                            editor.putString("logged", "logged");
+//                            editor.commit();
+
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }*/
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                    Log.e("VOLLEY", error.toString());
+                    Toast.makeText(activity,"Following detais are incorrect",Toast.LENGTH_SHORT).show();
+                }
+            }) {
+                @Override
+                public String getBodyContentType() {
+                    return "application/json; charset=utf-8";
+                }
+
+             /*   @Override
+                public byte[] getBody() throws AuthFailureError {
+                    try {
+                        return mRequestBody == null ? null : mRequestBody.getBytes("utf-8");
+                    } catch (UnsupportedEncodingException uee) {
+                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", mRequestBody, "utf-8");
+                        return null;
+                    }
+                }*/
+
+                /*@Override
+                protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                    String responseString = "";
+                    if (response != null) {
+                        responseString = String.valueOf(response);
+//                        Log.e(" response.data", response);
+
+                        // can get more details such as response.headers
+                    }
+                    return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+                }*/
+            };
+
+            requestQueue.add(stringRequest);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

@@ -1,9 +1,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:padding="10dp" >
+    android:background="@color/color_text"
+    >
 
 
 
@@ -13,7 +14,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
+        android:background="@color/color_text"
         android:gravity="right">
 
         <ImageView
@@ -34,48 +35,52 @@
     </LinearLayout>
     <RelativeLayout
         android:orientation="vertical"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="200dp"
-       android:layout_gravity="center">
+       android:layout_gravity="center"
+        >
     <ImageView
         android:id="@+id/grid_image"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingBottom="10dp"
-        android:scaleType="fitXY"
+        android:paddingRight="5dp"
+        android:paddingLeft="5dp"
+        android:scaleType="center"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        android:src="@drawable/loading">
+        android:src="@drawable/preloader_product">
     </ImageView>
 
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:background="@color/color_blue"
             android:text="best offer"
-            android:textSize="10sp"
+            android:textSize="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"
+
             android:textColor="@color/color_text"
             android:id="@+id/offer_tag_btn"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:layout_alignParentBottom="true"
+            android:layout_alignBottom="@id/grid_image"
             android:layout_centerHorizontal="true" />
     </RelativeLayout>
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1.5">
+        android:layout_height="wrap_content"
+       android:layout_margin="5dp">
     <TextView
         android:id="@+id/grid_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:text="dddddd"
-        android:textSize="9sp" >
+        android:layout_marginTop="10dp"
+        android:maxLines = "2"
+        android:text="text"
+        android:textSize="9dp" >
     </TextView>
     <RatingBar
         android:layout_width="wrap_content"
@@ -102,7 +107,7 @@
         android:textStyle="bold"
         android:textColor="@color/color_shadow"
         android:text="@string/rupee_symbol"
-        android:textSize="9sp" />
+        android:textSize="9dp" />
         <TextView
             android:id="@+id/price"
             android:layout_width="wrap_content"
@@ -145,6 +150,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
+        android:paddingBottom="10dp"
         android:text="500"
          >
     </TextView>
@@ -157,5 +163,14 @@
         android:max="100"
         android:layout_gravity="bottom"
         style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
+       <!-- <View
+            android:id="@+id/div_a"
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:visibility="gone"
+            android:paddingTop="5dp"
+            android:layout_below="@+id/pdt_name_title"
+            android:background="@color/view_divider_color" />-->
+
     </LinearLayout>
 </LinearLayout>

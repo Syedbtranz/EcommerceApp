@@ -5,10 +5,13 @@ public class TagName {
 	public static final String TAG_STATUS = "status";
 	public static final String TAG_STATUS_CODE = "code";
 	public static final String TAG_MSG = "message";
+	public static final String TAG_SUCCESS = "success";
 	public static final String TAG_CUSTMER = "customer";
 	public static final String TAG_OFFER_BANNER = "offersbanners";
 	public static final String TAG_OFFER_ALL = "offferTag";
+	public static final String TAG_HOME = "home";
 	public static final String TAG_PRODUCT = "product";
+	public static final String TAG_TOP_PRODUCT = "topsellingproduct";
 	public static final String TAG_PRODUCT_DETAILS = "productdetails";
 	public static final String TAG_BRAND = "brandlist";
 	public static final String TAG_PRODUCT_CATG = "getproductcategories";
@@ -16,7 +19,7 @@ public class TagName {
 
 	public static final String TAG_DATA = "data";
 	public static final String TAG_PRODUCTS = "products";
-	public static final String TAG_ORDERS = "orders";
+	public static final String TAG_ORDER = "order";
 	public static final String TAG_ADDRESS = "address";
 	public static final String TAG_CART = "cart";
 

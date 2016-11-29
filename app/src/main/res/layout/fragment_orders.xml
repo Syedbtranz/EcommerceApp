@@ -34,7 +34,7 @@
         android:gravity="center">-->
 
 
-        <LinearLayout
+       <!-- <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="30dp">
@@ -81,7 +81,7 @@
                 android:layout_weight="1.1"
                 android:gravity="center"
                 android:id="@+id/tkt_status" />
-        </LinearLayout>
+        </LinearLayout>-->
    <!-- </LinearLayout>-->
     </android.support.v7.widget.CardView>
    <!-- <include android:id="@+id/filter_brand_list"

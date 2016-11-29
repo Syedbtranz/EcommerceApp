@@ -42,14 +42,14 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@+id/header_layout"
-        android:background="@color/colorAccent" />
+        android:background="?attr/colorPrimary" />
 
     <View
         android:id="@+id/div_line2"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@+id/div_line1"
-        android:background="@color/colorAccent" />
+        android:background="?attr/colorPrimary" />
 
     <ScrollView
         android:layout_width="fill_parent"
@@ -93,7 +93,7 @@
                     android:layout_below="@+id/pdt_name_title"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
-                    android:background="@color/colorAccent" />
+                    android:background="?attr/colorPrimary" />
 
                 <TextView
                     android:id="@+id/pdt_name"

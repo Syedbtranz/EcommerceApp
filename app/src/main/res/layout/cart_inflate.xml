@@ -28,7 +28,7 @@
                 android:layout_height="120dp"
                 android:layout_weight="1"
                 android:scaleType="fitXY"
-                android:src="@drawable/loading">
+                android:src="@drawable/preloader_product">
             </ImageView>
             <TextView
                 android:id="@+id/title"

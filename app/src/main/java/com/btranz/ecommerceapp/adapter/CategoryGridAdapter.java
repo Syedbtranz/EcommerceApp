@@ -36,7 +36,7 @@ public class CategoryGridAdapter extends BaseAdapter {
         inflater = LayoutInflater.from(context);
 //        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(context));
         options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.loading)
+                .showImageOnLoading(R.drawable.preloader_product)
                 .showImageForEmptyUri(R.drawable.ic_empty)
                 .showImageOnFail(R.drawable.ic_error)
                 .cacheInMemory(true)

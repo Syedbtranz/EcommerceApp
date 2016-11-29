@@ -7,7 +7,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/signup_image"
+        android:background="?attr/colorPrimary"
         android:gravity="start">
         <ImageView
             android:layout_width="wrap_content"
@@ -211,7 +211,7 @@
             android:layout_height="wrap_content"
             android:text="Signup"
             android:textColor="@color/color_text"
-            android:background="@drawable/button_bg_blue"
+            android:background="?button_bg_accent"
             android:paddingRight="10dp"
             android:layout_margin="30dp"
             android:id="@+id/signup_btn"

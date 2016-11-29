@@ -2,13 +2,14 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto">
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:background="@color/color_text">
     <android.support.v7.widget.CardView
         android:id="@+id/progress_ll"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
+       android:background="@color/color_text"
         android:gravity="center">
         <ProgressBar
             android:id="@+id/progressbar"
@@ -80,7 +81,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/loading"
+        android:src="@drawable/preloader_product"
         android:scaleType="centerInside"
         android:id="@+id/item_image" />
         </LinearLayout>
@@ -89,7 +90,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
+        android:text="name"
         android:id="@+id/item_title"
         android:layout_gravity="center_horizontal" />
         <LinearLayout
@@ -304,7 +305,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:text="( +Rs 105  )"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/color_red"
                 android:gravity="center"
                 android:id="@+id/express_cost" />
         </LinearLayout>
@@ -492,12 +493,30 @@
             android:layout_height="wrap_content"
             android:paddingBottom="10dp"
             card_view:cardCornerRadius="4dp">
+            <!--<LinearLayout
+                android:id="@+id/progress_simillar_ll"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:gravity="center">
+                <ProgressBar
+                    android:id="@+id/progress_simillar"
+                    style="?android:attr/progressBarStyleSmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="true"
+                    android:layout_gravity="center"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true" />
+            </LinearLayout>-->
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:gravity="center"
                 android:layout_margin="2dp"
+                android:background="@color/color_off_gray"
                 android:layout_height="match_parent">
                 <LinearLayout
                     android:orientation="horizontal"
@@ -516,15 +535,16 @@
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="30dp"
-                        android:text="view all"
+                        android:text="View All"
+                        android:textSize="10sp"
+                        android:padding="7dp"
                         android:drawableRight="@drawable/next_checkout_btn"
                         android:background="?attr/colorAccent"
                         android:textColor="@color/color_text"
                         android:id="@+id/similar_prdts_btn"
-                        android:paddingRight="10dp"
-                        android:textSize="8sp"
-                        android:layout_marginLeft="40dp"
-                        android:layout_weight="1"
+
+                        android:gravity="center"
+                        android:layout_gravity="right"
 
                         />
                 </LinearLayout>
@@ -537,11 +557,13 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingBottom="10dp"
+                    android:padding="10dp"
                     android:gravity="center">
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/sim_horizontal_recycler"
                         android:layout_width="match_parent"
-                        android:layout_height="220dp" />
+                        android:layout_height="240dp" />
                     <!--<Gallery
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -564,7 +586,7 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="50dp"
         android:layout_margin="5dp"
         android:layout_gravity="center|bottom">
         <LinearLayout
@@ -574,7 +596,7 @@
             android:layout_height="match_parent"
             android:layout_marginRight="5dp"
             android:gravity="center"
-            android:background="@drawable/button_bg_colorprimary"
+            android:background="?button_bg_primary"
             android:layout_weight="1" >
 
 
@@ -605,7 +627,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="5dp"
-            android:background="@drawable/button_bg_blue"
+            android:background="?button_bg_accent"
             android:gravity="center"
             android:layout_weight="1" >
 

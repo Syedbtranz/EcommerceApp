@@ -71,9 +71,9 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
 //                .into(feedListRowHolder.thumbnail);
 //        feedListRowHolder.title.setText(feedItem.getTitle());
 
-        feedListRowHolder.cost.setText(String.valueOf(feedItem.getCost()));
+        feedListRowHolder.cost.setText(String.valueOf(feedItem.getGrandTotal()));
         feedListRowHolder.num.setText(String.valueOf(feedItem.getQnty()));
-        feedListRowHolder.orderId.setText(String.valueOf(feedItem.getId()));
+        feedListRowHolder.orderId.setText(String.valueOf(feedItem.getOrderId()));
         feedListRowHolder.orderDate.setText(feedItem.getDate());
 
         if(feedItem.getStatus().equalsIgnoreCase("pending")){
@@ -115,9 +115,9 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
 ////                notifyItemInserted(position);
 //            }
 //        });
-//        imageLoader.displayImage(
-//               ((OrdersModel) feedItem).getThumbnail(), feedListRowHolder.thumbnail,
-//               options, imageListener);
+        imageLoader.displayImage(
+               ((OrdersModel) feedItem).getThumbnail(), feedListRowHolder.thumbnail,
+               options, imageListener);
 
     }
 
@@ -139,7 +139,7 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
 //        mListener = listener;
             this.orderId = (TextView) view.findViewById(R.id.order_id);
             this.orderDate = (TextView) view.findViewById(R.id.order_date);
-//            this.thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
+            this.thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
             this.statusImg = (ImageView) view.findViewById(R.id.status_bar);
 ////            this.incr = (ImageView) view.findViewById(R.id.incre_image);
 ////            this.decre = (ImageView) view.findViewById(R.id.decre_image);

@@ -30,6 +30,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.btranz.ecommerceapp.R;
 import com.btranz.ecommerceapp.activity.BookNowActivity;
 import com.btranz.ecommerceapp.activity.SecondActivity;
@@ -37,6 +46,7 @@ import com.btranz.ecommerceapp.modal.ProductModel;
 import com.btranz.ecommerceapp.utils.DatabaseHandler;
 import com.btranz.ecommerceapp.utils.TagName;
 import com.btranz.ecommerceapp.utils.Utils;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -60,7 +70,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 
@@ -193,8 +205,9 @@ public class LogRegFragment extends Fragment {
         // Inflate the layout for this fragment
         return rootView;
     }
-
+    //FPRGOT PASSWORD
     private void forgotPassword(final String username) {
+
 
         class LoginAsync extends AsyncTask<String, Void, String> {
 
@@ -350,6 +363,7 @@ public void showDialog(String message){
     }
     private void login(final String username, final String password) {
 
+
         class LoginAsync extends AsyncTask<String, Void, String> {
 
 
@@ -373,7 +387,7 @@ public void showDialog(String message){
 
                 try{
                     HttpClient httpClient = new DefaultHttpClient();
-                    HttpGet httpPost = new HttpGet(Utils.loginUrl+uname+"/"+pass);
+                    HttpGet httpPost = new HttpGet( Utils.instantLoginUrl+uname+"&password="+pass);
 //                    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
                     HttpResponse response = httpClient.execute(httpPost);
@@ -407,11 +421,11 @@ public void showDialog(String message){
                 Log.e("s",s);
                 loadingDialog.dismiss();
                 try {
-                    JSONArray response = new JSONArray(s);
-                    JSONObject jsonObject=response.getJSONObject(0);
+                    JSONObject response = new JSONObject(s);
+//                    JSONObject jsonObject=response.getJSONObject("");
 
-                    if (jsonObject != null) {
-                        JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                    if (response != null) {
+                        JSONObject jobstatus=response.getJSONObject(TagName.TAG_STATUS);
                         int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
                         String message = jobstatus.optString(TagName.TAG_MSG);
 
@@ -419,16 +433,27 @@ public void showDialog(String message){
 //            boolean status = response.getBoolean(TagName.TAG_STATUS);
                 if(message.equalsIgnoreCase("success")){
 
-                          JSONObject jobcust=jsonObject.getJSONObject(TagName.TAG_CUSTMER);
+                          JSONArray jarry=response.getJSONArray("userlogin");
+                    for(int i=0;i<jarry.length();i++){
+                        JSONObject jobLogin=jarry.getJSONObject(i);
+//                        if(i==0){
+                            JSONObject jobsuccess=jobLogin.getJSONObject("status");
+                            Toast.makeText(activity, jobsuccess.optString("message"), Toast.LENGTH_LONG).show();
+//                        }
+//                        if(i==1){
+                            JSONObject jobcust=jobLogin.getJSONObject(TagName.TAG_CUSTMER);
                             addCart(jobcust.optString("id"));
-                          editor = sharedpreferences.edit();
-                          editor.putString("userID", jobcust.optString("id"));
-                          editor.putString("userEmail", jobcust.optString("username"));
-                          editor.putString("password", jobcust.optString("password"));
-                          editor.putString("userName",jobcust.optString("name"));
-                          editor.putString("logged", "logged");
-                          editor.commit();
-                    activity.finish();
+                            editor = sharedpreferences.edit();
+                            editor.putString("userID", jobcust.optString("id"));
+                            editor.putString("userEmail", jobcust.optString("username"));
+                            editor.putString("password", jobcust.optString("password"));
+                            editor.putString("userName",jobcust.optString("name"));
+                            editor.putString("logged", "logged");
+                            editor.commit();
+                            activity.finish();
+//                        }
+                    }
+
 //                    Intent in=new Intent(getActivity(), SecondActivity.class);
 //                    in.putExtra("key", TagName.CART_ID);
 //                    activity.startActivity(in);

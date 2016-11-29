@@ -309,7 +309,9 @@ public class OrdersFragment extends Fragment {
                         item.setStatus(post.optString("status"));
                         item.setGrandTotal(post.optString("grand_total"));
                         item.setQnty(post.optInt("total_qty_ordered"));
-                        JSONArray jarray = jsonObject.optJSONArray("order_item_list");
+                        JSONArray jarray = post.optJSONArray("order_item_list");
+                        JSONObject job1 = jarray.optJSONObject(0);
+                        item.setThumbnail(job1.optString(TagName.KEY_THUMB));
                           /*Initialize array if null*/
                         if (null == orderList) {
                             orderList = new ArrayList<OrdersModel>();
@@ -318,14 +320,14 @@ public class OrdersFragment extends Fragment {
                             JSONObject job = jarray.optJSONObject(j);
                             OrdersModel item1 = new OrdersModel();
                             item1.setId(job.optInt("product_id"));
-                            item1.setTitle(post.optString(TagName.KEY_NAME));
+                            item1.setTitle(job.optString(TagName.KEY_NAME));
 //                        item.setDescription(post.optString(TagName.KEY_DES));
-                            item1.setCost(post.optDouble(TagName.KEY_PRICE));
+                            item1.setCost(job.optDouble(TagName.KEY_PRICE));
 //                        item.setFinalPrice(post.optDouble(TagName.KEY_FINAL_PRICE));
 //                            item.setPayment(post.optString("sku"));
-                            item1.setQnty(post.optInt(TagName.KEY_COUNT));
+                            item1.setQnty(job.optInt(TagName.KEY_COUNT));
 ////                    Log.e("name", "name");
-                            item1.setThumbnail(post.optString(TagName.KEY_THUMB));
+                            item1.setThumbnail(job.optString(TagName.KEY_THUMB));
                             orderList.add(item1);
                         }
                         services.add(item);

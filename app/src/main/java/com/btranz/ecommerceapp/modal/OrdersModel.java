@@ -5,10 +5,12 @@ import android.os.Parcelable;
 
 public class OrdersModel implements Parcelable {
     private int id;
+    private String orderId;
     private String title;
     private String payment;
     private String date;
     private String status;
+    private String grandTotal;
     private double cost;
     private int process;
     private int qnty;
@@ -20,15 +22,26 @@ public class OrdersModel implements Parcelable {
     private OrdersModel(Parcel in) {
         super();
         this.id = in.readInt();
+        this.orderId = in.readString();
         this.title = in.readString();
         this.payment = in.readString();
         this.date = in.readString();
         this.status = in.readString();
+        this.grandTotal = in.readString();
         this.cost = in.readDouble();
         this.qnty = in.readInt();
         this.process = in.readInt();
         this.thumbnail = in.readString();
     }
+    // getter and setter method for order id
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+
     // getter and setter method for id
     public int getId() {
         return id;
@@ -54,6 +67,15 @@ public class OrdersModel implements Parcelable {
 
     public void setPayment(String payment) {
         this.payment = payment;
+    }
+
+    // getter and setter method for grand Total
+    public String getGrandTotal() {
+        return grandTotal;
+    }
+
+    public void setGrandTotal(String grandTotal) {
+        this.grandTotal = grandTotal;
     }
 
     // getter and setter method for status
@@ -118,10 +140,12 @@ public class OrdersModel implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
         parcel.writeInt(getId());
+        parcel.writeString(getOrderId());
         parcel.writeString(getTitle());
         parcel.writeString(getPayment());
         parcel.writeString(getDate());
         parcel.writeString(getStatus());
+        parcel.writeString(getGrandTotal());
         parcel.writeDouble(getCost());
         parcel.writeInt(getProcess());
         parcel.writeInt(getQnty());
@@ -161,7 +185,7 @@ public class OrdersModel implements Parcelable {
 
     @Override
     public String toString() {
-        return "Product [id=" + id + ", name=" + title + ", payment=" + payment + ", date=" + date +", status=" + status + ", cost=" + cost + ", qnty=" + qnty +  ", process=" + process + ", imageUrl="
+        return "Product [id=" + id + ", orderId=" + orderId +", name=" + title + ", payment=" + payment + ", date=" + date +", status=" + status + ", grandTotal=" + grandTotal + ", cost=" + cost + ", qnty=" + qnty +  ", process=" + process + ", imageUrl="
                 + thumbnail + "]";
     }
 }

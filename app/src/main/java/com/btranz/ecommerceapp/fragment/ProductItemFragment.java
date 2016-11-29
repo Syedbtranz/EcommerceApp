@@ -408,8 +408,8 @@ public class ProductItemFragment extends Fragment {
         if(userId.equals("")){
             wishList=dbHandler.checkWishlistProduct(String.valueOf(singlePrdtId));
             if(wishList.size()<1){
-                Toast.makeText(getActivity(), "Added to Cart!", Toast.LENGTH_SHORT).show();
-                dbHandler.insertWishlist(String.valueOf(singlePrdtId),item1.getTitle(),String.valueOf(item1.getCost()),String.valueOf(item1.getFinalPrice()),item1.getThumbnail(),"1");
+                Toast.makeText(getActivity(), "Added to Wishlist!", Toast.LENGTH_SHORT).show();
+                dbHandler.insertWishlist(String.valueOf(singlePrdtId),item1.getTitle(),String.valueOf(item1.getCost()),String.valueOf(item1.getFinalPrice()),item1.getThumbnail());
 
 //                if(cartBadge.equals("")){
 //                    ((SecondActivity) getActivity()).writeBadge(1);

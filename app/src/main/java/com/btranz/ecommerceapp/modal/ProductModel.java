@@ -41,6 +41,7 @@ public class ProductModel implements Parcelable, Comparable<ProductModel> {
         this.subTitle = in.readString();
         this.subTitle1 = in.readString();
     }
+
     public int getId() {
         return id;
     }

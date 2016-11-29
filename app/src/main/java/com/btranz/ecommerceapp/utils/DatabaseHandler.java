@@ -27,6 +27,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	//  Tables Columns Id
 	private static final String ID = "c_id";
 	private static final String S_ID = "s_id";
+	private static final String W_ID = "w_id";
 	private static final String S_NAME = "s_name";
 	List<String> searchList=new ArrayList<String>();
 
@@ -45,10 +46,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				TagName.KEY_COUNT + " TEXT)";
 
 		String CREATE_WISHLIST_TABLE = "CREATE TABLE " + TABLE_WISHLIST + "("
-				+ ID + " INTEGER PRIMARY KEY," + TagName.KEY_ID +" TEXT," + TagName.KEY_NAME + " TEXT," + TagName.KEY_PRICE + " TEXT,"+
+				+ W_ID + " INTEGER PRIMARY KEY," + TagName.KEY_ID +" TEXT," + TagName.KEY_NAME + " TEXT," + TagName.KEY_PRICE + " TEXT,"+
 				TagName.KEY_FINAL_PRICE + " TEXT,"+
-				TagName.KEY_THUMB + " TEXT," +
-				TagName.KEY_COUNT + " TEXT)";
+				TagName.KEY_THUMB +  " TEXT)";
 
 		String CREATE_SEARCH_TABLE = "CREATE TABLE " + TABLE_SEARCH + "("
 				+ S_ID + " INTEGER PRIMARY KEY," + S_NAME + " TEXT)";
@@ -168,7 +168,7 @@ public List<String>getCartList(){
 
 	//********* INTETRTING VALUES IN TO CART TABLE******************************//
 
-	public void insertWishlist(String prdt_id,String prdt_name,String prdt_price,String prdt_final_price, String prdt_thumb,String prdt_count) {
+	public void insertWishlist(String prdt_id,String prdt_name,String prdt_price,String prdt_final_price, String prdt_thumb) {
 		SQLiteDatabase db = this.getWritableDatabase();
 
 		ContentValues values = new ContentValues();
@@ -177,10 +177,10 @@ public List<String>getCartList(){
 		values.put(TagName.KEY_PRICE, prdt_price);
 		values.put(TagName.KEY_FINAL_PRICE, prdt_final_price);
 		values.put(TagName.KEY_THUMB , prdt_thumb);
-		values.put(TagName.KEY_COUNT , prdt_count);
-
+//		values.put(TagName.KEY_COUNT , prdt_count);
+		System.out.println("prdt_id" +prdt_id);
 		// Inserting Row
-		db.insert(TABLE_CART, null, values);
+		db.insert(TABLE_WISHLIST, null, values);
 
 		db.close(); // Closing database connection
 	}
@@ -188,15 +188,15 @@ public List<String>getCartList(){
 
 	public List<String>getWishlist(){
 
-		List<String> cartList=new ArrayList<String>();
-		String selectQuery = "SELECT * FROM "+TABLE_CART;
+		List<String> wishList=new ArrayList<String>();
+		String selectQuery = "SELECT * FROM "+TABLE_WISHLIST;
 		SQLiteDatabase db=this.getReadableDatabase();
 		Cursor cursor=db.rawQuery(selectQuery,null);
 		if (cursor.moveToFirst()) {
 			do {
 
-				cartList.add(cursor.getString(1)+"***"+cursor.getString(2)+"***"+cursor.getString(3)+"***"+cursor.getString(4)+"***"+cursor.getString(5)+"***"+cursor.getString(6));
-//		System.out.println(cursor.getString(1)+"***"+cursor.getString(2)+"***"+cursor.getString(3)+"***"+cursor.getString(4)+"***"+cursor.getString(5)+"***"+cursor.getString(6));
+				wishList.add(cursor.getString(1)+"***"+cursor.getString(2)+"***"+cursor.getString(3)+"***"+cursor.getString(4)+"***"+cursor.getString(5));
+		System.out.println(cursor.getString(1)+"***"+cursor.getString(2)+"***"+cursor.getString(3)+"***"+cursor.getString(4)+"***"+cursor.getString(5));
 			} while (cursor.moveToNext());
 		}
 		// closing connection
@@ -204,13 +204,13 @@ public List<String>getCartList(){
 		db.close();
 
 		// returning lables
-		return cartList;
+		return wishList;
 
 
 	}
 	public void removeWishlistItem(String id) {
 		// Select All Query
-		String deleteQuery = "DELETE  FROM " + TABLE_CART+ " Where "+TagName.KEY_ID+"="+id;
+		String deleteQuery = "DELETE  FROM " + TABLE_WISHLIST+ " Where "+TagName.KEY_ID+"="+id;
 		SQLiteDatabase db = this.getReadableDatabase();
 		db.execSQL(deleteQuery);
 	}
@@ -219,14 +219,14 @@ public List<String>getCartList(){
 
 	public void removeWishlist() {
 		// Select All Query
-		String deleteQuery = "DELETE  FROM " + TABLE_CART;
+		String deleteQuery = "DELETE  FROM " + TABLE_WISHLIST;
 		SQLiteDatabase db = this.getReadableDatabase();
 		db.execSQL(deleteQuery);
 	}
 
 	public void updateWishlistItem(String id,String count){
 		SQLiteDatabase db = this.getWritableDatabase();
-		String strSQL = "UPDATE "+ TABLE_CART+ " SET "+TagName.KEY_COUNT+" = "+count+ " WHERE "+TagName.KEY_ID+"="+id;
+		String strSQL = "UPDATE "+ TABLE_WISHLIST+ " SET "+TagName.KEY_COUNT+" = "+count+ " WHERE "+TagName.KEY_ID+"="+id;
 
 		db.execSQL(strSQL);
        /* SQLiteDatabase db = this.getWritableDatabase();
@@ -237,7 +237,7 @@ public List<String>getCartList(){
 
 	public List<String> checkWishlistProduct(String id){
 
-		List<String> cartData=new ArrayList<String>();
+		List<String> wishListData=new ArrayList<String>();
 
 		String selectQuery = "SELECT * FROM "+TABLE_CART +" WHERE "+TagName.KEY_ID+"="+id;
 		SQLiteDatabase db=this.getReadableDatabase();
@@ -245,7 +245,7 @@ public List<String>getCartList(){
 		if (cursor.moveToFirst()) {
 			do {
 
-				cartData.add(cursor.getString(1)+"***"+cursor.getString(2)+"***"+cursor.getString(3)+"***"+cursor.getString(4)+"***"+cursor.getString(5)+"***"+cursor.getString(6));
+				wishListData.add(cursor.getString(1)+"***"+cursor.getString(2)+"***"+cursor.getString(3)+"***"+cursor.getString(4)+"***"+cursor.getString(5)+"***"+cursor.getString(6));
 
 			} while (cursor.moveToNext());
 		}
@@ -254,7 +254,7 @@ public List<String>getCartList(){
 		db.close();
 
 		// returning studentData
-		return cartData;
+		return wishListData;
 
 
 	}

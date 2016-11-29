@@ -91,6 +91,7 @@ public class WishlistFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity=getActivity();
+        db=new DatabaseHandler(activity);
         sharedpreferences = activity.getSharedPreferences(PREFS_NAME,
                 Context.MODE_PRIVATE);
         userId = sharedpreferences.getString("userID", "");
@@ -218,7 +219,7 @@ public class WishlistFragment extends Fragment {
             item.setCost(Double.valueOf(wishListArr[2]));
             item.setFinalPrice(Double.valueOf(wishListArr[3]));
             item.setThumbnail(wishListArr[4]);
-            item.setCount(Integer.valueOf(wishListArr[5]));
+//            item.setCount(Integer.valueOf(wishListArr[5]));
 //            Log.e("name","name");
 
             services.add(item);
@@ -249,12 +250,12 @@ public class WishlistFragment extends Fragment {
 //                    editor.commit();
 //                }
 //            }, 1000);
-//            emptyCart.setVisibility(View.GONE);
+            emptyWishlist.setVisibility(View.GONE);
             adapter = new WislistRecyclerAdapter(WishlistFragment.this, services, R.layout.wishlist_inflate);
             recyclerView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }else{
-//            emptyCart.setVisibility(View.VISIBLE);
+            emptyWishlist.setVisibility(View.VISIBLE);
         }
     }
     private void sendRequest() {
@@ -415,6 +416,7 @@ public class WishlistFragment extends Fragment {
     public void reomvewishlistItem(int prdtId){
         if(userId.equals("")) {
             db.removeWishlistItem(String.valueOf(prdtId));
+            emptyWishlist.setVisibility(View.VISIBLE);
         }else {
 //            sendRequest();
             deleteWishlistItem(String.valueOf(prdtId),userId);

@@ -54,6 +54,7 @@ import java.util.List;
  */
 public class OrdersFragment extends Fragment {
     ArrayList<OrdersModel> services;// = new ArrayList<ProductModel>();
+    ArrayList<OrdersModel> orderList;// = new ArrayList<ProductModel>();
     List<String> cartList= new ArrayList<String>();
     FragmentActivity activity;
     private RecyclerView recyclerView;
@@ -303,18 +304,30 @@ public class OrdersFragment extends Fragment {
                         JSONObject post = posts.optJSONObject(i);
 
                         OrdersModel item = new OrdersModel();
-                        item.setId(post.optInt("increment_id"));
+                        item.setOrderId(post.optString("increment_id"));
                         item.setDate(post.optString("created_at"));
                         item.setStatus(post.optString("status"));
-                        item.setCost(post.optDouble("grand_total"));
+                        item.setGrandTotal(post.optString("grand_total"));
                         item.setQnty(post.optInt("total_qty_ordered"));
-//                        item.setTitle(post.optString(TagName.KEY_NAME));
+                        JSONArray jarray = jsonObject.optJSONArray("order_item_list");
+                          /*Initialize array if null*/
+                        if (null == orderList) {
+                            orderList = new ArrayList<OrdersModel>();
+                        }
+                        for (int j = 0; j < jarray.length(); j++) {
+                            JSONObject job = jarray.optJSONObject(j);
+                            OrdersModel item1 = new OrdersModel();
+                            item1.setId(job.optInt("product_id"));
+                            item1.setTitle(post.optString(TagName.KEY_NAME));
 //                        item.setDescription(post.optString(TagName.KEY_DES));
-//                        item.setCost(post.optDouble(TagName.KEY_PRICE));
+                            item1.setCost(post.optDouble(TagName.KEY_PRICE));
 //                        item.setFinalPrice(post.optDouble(TagName.KEY_FINAL_PRICE));
-//                        item.setCount(post.optInt(TagName.KEY_COUNT));
+//                            item.setPayment(post.optString("sku"));
+                            item1.setQnty(post.optInt(TagName.KEY_COUNT));
 ////                    Log.e("name", "name");
-//                        item.setThumbnail(post.optString(TagName.KEY_THUMB));
+                            item1.setThumbnail(post.optString(TagName.KEY_THUMB));
+                            orderList.add(item1);
+                        }
                         services.add(item);
                     }
                 } else {

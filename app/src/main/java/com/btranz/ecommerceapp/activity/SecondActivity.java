@@ -44,6 +44,7 @@ import com.btranz.ecommerceapp.utils.Utils;
 
 
 public class SecondActivity extends AppCompatActivity {
+
     ImageView SearchET;
     private static final long ANIM_VIEWPAGER_DELAY = 5000;
     public Toolbar mToolbar;

@@ -60,6 +60,7 @@ public static final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@
     public static String bannerUrl = instantServerUrl+"?tag=offersbanners&sellerid="+sellerId;
     public static String prdtGlanceUrl = instantServerUrl+"?tag=productglance&sellerid="+sellerId;
     public static String addtoCartUrl = instantServerUrl+"?tag=addtocart";
+    public static String forgotPwdUrl = instantServerUrl+"?tag=forgotpassword&email=";
 
    /* public static String btranzUrl = "http://192.168.1.136/";
     public static String url = btranzUrl+"ecom/products.json";

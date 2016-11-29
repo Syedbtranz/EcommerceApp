@@ -5,6 +5,9 @@ public class TagName {
 	public static final String TAG_STATUS = "status";
 	public static final String TAG_STATUS_CODE = "code";
 	public static final String TAG_MSG = "message";
+	public static final String TAG_ERROR= "Error";
+
+	public static final String TAG_FORGOT_PWD = "forgotpassword";
 	public static final String TAG_SUCCESS = "success";
 	public static final String TAG_CUSTMER = "customer";
 	public static final String TAG_OFFER_BANNER = "offersbanners";

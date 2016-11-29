@@ -20,6 +20,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.util.TypedValue;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -127,12 +128,16 @@ public class LogRegFragment extends Fragment {
                 emailET.requestFocus();
             } else if (!email.matches(Utils.EMAIL_PATTERN)&&email.length()!=10){
                 Toast.makeText(activity,
-                        "Please Enter the currect Email/Mobile No",
+                        "Please Enter the valid Email/Mobile No",
                         Toast.LENGTH_SHORT).show();
-            }else if (email.matches(Utils.EMAIL_PATTERN)||email.length()==10) {
+            }/*else if (email.matches(Utils.EMAIL_PATTERN)||email.length()==10) {
                 Toast.makeText(activity,
                         "Success Please Check Your Email!",
                         Toast.LENGTH_SHORT).show();
+            }*/
+            else
+            {
+                forgotPassword(email);
             }
         }
         });
@@ -188,6 +193,130 @@ public class LogRegFragment extends Fragment {
         // Inflate the layout for this fragment
         return rootView;
     }
+
+    private void forgotPassword(final String username) {
+
+        class LoginAsync extends AsyncTask<String, Void, String> {
+
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                loadingDialog = ProgressDialog.show(activity, "", "Please wait...");
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+                String uname = params[0];
+
+                Log.e("uname",uname);
+
+                InputStream is = null;
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                nameValuePairs.add(new BasicNameValuePair("tag", "forgotpassword"));
+                nameValuePairs.add(new BasicNameValuePair("email", uname));
+
+                String result = null;
+
+                try{
+                    HttpClient httpClient = new DefaultHttpClient();
+                    HttpGet httpPost = new HttpGet(Utils.forgotPwdUrl+uname);
+                    //httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+                    HttpResponse response = httpClient.execute(httpPost);
+
+                    HttpEntity entity = response.getEntity();
+
+                    is = entity.getContent();
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"), 8);
+                    StringBuilder sb = new StringBuilder();
+
+                    String line = null;
+                    while ((line = reader.readLine()) != null)
+                    {
+                        sb.append(line + "\n");
+                    }
+                    result = sb.toString();
+                } catch (ClientProtocolException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return result;
+            }
+
+            @Override
+            protected void onPostExecute(String result){
+                String s = result.trim();
+                Log.e("forgot_password_result",s);
+                loadingDialog.dismiss();
+                try {
+
+                    JSONObject jsonObject=new JSONObject(s);
+
+                    if (jsonObject != null) {
+                        JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                        int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+                        String message = jobstatus.optString(TagName.TAG_MSG);
+
+//                      if (status==1) {
+//            boolean status = response.getBoolean(TagName.TAG_STATUS);
+                        if(message.equalsIgnoreCase("success")){
+JSONArray jsonArray=jsonObject.getJSONArray(TagName.TAG_FORGOT_PWD);
+                            JSONObject jsonObject1=jsonArray.getJSONObject(0);
+                            String message_fpwd=jsonObject1.getString(TagName.TAG_MSG);
+                            if(message_fpwd.equalsIgnoreCase(TagName.TAG_ERROR)){
+                                showDialog("You are not registered with us");
+                            }else
+                            {
+                                showDialog(message_fpwd);
+                            }
+                         /*   JSONObject jobcust=jsonObject.getJSONObject(TagName.TAG_CUSTMER);
+                            addCart(jobcust.optString("id"));
+                            editor = sharedpreferences.edit();
+                            editor.putString("userID", jobcust.optString("id"));
+                            editor.putString("userEmail", jobcust.optString("username"));
+                            editor.putString("password", jobcust.optString("password"));
+                            editor.putString("userName",jobcust.optString("name"));
+                            editor.putString("logged", "logged");
+                            editor.commit();
+                            activity.finish();*/
+//                    Intent in=new Intent(getActivity(), SecondActivity.class);
+//                    in.putExtra("key", TagName.CART_ID);
+//                    activity.startActivity(in);
+//                    activity.overridePendingTransition(android.R.anim.fade_in,
+//                            android.R.anim.fade_out);
+                        }else {
+                            Toast.makeText(activity, "Invalid User Name or Password", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        LoginAsync la = new LoginAsync();
+        la.execute(username, password);
+
+    }
+public void showDialog(String message){
+    AlertDialog.Builder dialog=new AlertDialog.Builder(getActivity());
+    dialog.setCancelable(false);
+    dialog.setTitle(message);
+    dialog.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+
+        }
+    });
+    dialog.show();
+
+}
+
     public void sendData(){
         if (email.equals("") && password.equals("")) {
 

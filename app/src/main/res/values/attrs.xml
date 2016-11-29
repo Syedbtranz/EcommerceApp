@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Attributes must be lowercase as we want to use them for drawables -->
+    <attr name="button_bg_accent" format="reference" />
+    <attr name="button_bg_primary" format="reference" />
+    <attr name="button_bg_accent_border" format="reference" />
+    <attr name="button_bg_primary_border" format="reference" />
+    <attr name="court_count_bg" format="reference" />
+</resources>

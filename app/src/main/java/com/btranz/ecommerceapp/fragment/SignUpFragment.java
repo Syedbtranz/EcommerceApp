@@ -415,10 +415,10 @@ public class SignUpFragment extends Fragment implements GoogleApiClient.OnConnec
 //                if(message.equalsIgnoreCase("success")){
                             JSONObject jobcust=jsonObject.getJSONObject(TagName.TAG_CUSTMER);
                             editor = sharedpreferences.edit();
-                            editor.putString("customerID", jobcust.optString("id"));
-                            editor.putString("customerEmail", jobcust.optString("username"));
+                            editor.putString("userID", jobcust.optString("id"));
+                            editor.putString("userEmail", jobcust.optString("username"));
                             editor.putString("password", jobcust.optString("password"));
-                          editor.putString("customerName",jobcust.optString("name"));
+                          editor.putString("userName",jobcust.optString("name"));
                             editor.putString("logged", "logged");
                             editor.commit();
                             activity.finish();

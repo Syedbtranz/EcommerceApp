@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        >
+       >
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="Summary"
-            android:textSize="25dp"
+            android:textSize="15dp"
             android:textStyle="bold"
             />
 
@@ -225,9 +225,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="Payment Info"
-            android:textSize="25dp"
+            android:textSize="15dp"
             android:textStyle="bold"
             />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/color_green">
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -238,6 +243,7 @@
                 android:text="Payment Mode"
                 android:textStyle="bold"
                 android:layout_weight="1"
+                android:textColor="@color/color_text"
                 android:layout_margin="5dp"/>
 
 
@@ -245,9 +251,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Master Card"
-              android:drawableRight="@drawable/master_card"
                 android:layout_weight="1"
-                android:id="@+id/mode_txt"
+                android:textColor="@color/color_text"
+                android:id="@+id/payment_mode_txt"
                 android:layout_margin="5dp"/>
         </LinearLayout>
         <LinearLayout
@@ -257,7 +263,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Ammount Due"
+                android:text="Sub Total"
+                android:textColor="@color/color_text"
                 android:textStyle="bold"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
@@ -273,83 +280,203 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/rupee_symbol"
+                android:textColor="@color/color_text"
                android:layout_marginRight="3dp"
                 android:id="@+id/textView2" />
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="5000"
-
+                    android:text="0"
+                    android:textColor="@color/color_text"
                     android:layout_weight="1"
                     android:id="@+id/due_amt_txt" />
                 </LinearLayout>
         </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:id="@+id/discount_ll" >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Discount"
+                android:textColor="@color/color_text"
+                android:textStyle="bold"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-"
+                    android:layout_marginRight="3dp"
+                    android:textColor="@color/color_text"
+                  />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rupee_symbol"
+                    android:layout_marginRight="3dp"
+                    android:textColor="@color/color_text"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="@color/color_text"
+                    android:layout_weight="1"
+                    android:id="@+id/discount_txt" />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Shipping"
+                android:textColor="@color/color_text"
+                android:textStyle="bold"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rupee_symbol"
+                    android:layout_marginRight="3dp"
+                    android:textColor="@color/color_text"
+                    android:id="@+id/textView2" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="@color/color_text"
+                    android:layout_weight="1"
+                    android:id="@+id/shipping_amt_txt" />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Grand Total"
+                android:textColor="@color/color_text"
+                android:textStyle="bold"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rupee_symbol"
+                    android:layout_marginRight="3dp"
+                    android:textColor="@color/color_text"
+                    android:id="@+id/textView2" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="@color/color_text"
+                    android:layout_weight="1"
+                    android:id="@+id/total_amt_txt" />
+            </LinearLayout>
+        </LinearLayout>
+            </LinearLayout>
         <LinearLayout
 
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginTop="20dp">
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="BACK"
-            android:textColor="@color/color_text"
-            android:background="@color/color_green"
-            android:drawableLeft="@drawable/back_checkout_btn"
-            android:padding="10dp"
-            android:textSize="12dp"
             android:layout_marginTop="20dp"
-            android:id="@+id/back_btn"
-            android:layout_gravity="start" />
-
-          <!--  <Button
-                android:id="@+id/buynow_btn"
-                android:layout_width="match_parent"
+            android:layout_gravity="bottom">
+            <Button
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="BUY"
+                android:text="BACK"
                 android:textColor="@color/color_text"
-                android:background="@color/color_rating"
-                android:drawableRight="@drawable/cart_btn"
-
+                android:background="@color/color_green"
+                android:drawableLeft="@drawable/back_checkout_btn"
+                android:padding="10dp"
                 android:textSize="12dp"
+                android:layout_marginTop="20dp"
+                android:id="@+id/back_btn"
+                android:layout_gravity="start" />
+
+            <!--  <Button
+                  android:id="@+id/buynow_btn"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="BUY"
+                  android:textColor="@color/color_text"
+                  android:background="@color/color_rating"
+                  android:drawableRight="@drawable/cart_btn"
+
+                  android:textSize="12dp"
+                  android:layout_marginLeft="20dp"
+                  android:layout_gravity="right" />-->
+            <LinearLayout
+                android:id="@+id/buynow_btn"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
                 android:layout_marginLeft="20dp"
-                android:layout_gravity="right" />-->
-        <LinearLayout
-            android:id="@+id/buynow_btn"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginLeft="20dp"
-            android:background="@color/color_rating"
-            android:gravity="center"
-            android:layout_weight="1" >
+                android:background="@color/color_rating"
+                android:gravity="center"
+                android:layout_weight="1" >
 
 
 
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="BUY "
-                android:textColor="@color/color_text"
-                android:id="@+id/tetViw"
-                />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="BUY "
+                    android:textColor="@color/color_text"
+                    android:id="@+id/tetViw"
+                    />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/cart_btn"
-                android:layout_gravity="center"
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/cart_btn"
+                    android:layout_gravity="center"
 
-                android:id="@+id/imageVew5" />
+                    android:id="@+id/imageVew5" />
 
-        </LinearLayout>
             </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 
 </ScrollView>
 
 
-</LinearLayout>
+</FrameLayout>

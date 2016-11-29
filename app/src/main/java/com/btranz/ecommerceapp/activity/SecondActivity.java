@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -580,7 +581,32 @@ String customerEmail, cartBadge;
 //        });
     }
 
+    @Override
+    public Resources.Theme getTheme() {
+        Resources res = getResources();
+        Resources.Theme theme = super.getTheme();
 
+        String theme_id = res.getString(R.string.theme);
+        switch (theme_id)
+        {
+            case "Default":
+
+                theme.applyStyle(R.style.AppTheme, true);
+                break;
+
+            case "Blue":
+
+                theme.applyStyle(R.style.AppTheme_blue, true);
+                break;
+            case "Yellow":
+
+                theme.applyStyle(R.style.AppTheme_yellow, true);
+                break;
+
+        }
+        // you could also use a switch if you have many themes that could apply
+        return theme;
+    }
 
 
 

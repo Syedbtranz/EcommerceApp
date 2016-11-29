@@ -53,7 +53,7 @@ public class CartServicesRecyclerAdapter extends RecyclerView.Adapter<CartServic
         this.acti = context;
         ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(acti.getActivity()));
         options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.loading)
+                .showImageOnLoading(R.drawable.preloader_product)
                 .showImageForEmptyUri(R.drawable.ic_empty)
                 .showImageOnFail(R.drawable.ic_error)
                 .cacheInMemory(true)

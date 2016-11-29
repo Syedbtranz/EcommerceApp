@@ -9,18 +9,65 @@
     </style>-->
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
         <item name="buttonStyle">@style/RobotoButtonStyle</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="button_bg_accent">@drawable/button_bg_default_accent</item>
+        <item name="button_bg_primary">@drawable/button_bg_default_primary</item>
+        <item name="button_bg_accent_border">@drawable/button_bg_default_accent_barder</item>
+        <item name="button_bg_primary_border">@drawable/button_bg_default_primary_barder</item>
+        <item name="court_count_bg">@drawable/cart_count_bg_default_theme</item>
+
+        <item name="colorPrimaryDark">@color/theme_default_colorPrimaryDark</item>
+        <item name="colorPrimary">@color/theme_default_colorPrimary</item>
+        <item name="colorAccent">@color/theme_default_colorAccent</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme_blue" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="button_bg_accent">@drawable/button_bg_blue_accent</item>
+        <item name="button_bg_primary">@drawable/button_bg_blue_primary</item>
+        <item name="button_bg_accent_border">@drawable/button_bg_blue_accent_barder</item>
+        <item name="button_bg_primary_border">@drawable/button_bg_blue_primary_barder</item>
+        <item name="court_count_bg">@drawable/cart_count_bg_blue_theme</item>
+
+        <item name="colorPrimary">@color/theme_blue_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/theme_blue_colorPrimaryDark</item>
+        <item name="colorAccent">@color/theme_blue_colorAccent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme_blue.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme_yellow" parent="Base.Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="button_bg_accent">@drawable/button_bg_yellow_accent</item>
+        <item name="button_bg_primary">@drawable/button_bg_yellow_primary</item>
+        <item name="button_bg_accent_border">@drawable/button_bg_yellow_accent_barder</item>
+        <item name="button_bg_primary_border">@drawable/button_bg_yellow_primary_barder</item>
+        <item name="court_count_bg">@drawable/cart_count_bg_yellow_theme</item>
+
+        <item name="colorPrimary">@color/theme_yellow_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/theme_yellow_colorPrimaryDark</item>
+        <item name="colorAccent">@color/theme_yellow_colorAccent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme_yellow.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>

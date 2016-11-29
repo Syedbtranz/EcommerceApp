@@ -24,6 +24,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.display.SimpleBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
@@ -50,14 +51,14 @@ public class ProductGridAdapter extends BaseAdapter {
         inflater = LayoutInflater.from(context);
         ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(context));
         options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.loading)
+                .showImageOnLoading(R.drawable.preloader_product)
                 .showImageForEmptyUri(R.drawable.ic_empty)
                 .showImageOnFail(R.drawable.ic_error)
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
                 .considerExifParams(true)
                 .bitmapConfig(Bitmap.Config.RGB_565)
-                .displayer(new SimpleBitmapDisplayer())
+                .displayer(new RoundedBitmapDisplayer(5,5))
                 .build();
     }
 
@@ -104,10 +105,10 @@ public class ProductGridAdapter extends BaseAdapter {
         holder.finalPrice.setText(""+modelList.get(position).getFinalPrice());
 //        holder.desc.setText(modelList.get(position).getDescription());
         holder.offerTag.setText(modelList.get(position).getTag());
-        if(modelList.get(position).getTag().equalsIgnoreCase("best offer")){
-            holder.offerTag.setBackgroundColor(ContextCompat.getColor(context, R.color.color_blue));
-        }else  if(modelList.get(position).getTag().equalsIgnoreCase("new")){
+        if(modelList.get(position).getTag().equalsIgnoreCase("new")){
             holder.offerTag.setBackgroundColor(ContextCompat.getColor(context, R.color.color_green));
+        }else  if(modelList.get(position).getTag().equalsIgnoreCase("best offer")){
+            holder.offerTag.setBackgroundColor(ContextCompat.getColor(context, R.color.color_blue));
         }else  if(modelList.get(position).getDiscount()!=0){
             holder.offerTag.setText("Sale "+modelList.get(position).getDiscount()+"% Off");
             holder.offerTag.setBackgroundColor(ContextCompat.getColor(context, R.color.color_red));

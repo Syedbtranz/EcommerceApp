@@ -40,7 +40,7 @@ public class BrandGridAdapter extends BaseAdapter {
         modelList = objects;
         this.context=context;
         inflater = LayoutInflater.from(context);
-        ImageLoader.getInstance().destroy();
+//        ImageLoader.getInstance().destroy();
         ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(context));
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.loading)

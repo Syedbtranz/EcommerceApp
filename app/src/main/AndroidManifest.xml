@@ -9,7 +9,7 @@
     <application
         android:name="com.btranz.ecommerceapp.utils.AppData"
         android:allowBackup="true"
-        android:icon="@mipmap/logo_icon"
+        android:icon="@mipmap/ic_launcher_ecom"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">

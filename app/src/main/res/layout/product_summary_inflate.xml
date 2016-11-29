@@ -204,7 +204,7 @@
                 android:textSize="7dp"
                 android:padding="3dp"
                 android:textColor="@color/colorPrimary"
-                android:background="@drawable/button_bg_primary_barder"
+                android:background="@drawable/button_bg_default_primary_barder"
                 />
         </LinearLayout>-->
 

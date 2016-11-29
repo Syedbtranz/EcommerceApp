@@ -37,6 +37,12 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.btranz.ecommerceapp.R;
 import com.btranz.ecommerceapp.activity.BookNowActivity;
 import com.btranz.ecommerceapp.activity.CredientialActivity;
@@ -103,6 +109,7 @@ public class ProductItemFragment extends Fragment {
     ArrayList<ProductModel> services, checkOutProductsArray;
 
     List<String> checkList= new ArrayList<String>();
+    List<String> wishList= new ArrayList<String>();
     ProductGlanceAdapter adapter;
     String message;
     private RecyclerView horizontalList;
@@ -111,7 +118,7 @@ public class ProductItemFragment extends Fragment {
     DatabaseHandler dbHandler;
     int singlePrdtId;
     boolean flag=true;
-    String customerId,customerEmail, cartBadge;
+    String userId,userEmail, cartBadge;
     // shared preference
     SharedPreferences sharedpreferences;
     String PREFS_NAME = "MyPrefs";
@@ -141,8 +148,8 @@ public class ProductItemFragment extends Fragment {
                 Context.MODE_PRIVATE);
         editor = sharedpreferences.edit();
 //        customerName = sharedpreferences.getString("customerName", "");
-        customerId = sharedpreferences.getString("customerID", "");
-        customerEmail = sharedpreferences.getString("customerEmail", "");
+        userId = sharedpreferences.getString("userID", "");
+        userEmail = sharedpreferences.getString("userEmail", "");
         cartBadge = sharedpreferences.getString("cartBadge", "");
 
     }
@@ -222,14 +229,8 @@ public class ProductItemFragment extends Fragment {
     }
 
     private void findViewById(View view) {
-//        DisplayMetrics metrics = new DisplayMetrics();
-//        activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-//        grid=(Gallery) view.findViewById(R.id.sim_grid);
-//        // set gallery to left side
-//        ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) grid.getLayoutParams();
-//        mlp.setMargins(-(metrics.widthPixels / 2 + (120/2)), mlp.topMargin,
-//                mlp.rightMargin, mlp.bottomMargin);
-      cardView=(CardView)view.findViewById(R.id.progress_ll) ;
+
+        cardView=(CardView)view.findViewById(R.id.progress_ll) ;
         horizontalList = (RecyclerView)view.findViewById(R.id.sim_horizontal_recycler);
         horizontalList.setNestedScrollingEnabled(false);
         horizontalList.setHasFixedSize(true);
@@ -284,40 +285,7 @@ public class ProductItemFragment extends Fragment {
         addToCartBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(customerEmail.equals("")){
-                    checkList=dbHandler.checkProduct(String.valueOf(singlePrdtId));
-                    if(checkList.size()<1){
-                        Toast.makeText(getActivity(), "Item Added!", Toast.LENGTH_SHORT).show();
-                        dbHandler.insertCart(String.valueOf(singlePrdtId),item1.getTitle(),String.valueOf(item1.getCost()),String.valueOf(item1.getFinalPrice()),item1.getThumbnail(),"1");
-
-                        if(cartBadge.equals("")){
-                            ((SecondActivity) getActivity()).writeBadge(1);
-                            editor.putString("cartBadge", String.valueOf(1));
-                            editor.commit();
-//                            writeBadge(0);
-                        }else{
-                            ((SecondActivity) getActivity()).writeBadge(Integer.parseInt(cartBadge)+1);
-                            editor.putString("cartBadge", String.valueOf(Integer.parseInt(cartBadge)+1));
-                            editor.commit();
-                        }
-                    }else{
-                        Toast.makeText(getActivity(), "This Product is already Added please check in CART!", Toast.LENGTH_SHORT).show();
-                    }
-
-                }else{
-                    addtocartData(String.valueOf(singlePrdtId),"1",customerId);
-                    if(cartBadge.equals("")){
-                        ((SecondActivity) getActivity()).writeBadge(1);
-                        editor.putString("cartBadge", String.valueOf(1));
-                        editor.commit();
-//                            writeBadge(0);
-                    }else{
-
-                        ((SecondActivity) getActivity()).writeBadge(Integer.parseInt(cartBadge)+1);
-                        editor.putString("cartBadge", String.valueOf(Integer.parseInt(cartBadge)+1));
-                        editor.commit();
-                    }
-                }
+                addtoCart();
 
             }
         });
@@ -325,7 +293,7 @@ public class ProductItemFragment extends Fragment {
         buyNowBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "Item ordered", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), "Item ordered", Toast.LENGTH_SHORT).show();
 //                 /*Initialize array if null*/
 //                if (null == checkOutProductsArray) {
 //                    checkOutProductsArray = new ArrayList<ProductModel>();
@@ -336,14 +304,13 @@ public class ProductItemFragment extends Fragment {
 //                bundle.putParcelableArrayList("CheckOutProductList", checkOutProductsArray);
 //                Output
 //                ArrayList<ProductModel> challenge = this.getIntent().getExtras().getParcelableArrayList("CheckOutProductList");
+                if(userId.equals("")){
+                    bookNow();
+                }else {
+                    getQuoteId(userId, String.valueOf(singlePrdtId));
+                }
+//                addtoCart();
 
-                Intent in=new Intent(activity, CredientialActivity.class);
-                in.putExtra("credKey", TagName.CRED_LOGIN);
-                in.putParcelableArrayListExtra("CheckOutProductList",checkOutProductsArray);
-//                in.putExtras(bundle);
-                activity.startActivity(in);
-                activity.overridePendingTransition(android.R.anim.fade_in,
-                        android.R.anim.fade_out);
 //                Intent in=new Intent(getActivity(), BookNowActivity.class);
 //                in.putExtra("buynowKey", TagName.BUYNOW_USER_DETAILS);
 //                activity.startActivity(in);
@@ -367,10 +334,12 @@ public class ProductItemFragment extends Fragment {
                 if(flag){
 //
                     ((ImageView)v).setImageResource(R.drawable.like_icon_filled);
+                    addtoWishlist();
                     flag=false;
                 }else{
 
                     ((ImageView)v).setImageResource(R.drawable.like_icon);
+                    reomvewishlistItem(singlePrdtId);
                     flag=true;
                 }
             }
@@ -400,6 +369,157 @@ public class ProductItemFragment extends Fragment {
             }
         });
     }
+    public void bookNow(){
+        Intent in=new Intent(activity, CredientialActivity.class);
+        in.putExtra("credKey", TagName.CRED_LOGIN);
+        in.putParcelableArrayListExtra("CheckOutProductList",checkOutProductsArray);
+//                in.putExtras(bundle);
+        activity.startActivity(in);
+        activity.overridePendingTransition(android.R.anim.fade_in,
+                android.R.anim.fade_out);
+    }
+    public void addtoCart(){
+        if(userId.equals("")){
+            checkList=dbHandler.checkProduct(String.valueOf(singlePrdtId));
+            if(checkList.size()<1){
+                Toast.makeText(getActivity(), "Added to Cart!", Toast.LENGTH_SHORT).show();
+                dbHandler.insertCart(String.valueOf(singlePrdtId),item1.getTitle(),String.valueOf(item1.getCost()),String.valueOf(item1.getFinalPrice()),item1.getThumbnail(),"1");
+
+                if(cartBadge.equals("")){
+                    ((SecondActivity) getActivity()).writeBadge(1);
+                    editor.putString("cartBadge", String.valueOf(1));
+                    editor.commit();
+//                            writeBadge(0);
+                }else{
+                    ((SecondActivity) getActivity()).writeBadge(Integer.parseInt(cartBadge)+1);
+                    editor.putString("cartBadge", String.valueOf(Integer.parseInt(cartBadge)+1));
+                    editor.commit();
+                }
+            }else{
+                Toast.makeText(getActivity(), "This Product is already Added please check in CART!", Toast.LENGTH_SHORT).show();
+            }
+
+        }else{
+            addtocartData(String.valueOf(singlePrdtId),"1",userId);
+
+        }
+    }
+    public void addtoWishlist(){
+        if(userId.equals("")){
+            wishList=dbHandler.checkWishlistProduct(String.valueOf(singlePrdtId));
+            if(wishList.size()<1){
+                Toast.makeText(getActivity(), "Added to Cart!", Toast.LENGTH_SHORT).show();
+                dbHandler.insertWishlist(String.valueOf(singlePrdtId),item1.getTitle(),String.valueOf(item1.getCost()),String.valueOf(item1.getFinalPrice()),item1.getThumbnail(),"1");
+
+//                if(cartBadge.equals("")){
+//                    ((SecondActivity) getActivity()).writeBadge(1);
+//                    editor.putString("cartBadge", String.valueOf(1));
+//                    editor.commit();
+////                            writeBadge(0);
+//                }else{
+//                    ((SecondActivity) getActivity()).writeBadge(Integer.parseInt(cartBadge)+1);
+//                    editor.putString("cartBadge", String.valueOf(Integer.parseInt(cartBadge)+1));
+//                    editor.commit();
+//                }
+            }else{
+                Toast.makeText(getActivity(), "This Product is already Added please check in CART!", Toast.LENGTH_SHORT).show();
+            }
+
+        }else{
+            addWishlistItem(String.valueOf(singlePrdtId),userId);
+
+        }
+    }
+    public void reomvewishlistItem(int prdtId){
+        if(userId.equals("")) {
+            dbHandler.removeWishlistItem(String.valueOf(prdtId));
+        }else {
+//            sendRequest();
+            deleteWishlistItem(String.valueOf(prdtId),userId);
+        }
+
+    }
+    public void deleteWishlistItem(String prdtId,String userId){
+        try {
+            RequestQueue requestQueue = Volley.newRequestQueue(activity);
+            String URL = "http://...";
+//            JSONObject jsonBody = new JSONObject();
+//            jsonBody.put("reference_id", "1");
+//            jsonBody.put("service_id", "1");
+//            jsonBody.put("client_id", userId);
+//            jsonBody.put("service_type", "1");
+//            final String mRequestBody = jsonBody.toString();
+
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, Utils.itemremovewishlistUrl+userId+"/"+prdtId, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.i("VOLLEY", response);
+
+                    try {
+                        JSONObject jsonObject=new JSONObject(response);
+                        if(jsonObject!=null) {
+                            String status=jsonObject.optString(TagName.TAG_STATUS);
+                            if(status.equalsIgnoreCase("success")){
+//                                String status=jsonObject.optString(TagName.KEY_MSG);
+                                Toast.makeText(activity,jsonObject.optString(TagName.TAG_MSG),Toast.LENGTH_SHORT).show();
+//                                activity.finish();
+                            }
+//                            JSONObject job=jsonObject.optJSONObject(TagName.TAG_DATA);
+//                            editor = sharedpreferences.edit();
+//                            editor.putString("userId", job.optString("user_id"));
+//                            editor.putString("userName", job.optString("user_name"));
+////                            editor.putString("password", jsonObject.optString("password"));
+////                            editor.putString("userName",jobcust.optString("name"));
+//                            editor.putString("logged", "logged");
+//                            editor.commit();
+
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                    Log.e("VOLLEY", error.toString());
+                    Toast.makeText(activity,"Following detais are incorrect",Toast.LENGTH_SHORT).show();
+                }
+            }) {
+                @Override
+                public String getBodyContentType() {
+                    return "application/json; charset=utf-8";
+                }
+
+             /*   @Override
+                public byte[] getBody() throws AuthFailureError {
+                    try {
+                        return mRequestBody == null ? null : mRequestBody.getBytes("utf-8");
+                    } catch (UnsupportedEncodingException uee) {
+                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", mRequestBody, "utf-8");
+                        return null;
+                    }
+                }*/
+
+                /*@Override
+                protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                    String responseString = "";
+                    if (response != null) {
+                        responseString = String.valueOf(response);
+//                        Log.e(" response.data", response);
+
+                        // can get more details such as response.headers
+                    }
+                    return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+                }*/
+            };
+
+            requestQueue.add(stringRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     private static class ImageDisplayListener extends
             SimpleImageLoadingListener {
@@ -425,6 +545,7 @@ public class ProductItemFragment extends Fragment {
     private void setProductItem(final ProductModel resultProduct) {
         pdtNameTxt.setText("" + resultProduct.getTitle());
         desTxt.setText(Html.fromHtml( resultProduct.getDescription()));
+//        desTxt.setText(resultProduct.getDescription());
         priceTxt.setText(String.valueOf(resultProduct.getCost()));
         priceTxt.setPaintFlags(priceTxt.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
         Log.e("MrE", ""+resultProduct.getFinalPrice());
@@ -485,7 +606,7 @@ public class ProductItemFragment extends Fragment {
         if (CheckNetworkConnection.isConnectionAvailable(activity)) {
             //Product Details
             task = new ProductDetailsAsyncTask();
-            Log.e("singlePrdtId",""+singlePrdtId);
+//            Log.e("singlePrdtId",""+singlePrdtId);
             task.execute(Utils.prdtDetailsUrl+singlePrdtId);
             //Product on Glance
             taskAsynk = new AsyncHttpTask();
@@ -516,11 +637,10 @@ public class ProductItemFragment extends Fragment {
 
         @Override
         protected void onPreExecute() {
-//            prgs = new ProgressFragment();
+
             cardView.setVisibility(View.VISIBLE);
 //            pb.setVisibility(View.VISIBLE);
-//            activity.getFragmentManager().beginTransaction().add(R.id.container_body, prgs).commit();
-//            activity.setProgressBarIndeterminateVisibility(true);
+
 //            progressBar.setVisibility(View.VISIBLE);
 //            layout.setVisibility(View.VISIBLE);
 
@@ -596,17 +716,17 @@ public class ProductItemFragment extends Fragment {
     }
     private void productDetailsParseResult(String result) {
         try {
-            Log.e("MrE", "1");
+//            Log.e("MrE", "1");
             JSONArray response = new JSONArray(result);
             JSONObject jsonObject=response.getJSONObject(0);
 
             if (jsonObject != null) {
                 JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
                 int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
-                Log.e("MrE", "2");
+//                Log.e("MrE", "2");
                 if (status==1) {
 //            boolean status = response.getBoolean(TagName.TAG_STATUS);
-                    Log.e("MrE", "3");
+//                    Log.e("MrE", "3");
 //                    if (status) {
 //                JSONObject jsonData = jsonObject
 //                        .getJSONObject(TagName.TAG_PRODUCT);
@@ -673,11 +793,10 @@ public class ProductItemFragment extends Fragment {
 
         @Override
         protected void onPreExecute() {
-//            prgs = new ProgressFragment();
+
 //            progressLL.setVisibility(View.VISIBLE);
 //            pb.setVisibility(View.VISIBLE);
-//            activity.getFragmentManager().beginTransaction().add(R.id.container_body, prgs).commit();
-//            activity.setProgressBarIndeterminateVisibility(true);
+
 //            progressBar.setVisibility(View.VISIBLE);
 //            layout.setVisibility(View.VISIBLE);
 
@@ -725,14 +844,14 @@ public class ProductItemFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Integer result) {
-//            activity.getFragmentManager().beginTransaction().remove(prgs).commit();
+
 //            activity.setProgressBarIndeterminateVisibility(false);
 //            progressBar.setVisibility(View.GONE);
 //            layout.setVisibility(View.GONE);
 
             /* Download complete. Lets update UI */
             if (result == 1) {
-                Log.e("onPostExecute", "onPostExecute");
+//                Log.e("onPostExecute", "onPostExecute");
 //                adapter = new ProductGlanceAdapter(activity, services);
 //                grid.setAdapter(adapter);
 ////                grid1.setAdapter(adapter);
@@ -897,7 +1016,161 @@ public class ProductItemFragment extends Fragment {
             @Override
             protected void onPostExecute(String result){
                 String s = result.trim();
-                Log.e("s",s);
+//                Log.e("s",s);
+                loadingDialog.dismiss();
+                try {
+                    JSONArray response = new JSONArray(s);
+                    JSONObject jsonObject=response.getJSONObject(0);
+
+                    if (jsonObject != null) {
+//                        JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+//                        int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+//                        String message = jobstatus.optString(TagName.TAG_MSG);
+
+//                        if (status==1) {
+                            if(cartBadge.equals("")){
+                                ((SecondActivity) getActivity()).writeBadge(1);
+                                editor.putString("cartBadge", String.valueOf(1));
+                                editor.commit();
+//                            writeBadge(0);
+                            }else{
+
+                                ((SecondActivity) getActivity()).writeBadge(Integer.parseInt(cartBadge)+1);
+                                editor.putString("cartBadge", String.valueOf(Integer.parseInt(cartBadge)+1));
+                                editor.commit();
+                            }
+                            Toast.makeText(activity, "Added to Cart!", Toast.LENGTH_LONG).show();
+//            boolean status = response.getBoolean(TagName.TAG_STATUS);
+//                if(message.equalsIgnoreCase("success")){
+//                            JSONObject jobcust=jsonObject.getJSONObject(TagName.TAG_CUSTMER);
+//                            editor = sharedpreferences.edit();
+//                            editor.putString("customerID", jobcust.optString("id"));
+//                            editor.putString("customerEmail", jobcust.optString("username"));
+//                            editor.putString("password", jobcust.optString("password"));
+////                          editor.putString("customerName",jobcust.optString("name"));
+//                            editor.putString("logged", "logged");
+//                            editor.commit();
+//                            activity.finish();
+//                            Intent in=new Intent(getActivity(), BookNowActivity.class);
+//                            in.putExtra("buynowKey", TagName.BUYNOW_USER_DETAILS);
+//                            activity.startActivity(in);
+//                            activity.overridePendingTransition(android.R.anim.fade_in,
+//                                    android.R.anim.fade_out);
+//                        }else {
+//                            Toast.makeText(activity, "Invalid User Name or Password", Toast.LENGTH_LONG).show();
+//                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        LoginAsync la = new LoginAsync();
+        la.execute(productid, quantity, userid);
+
+    }
+
+    private void getQuoteId(String userid,String productid) {
+
+        class QuoteAsync extends AsyncTask<String, Void, String> {
+
+            private Dialog loadingDialog;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                loadingDialog = ProgressDialog.show(activity, "", "Pease Wait...");
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+                String userid = params[0];
+                String pid = params[1];
+//                String price = params[2];
+                InputStream inputStream = null;
+                String result= null;;
+                HttpURLConnection urlConnection = null;
+
+                try {
+                /* forming th java.net.URL object */
+                    URL url = new URL(Utils.quoteBuynowUrl+userid+"/"+pid);
+                    Log.e("URL", Utils.quoteBuynowUrl+userid+"/"+pid);
+
+                    urlConnection = (HttpURLConnection) url.openConnection();
+
+                /* for Get request */
+                    urlConnection.setRequestMethod("GET");
+
+                    int statusCode = urlConnection.getResponseCode();
+
+                /* 200 represents HTTP OK */
+                    if (statusCode ==  200) {
+
+                        BufferedReader r = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                        StringBuilder response = new StringBuilder();
+                        String line;
+                        while ((line = r.readLine()) != null) {
+                            response.append(line);
+                        }
+                        Log.e("response.toString()", response.toString());
+//                        parseResult(response.toString());
+                        result = response.toString(); // Successful
+                    }else{
+                        result = null; //"Failed to fetch data!";
+                    }
+
+                } catch (Exception e) {
+                    Log.d("catch", e.getLocalizedMessage());
+                }
+
+                return result; //"Failed to fetch data!";
+
+//                String pid = params[0];
+//                String quant = params[1];
+//                String userid = params[2];
+////                Log.e("uname",uname);
+////                Log.e("pass",pass);
+//                InputStream is = null;
+//                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+////                nameValuePairs.add(new BasicNameValuePair("username", uname));
+////                nameValuePairs.add(new BasicNameValuePair("password", pass));
+//                String result = null;
+//
+//                try{
+//                    HttpClient httpClient = new DefaultHttpClient();
+//                    HttpGet httpPost = new HttpGet(Utils.addtocartUrl+pid+"/"+quant+"/"+userid);
+////                    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+//
+//                    HttpResponse response = httpClient.execute(httpPost);
+//
+//                    HttpEntity entity = response.getEntity();
+//
+//                    is = entity.getContent();
+//
+//                    BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"), 8);
+//                    StringBuilder sb = new StringBuilder();
+//
+//                    String line = null;
+//                    while ((line = reader.readLine()) != null)
+//                    {
+//                        sb.append(line + "\n");
+//                    }
+//                    result = sb.toString();
+//                } catch (ClientProtocolException e) {
+//                    e.printStackTrace();
+//                } catch (UnsupportedEncodingException e) {
+//                    e.printStackTrace();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                return result;
+            }
+
+            @Override
+            protected void onPostExecute(String result){
+                String s = result.trim();
+//                Log.e("s",s);
                 loadingDialog.dismiss();
                 try {
                     JSONArray response = new JSONArray(s);
@@ -909,9 +1182,25 @@ public class ProductItemFragment extends Fragment {
                         String message = jobstatus.optString(TagName.TAG_MSG);
 
                         if (status==1) {
-                            Toast.makeText(activity, "Added to Cart!", Toast.LENGTH_LONG).show();
+
+                           String quoteId=jsonObject.optString("quoteid");
+                            if(cartBadge.equals("")){
+                                ((SecondActivity) getActivity()).writeBadge(1);
+                                editor.putString("cartBadge", String.valueOf(1));
+                                editor.commit();
+//                            writeBadge(0);
+                            }else{
+
+                                ((SecondActivity) getActivity()).writeBadge(Integer.parseInt(cartBadge)+1);
+                                editor.putString("cartBadge", String.valueOf(Integer.parseInt(cartBadge)+1));
+                                editor.commit();
+                            }
+                            bookNow();
+//                            Toast.makeText(activity, "Added "+quoteId, Toast.LENGTH_LONG).show();
 //            boolean status = response.getBoolean(TagName.TAG_STATUS);
 //                if(message.equalsIgnoreCase("success")){
+                            editor.putString("quoteId",quoteId);
+                            editor.commit();
 //                            JSONObject jobcust=jsonObject.getJSONObject(TagName.TAG_CUSTMER);
 //                            editor = sharedpreferences.edit();
 //                            editor.putString("customerID", jobcust.optString("id"));
@@ -936,10 +1225,191 @@ public class ProductItemFragment extends Fragment {
             }
         }
 
-        LoginAsync la = new LoginAsync();
-        la.execute(productid, quantity, userid);
+        QuoteAsync la = new QuoteAsync();
+        la.execute(userid, productid);
 
     }
+    public void addWishlistItem(String prdtId,String userId){
+        try {
+            RequestQueue requestQueue = Volley.newRequestQueue(activity);
+            String URL = "http://...";
+//            JSONObject jsonBody = new JSONObject();
+//            jsonBody.put("reference_id", "1");
+//            jsonBody.put("service_id", "1");
+//            jsonBody.put("client_id", userId);
+//            jsonBody.put("service_type", "1");
+//            final String mRequestBody = jsonBody.toString();
+
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, Utils.addwishlistUrl+userId+"/"+prdtId, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.i("VOLLEY", response);
+
+                    try {
+                        JSONObject jsonObject=new JSONObject(response);
+                        if(jsonObject!=null) {
+                            String status=jsonObject.optString(TagName.TAG_STATUS);
+                            if(status.equalsIgnoreCase("success")){
+//                                String status=jsonObject.optString(TagName.KEY_MSG);
+                                Toast.makeText(activity,jsonObject.optString(TagName.TAG_MSG),Toast.LENGTH_SHORT).show();
+//                                activity.finish();
+                            }
+//                            JSONObject job=jsonObject.optJSONObject(TagName.TAG_DATA);
+//                            editor = sharedpreferences.edit();
+//                            editor.putString("userId", job.optString("user_id"));
+//                            editor.putString("userName", job.optString("user_name"));
+////                            editor.putString("password", jsonObject.optString("password"));
+////                            editor.putString("userName",jobcust.optString("name"));
+//                            editor.putString("logged", "logged");
+//                            editor.commit();
+
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                    Log.e("VOLLEY", error.toString());
+                    Toast.makeText(activity,"Following detais are incorrect",Toast.LENGTH_SHORT).show();
+                }
+            }) {
+                @Override
+                public String getBodyContentType() {
+                    return "application/json; charset=utf-8";
+                }
+
+             /*   @Override
+                public byte[] getBody() throws AuthFailureError {
+                    try {
+                        return mRequestBody == null ? null : mRequestBody.getBytes("utf-8");
+                    } catch (UnsupportedEncodingException uee) {
+                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", mRequestBody, "utf-8");
+                        return null;
+                    }
+                }*/
+
+                /*@Override
+                protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                    String responseString = "";
+                    if (response != null) {
+                        responseString = String.valueOf(response);
+//                        Log.e(" response.data", response);
+
+                        // can get more details such as response.headers
+                    }
+                    return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+                }*/
+            };
+
+            requestQueue.add(stringRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+   /* private void getQuoteId(final String username, final String password) {
+
+        class QuoteAsync extends AsyncTask<String, Void, String> {
+
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+//                loadingDialog = ProgressDialog.show(activity, "", "Please wait...");
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+                String uname = params[0];
+                String pass = params[1];
+                Log.e("uname",uname);
+                Log.e("pass",pass);
+                InputStream is = null;
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                nameValuePairs.add(new BasicNameValuePair("username", uname));
+                nameValuePairs.add(new BasicNameValuePair("password", pass));
+                String result = null;
+
+                try{
+                    HttpClient httpClient = new DefaultHttpClient();
+                    HttpGet httpPost = new HttpGet(Utils.quoteBuynowUrl+uname+"/"+pass);
+//                    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+                    HttpResponse response = httpClient.execute(httpPost);
+
+                    HttpEntity entity = response.getEntity();
+
+                    is = entity.getContent();
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"), 8);
+                    StringBuilder sb = new StringBuilder();
+
+                    String line = null;
+                    while ((line = reader.readLine()) != null)
+                    {
+                        sb.append(line + "\n");
+                    }
+                    result = sb.toString();
+                } catch (ClientProtocolException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return result;
+            }
+
+            @Override
+            protected void onPostExecute(String result){
+                String s = result.trim();
+                Log.e("s",s);
+//                loadingDialog.dismiss();
+                try {
+                    JSONArray response = new JSONArray(s);
+                    JSONObject jsonObject=response.getJSONObject(0);
+
+                    if (jsonObject != null) {
+                        JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                        int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+                        String message = jobstatus.optString(TagName.TAG_MSG);
+
+//                      if (status==1) {
+//            boolean status = response.getBoolean(TagName.TAG_STATUS);
+                        if(message.equalsIgnoreCase("success")){
+
+                            JSONObject jobcust=jsonObject.getJSONObject(TagName.TAG_CUSTMER);
+//                            addCart(jobcust.optString("id"));
+                            editor = sharedpreferences.edit();
+                            editor.putString("customerID", jobcust.optString("id"));
+                            editor.putString("customerEmail", jobcust.optString("username"));
+                            editor.putString("password", jobcust.optString("password"));
+                            editor.putString("customerName",jobcust.optString("name"));
+                            editor.putString("logged", "logged");
+                            editor.commit();
+                            activity.finish();
+//                    Intent in=new Intent(getActivity(), SecondActivity.class);
+//                    in.putExtra("key", TagName.CART_ID);
+//                    activity.startActivity(in);
+//                    activity.overridePendingTransition(android.R.anim.fade_in,
+//                            android.R.anim.fade_out);
+                        }else {
+                            Toast.makeText(activity, "Invalid User Name or Password", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        QuoteAsync qa = new QuoteAsync();
+        qa.execute(username, password);
+
+    }*/
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

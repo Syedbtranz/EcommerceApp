@@ -27,7 +27,7 @@
             android:text="RESET"
             android:textSize="12dp"
             android:textColor="@color/color_text"
-            android:background="@drawable/button_bg_blue"
+            android:background="?button_bg_accent"
             android:id="@+id/reset_btn"
             android:layout_weight="1"
             android:layout_gravity="center_horizontal"
@@ -39,7 +39,7 @@
             android:text="APPLY"
             android:textSize="12dp"
             android:textColor="@color/color_text"
-            android:background="@drawable/button_bg_colorprimary"
+            android:background="?button_bg_primary"
             android:layout_weight="1"
             android:id="@+id/filter_apply" />
         </LinearLayout>

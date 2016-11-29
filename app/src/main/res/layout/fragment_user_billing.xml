@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
         android:padding="20dp">
         <ImageView
@@ -17,7 +18,28 @@
             android:layout_height="wrap_content"
             android:id="@+id/imageView8"
             android:src="@drawable/checkout_billing"/>
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Payment Mode"
+            android:textStyle="bold"
+            />
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinner"
+            android:padding="10dp"
+            android:background="@drawable/edittext_bg"
+            android:prompt="@string/spinner_title"/>
+        <LinearLayout
+            android:id="@+id/card_layout"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+           >
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -191,7 +213,7 @@
             </LinearLayout>
 
         </LinearLayout>
-
+    </LinearLayout>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -199,7 +221,45 @@
             android:text="Enter Promo Code(if any)"
             android:textStyle="bold"
             />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            >
 
+            <!-- <TextView
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:text="@string/pincode"
+                 android:id="@+id/textView4" />-->
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="text"
+                android:ems="10"
+                android:textColorHint="@color/view_divider_color"
+                android:paddingLeft="10dp"
+                android:background="@drawable/edittext_bg"
+                android:id="@+id/prome_et"
+                android:layout_weight="1" />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:background="@color/color_green"
+                android:textColor="@color/color_text"
+                android:text="@string/apply_btn"
+                android:id="@+id/promo_apply_btn" />
+        </LinearLayout>
+        <!--<LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            >
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -207,8 +267,21 @@
             android:padding="5dp"
             android:background="@drawable/edittext_bg"
             android:ems="10"
+            android:layout_weight="1"
             android:id="@+id/prome_et" />
-
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="BACK"
+                android:textColor="@color/color_text"
+                android:background="@color/color_green"
+                android:drawableLeft="@drawable/back_checkout_btn"
+                android:padding="10dp"
+                android:textSize="12dp"
+                android:layout_marginRight="5dp"
+                android:id="@+id/back_btn"
+                android:layout_gravity="right|center" />
+    </LinearLayout>-->
 
         <!--<EditText
             android:layout_width="match_parent"
@@ -255,13 +328,12 @@
             android:layout_gravity="center_horizontal" />
 -->
 
-
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:paddingTop="20dp"
-            android:gravity="right">
+            android:layout_gravity="bottom">
 
             <Button
                 android:layout_width="wrap_content"
@@ -274,23 +346,30 @@
                 android:textSize="12dp"
                 android:layout_marginRight="5dp"
                 android:id="@+id/back_btn"
-                android:layout_gravity="right|center" />
-
-            <Button
-                android:layout_width="wrap_content"
+                android:gravity="center" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="NEXT"
-                android:textColor="@color/color_text"
-                android:background="@color/color_green"
-                android:drawableRight="@drawable/next_checkout_btn"
-                android:padding="10dp"
-                android:textSize="12dp"
-                android:id="@+id/next_btn"
-                android:layout_gravity="right" />
+
+                android:gravity="right">
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="NEXT"
+                    android:textColor="@color/color_text"
+                    android:background="@color/color_green"
+                    android:drawableRight="@drawable/next_checkout_btn"
+                    android:padding="10dp"
+                    android:textSize="12dp"
+                    android:id="@+id/next_btn"
+                    android:layout_gravity="right" />
+            </LinearLayout>
         </LinearLayout>
+
     </LinearLayout>
 
 </ScrollView>
 
 
-</LinearLayout>
+</FrameLayout>

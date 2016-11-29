@@ -18,6 +18,7 @@ import com.btranz.ecommerceapp.R;
 import com.btranz.ecommerceapp.activity.SecondActivity;
 import com.btranz.ecommerceapp.fragment.HomeFragment;
 import com.btranz.ecommerceapp.modal.Product;
+import com.btranz.ecommerceapp.modal.ProductModel;
 import com.btranz.ecommerceapp.utils.TagName;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -35,10 +36,10 @@ public class ImageSlideAdapter extends PagerAdapter {
 	DisplayImageOptions options;
 	private ImageLoadingListener imageListener;
 	FragmentActivity activity;
-	List<Product> products;
+	List<ProductModel> products;
 	HomeFragment homeFragment;
 
-	public ImageSlideAdapter(FragmentActivity activity, List<Product> products,
+	public ImageSlideAdapter(FragmentActivity activity, List<ProductModel> products,
 							 HomeFragment homeFragment) {
 		this.activity = activity;
 		this.homeFragment = homeFragment;
@@ -46,7 +47,7 @@ public class ImageSlideAdapter extends PagerAdapter {
 		imageLoader.init(ImageLoaderConfiguration.createDefault(activity));
 		options = new DisplayImageOptions.Builder()
 				.showImageOnFail(R.drawable.ic_error)
-				.showStubImage(R.drawable.loading)
+				.showStubImage(R.drawable.preloader_banner)
 				.showImageForEmptyUri(R.drawable.ic_empty).cacheInMemory()
 				.cacheOnDisc().build();
 
@@ -67,7 +68,7 @@ public class ImageSlideAdapter extends PagerAdapter {
 
 		holder.image = (ImageView) view
 				.findViewById(R.id.image_display);
-		holder.image .setOnClickListener(new OnClickListener() {
+/*		holder.image .setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
@@ -75,7 +76,7 @@ public class ImageSlideAdapter extends PagerAdapter {
 //				Bundle arguments = new Bundle();
 //				Fragment fragment = null;
 //				Log.d("position adapter", "" + position);
-				Product product = (Product) products.get(position);
+				ProductModel product = (ProductModel) products.get(position);
 //				arguments.putParcelable("singleProduct", product);
 //
 //				// Start a new fragment
@@ -95,9 +96,9 @@ public class ImageSlideAdapter extends PagerAdapter {
 				activity.overridePendingTransition(android.R.anim.fade_in,
 						android.R.anim.fade_out);
 			}
-		});
+		});*/
 		imageLoader.displayImage(
-				((Product) products.get(position)).getImageUrl(), holder.image ,
+				((ProductModel) products.get(position)).getThumbnail(), holder.image ,
 				options, imageListener);
 		container.addView(view);
 		return view;

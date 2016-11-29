@@ -16,6 +16,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.Spannable;
@@ -49,6 +50,7 @@ import com.btranz.ecommerceapp.utils.NewArrivalSorter;
 import com.btranz.ecommerceapp.utils.PriceSorter;
 import com.btranz.ecommerceapp.utils.TagName;
 import com.btranz.ecommerceapp.utils.TypefaceSpan;
+import com.btranz.ecommerceapp.utils.Utils;
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.google.gson.Gson;
@@ -58,6 +60,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -68,6 +71,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -77,11 +81,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 
 /**
  * Created by Ravi on 29/07/15.
  */
 public class ProductsFragment extends Fragment implements NavigationView.OnNavigationItemSelectedListener{
+    View div;
     ImageView dis_image, arr_image, htol_image, ltoh_image, pop_image;
     TextView disTxt, arrTxt, htolTxt, ltohTxt, popTxt;
     LinearLayout filterBrand, filterPrice, filterRating, filterDiscount;
@@ -119,34 +128,36 @@ public class ProductsFragment extends Fragment implements NavigationView.OnNavig
 //        initList();
 //        sendRequest();
 //        Log.e("onCreate","test");
-        Bundle bundle = this.getArguments();
-//        Bundle b = activity.getIntent().getExtras();
-//        if (b != null) {
-//            product = b.getParcelable("singleProduct");
-//            setProductItem(product);
-//        }else
-        if (bundle != null) {
-//            product = bundle.getParcelable("singleProduct");
-            prdtsUrl = bundle.getString("prdtsUrl");
-            prdtsTitle = bundle.getString("prdtsTitle");
-//            setProductItem(product);
-            Log.d("bundle", "product");
-        }else {
-            prdtsUrl=activity.getIntent().getStringExtra("prdtsUrl");
-            prdtsTitle=activity.getIntent().getStringExtra("prdtsTitle");
-            Log.d("intent", "product1");
-        }
+//        Bundle bundle = this.getArguments();
+////        Bundle b = activity.getIntent().getExtras();
+////        if (b != null) {
+////            product = b.getParcelable("singleProduct");
+////            setProductItem(product);
+////        }else
+//        if (bundle != null) {
+////            product = bundle.getParcelable("singleProduct");
+//            prdtsUrl = bundle.getString("prdtsUrl");
+//            prdtsTitle = bundle.getString("prdtsTitle");
+////            setProductItem(product);
+//            Log.d("bundle", "product");
+//        }else {
+//            prdtsUrl=activity.getIntent().getStringExtra("prdtsUrl");
+//            prdtsTitle=activity.getIntent().getStringExtra("prdtsTitle");
+//             services = activity.getIntent().getParcelableArrayListExtra("ProductList");
+//            Log.d("intent", "product1");
+//        }
 //        sendRequest();
 
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView=null;
-        try {
-        rootView = inflater.inflate(R.layout.fragment_product, container, false);
 
+
+        View  rootView = inflater.inflate(R.layout.fragment_product, container, false);
+
+            div = (View) rootView.findViewById(R.id.div_a);
             progressLL = (LinearLayout) rootView.findViewById(R.id.progress_ll);
             sortSubTxt = (TextView) rootView.findViewById(R.id.sort_sub_txt);
             pb = (ProgressBar) rootView.findViewById(R.id.progressbar);
@@ -209,11 +220,19 @@ public class ProductsFragment extends Fragment implements NavigationView.OnNavig
                 public void onClick(View v) {
                     Toast.makeText(getActivity(), "ViewList", Toast.LENGTH_LONG).show();
                     if (view_flag) {
+                        ProductsGrid.setBackgroundColor(getResources().getColor(R.color.view_divider_color));
                         ProductsGrid.setNumColumns(1);
+                        ProductsGrid.setVerticalSpacing(2);
+                        ProductsGrid.setHorizontalSpacing(0);
+//                        div.setVisibility(View.VISIBLE);
                         viewBtn.setImageResource(R.drawable.view_grid_btn);
                         view_flag = false;
                     } else {
+                        ProductsGrid.setBackgroundColor(getResources().getColor(R.color.color_text));
                         ProductsGrid.setNumColumns(2);
+                        ProductsGrid.setVerticalSpacing(0);
+                        ProductsGrid.setHorizontalSpacing(5);
+//                        div.setVisibility(View.GONE);
                         viewBtn.setImageResource(R.drawable.view_icon);
                         view_flag = true;
                     }
@@ -222,15 +241,54 @@ public class ProductsFragment extends Fragment implements NavigationView.OnNavig
                 }
             });
 
-        }catch (Exception e){
 
-        }
             // Inflate the layout for this fragment
             return rootView;
 
     }
     @Override
     public void onResume() {
+        if (services == null) {
+            Bundle bundle = this.getArguments();
+//        Bundle b = activity.getIntent().getExtras();
+//        if (b != null) {
+//            product = b.getParcelable("singleProduct");
+//            setProductItem(product);
+//        }else
+            if (bundle != null) {
+//            product = bundle.getParcelable("singleProduct");
+                prdtsUrl = bundle.getString("prdtsUrl");
+                prdtsTitle = bundle.getString("prdtsTitle");
+                sendRequest();
+//            setProductItem(product);
+                Log.e("bundle", "product");
+            }else {
+                prdtsUrl=activity.getIntent().getStringExtra("prdtsUrl");
+                prdtsTitle=activity.getIntent().getStringExtra("prdtsTitle");
+                services = activity.getIntent().getParcelableArrayListExtra("productList");
+                Log.e("checkOutProductsArray",""+services);
+                try {
+                    ProductsGrid.setAdapter(new ProductGridAdapter(activity, services));
+                    progressLL.setVisibility(View.GONE);
+                }catch (Exception e){
+
+                }
+
+
+                Log.e("intent", "product1");
+            }
+//            sendRequest();
+            initList();
+//            Log.e("onResume","test");
+////            adapter = new ServicesRecyclerAdapter(activity, services);
+//            Log.e("onResume", "onResume");
+        } else {
+            Log.e("onResume else", "onResume else");
+            ProductsGrid.setAdapter(new ProductGridAdapter(activity, services));
+//            progressLL.setVisibility(View.GONE);
+//            pb.setVisibility(View.GONE);
+//            recyclerView.scrollToPosition(0);
+        }
         setHasOptionsMenu(true);
         final Toolbar mToolbar= ((SecondActivity) getActivity()).mToolbar;
         SpannableString s = new SpannableString(prdtsTitle.toUpperCase());
@@ -257,19 +315,7 @@ public class ProductsFragment extends Fragment implements NavigationView.OnNavig
 
 
 
-        if (services == null) {
-            sendRequest();
-            initList();
-//            Log.e("onResume","test");
-////            adapter = new ServicesRecyclerAdapter(activity, services);
-//            Log.e("onResume", "onResume");
-        } else {
-            Log.e("onResume else", "onResume else");
-            ProductsGrid.setAdapter(new ProductGridAdapter(activity, services));
-            progressLL.setVisibility(View.GONE);
-//            pb.setVisibility(View.GONE);
-//            recyclerView.scrollToPosition(0);
-        }
+
 
         super.onResume();
 
@@ -405,7 +451,7 @@ public void showFilterDialog() {
     });
     dialogBuilder.setView(dialogView);
     final android.support.v7.app.AlertDialog b = dialogBuilder.create();
-    b.getWindow().getAttributes().windowAnimations = R.style.CustomAnimations_up;
+    b.getWindow().getAttributes().windowAnimations = R.style.CustomAnimations_slide;
     b.show();
     close.setOnClickListener(new View.OnClickListener() {
         @Override
@@ -528,7 +574,11 @@ public void showSortDialog() {
     b.setOnShowListener(new DialogInterface.OnShowListener() {
         @Override
         public void onShow(DialogInterface dialog) {
-            revealShow(dialogView, true, null);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+                revealShow(dialogView, true, null);
+            }
+
         }
     });
     sortRadio();
@@ -572,7 +622,13 @@ public void showSortDialog() {
     applyBtn.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            revealShow(dialogView, false, b);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+                revealShow(dialogView, false, b);
+            }else{
+                b.dismiss();
+            }
+
             if( sort_flag==1){
                 Collections.sort(services, new Comparator<ProductModel>() {
                     public int compare(ProductModel a, ProductModel b) {
@@ -607,7 +663,7 @@ public void showSortDialog() {
                 sortSubTxt.setText(popTxt.getText());
             }
             ProductsGrid.setAdapter(new ProductGridAdapter(activity, services));
-//            b.dismiss();
+            b.dismiss();
         }
     });
 
@@ -721,6 +777,7 @@ public void showSortDialog() {
             task = new AsyncHttpTask();
 //            task.execute(Utils.productsUrl);
             task.execute(prdtsUrl);
+//            task.execute(Utils.instantServerUrl);
             Log.e("sendrequest","sendrequest");
         } else {
             message = getResources().getString(R.string.no_internet_connection);
@@ -785,7 +842,7 @@ public void showSortDialog() {
 //    }
 
     public class AsyncHttpTask extends AsyncTask<String, Void, Integer> {
-        ProgressFragment prgs;
+
         @Override
         protected void onPreExecute() {
 //            setProgressBarIndeterminateVisibility(true);
@@ -795,8 +852,7 @@ public void showSortDialog() {
             }catch(Exception e){
 
             }
-//            prgs = new ProgressFragment();
-//            activity.getFragmentManager().beginTransaction().add(R.id.container_second, prgs).commit();
+
         }
 
         @Override
@@ -805,18 +861,28 @@ public void showSortDialog() {
             Integer result = 0;
             HttpURLConnection urlConnection = null;
 
-            try {
-                /* forming th java.net.URL object */
+//                OkHttpClient client = new OkHttpClient();
+//                Request request = new Request.Builder()
+//                        .url(params[0])
+//                        .build();
+
+                try {
+//                    Response response = client.newCall(request).execute();
+//                    String jsonString = response.body().string();
+//                    Log.e("NGVL", jsonString);
+
+//                 forming th java.net.URL object
                 URL url = new URL(params[0]);
 
                 urlConnection = (HttpURLConnection) url.openConnection();
 
-                /* for Get request */
+//                 for Get request
                 urlConnection.setRequestMethod("GET");
 
                 int statusCode = urlConnection.getResponseCode();
-
-                /* 200 represents HTTP OK */
+//                int statusCode = response.code();
+//                    Log.e("response.code", ""+response.hashCode());
+//                 200 represents HTTP OK
                 if (statusCode ==  200) {
 
                     BufferedReader r = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
@@ -841,28 +907,85 @@ public void showSortDialog() {
 
         @Override
         protected void onPostExecute(Integer result) {
-//            activity.getFragmentManager().beginTransaction().remove(prgs).commit();
-//            setProgressBarIndeterminateVisibility(false);
+
 //            progressLL.setVisibility(View.GONE);
 //            pb.setVisibility(View.GONE);
-            /* Download complete. Lets update UI */
+//             Download complete. Lets update UI
             if (result == 1) {
                 Log.e("onPostExecute", "onPostExecute");
-                adapter = new ProductGridAdapter(activity, services);
-                ProductsGrid.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
-                progressLL.setVisibility(View.GONE);
+                if(services!=null&&services.size()!=0) {
+                    adapter = new ProductGridAdapter(activity, services);
+                    ProductsGrid.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                    progressLL.setVisibility(View.GONE);
 //                pb.setVisibility(View.GONE);
 
 //                recyclerView.setAdapter(new ServicesRecyclerAdapter(activity, services));
+                }else {
+                    message = getResources().getString(R.string.no_products);
+                    showAlertDialog(message, true);
+                }
             } else {
                 Log.e("hello", "Failed to fetch data!");
                 pb.setVisibility(View.GONE);
-                Toast.makeText(activity,"No Prodructs Found",Toast.LENGTH_SHORT).show();
+//                message = getResources().getString(R.string.no_products);
+                showAlertDialog(message, true);
+//                Toast.makeText(activity,"No Prodructs Found",Toast.LENGTH_SHORT).show();
             }
         }
     }
     private void parseResult(String result) {
+        try {
+//            JSONArray response = new JSONArray(result);
+            JSONObject jsonObject=new JSONObject(result);
+
+            if (jsonObject != null) {
+                JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+//                message = jsonObject.optString(TagName.TAG_MSG);
+
+//               if (message.equals("success")) {
+//            boolean status = response.getBoolean(TagName.TAG_STATUS);
+
+                if (status!=0) {
+//                JSONObject jsonData = jsonObject
+//                        .getJSONObject(TagName.TAG_PRODUCT);
+//                    }
+                    JSONArray posts = jsonObject.optJSONArray(TagName.TAG_PRODUCT);
+
+            /*Initialize array if null*/
+                    if (null == services) {
+                        services = new ArrayList<ProductModel>();
+                    }
+
+                    for (int i = 0; i < posts.length(); i++) {
+                        JSONObject post = posts.optJSONObject(i);
+
+                        ProductModel item = new ProductModel();
+                        item.setId(post.optInt(TagName.KEY_ID));
+                        item.setTitle(post.optString(TagName.KEY_NAME));
+                        item.setDescription(post.optString(TagName.KEY_DES));
+                        item.setCost(post.optDouble(TagName.KEY_PRICE));
+                        item.setFinalPrice(post.optDouble(TagName.KEY_FINAL_PRICE));
+//                    item.setCount(post.optInt("finalPrice"));
+//                    Log.e("name", "name"+ post.optDouble("finalPrice"));
+                        item.setThumbnail(post.optString(TagName.KEY_THUMB));
+                        JSONObject post1 = post.optJSONObject(TagName.TAG_OFFER_ALL);
+                        item.setShare(post1.optString(TagName.KEY_SHARE));
+                        item.setTag(post1.optString(TagName.KEY_TAG));
+                        item.setDiscount(post1.optInt(TagName.KEY_DISC));
+                        item.setRating(post1.optInt(TagName.KEY_RATING));
+                        services.add(item);
+                    }
+                } else {
+                    message = jsonObject.optString(TagName.TAG_MSG);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+   /* private void parseResult(String result) {
         try {
             JSONArray response = new JSONArray(result);
             JSONObject jsonObject=response.getJSONObject(0);
@@ -880,7 +1003,7 @@ public void showSortDialog() {
 //                    }
                 JSONArray posts = jsonObject.optJSONArray(TagName.TAG_PRODUCT);
 
-            /*Initialize array if null*/
+//            Initialize array if null
                 if (null == services) {
                     services = new ArrayList<ProductModel>();
                 }
@@ -911,101 +1034,78 @@ public void showSortDialog() {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
-    //asynchronous task to get our JSON data with holding up the main thread
-//    private class MyAsyncTask extends AsyncTask<String, Void, Void> {
-//
-//        private static final int REGISTRATION_TIMEOUT = 3 * 1000;
-//        private static final int WAIT_TIMEOUT = 30 * 1000;
-//        private final HttpClient httpclient = new DefaultHttpClient();
-//
-//        final HttpParams params = httpclient.getParams();
-//        private boolean error = false;
-//
-//        protected Void doInBackground(String... urls) {
-//
-//            String URL = null;
-//
-//            try {
-//
-//                //URL passed to the AsyncTask
-//                URL = urls[0];
-//                HttpConnectionParams.setConnectionTimeout(params, REGISTRATION_TIMEOUT);
-//                HttpConnectionParams.setSoTimeout(params, WAIT_TIMEOUT);
-//                ConnManagerParams.setTimeout(params, WAIT_TIMEOUT);
-//
-//
-//                HttpPost httpPost = new HttpPost(URL);
-//
-//                //Response from the Http Request
-//                HttpResponse response = httpclient.execute(httpPost);
-//
-//                //Check the Http Request for success
-//                StatusLine statusLine = response.getStatusLine();
-//                if(statusLine.getStatusCode() == HttpStatus.SC_OK){
-//
-//                    Gson gson = new Gson();
-//                    //create a new JSON reader from the response input stream
-//                    JsonReader jsonReader = new JsonReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
-//                    //begin parsing
-//                    jsonReader.beginObject();
-//                    //stay in loop as long as there are more data elements
-//                    while (jsonReader.hasNext()) {
-//                        //get the element name
-//                        String name = jsonReader.nextName();
-//
-//                        if (name.equals("success")) {
-//                            success = jsonReader.nextBoolean();
-//                        }
-//                        //if the element name is the list of countries then start the array
-//                        else if(name.equals("countryList")){
-//                            jsonReader.beginArray();
-//                            while (jsonReader.hasNext()) {
-//                                //parse every element and convert that to a country object
-//                                ProductModel country = gson.fromJson(jsonReader, ProductModel.class);
-//                                //add the country object to the list
-//                                countryList.add(country);
-//                            }
-//                            jsonReader.endArray();
-//                        }
+
+public void loadData(String url){
+    Log.d("NGVL", "WEB");
+    OkHttpClient client = new OkHttpClient();
+    Request request = new Request.Builder()
+            .url(url)
+            .build();
+
+    try {
+        Response response = client.newCall(request).execute();
+        String jsonString = response.body().string();
+        Log.d("NGVL", jsonString);
+//        JSONArray jsonArray = new JSONArray(jsonString);
+
+        services = new ArrayList<>();
+
+//        int lenght = jsonArray.length();
+//        for (int i = 0; i < lenght; i++) {
+//            String city = jsonArray.getString(i);
+//            services.add(city);
+            JSONArray jArry = new JSONArray(jsonString);
+            JSONObject jsonObject=jArry.getJSONObject(0);
+
+            if (jsonObject != null) {
+                JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+
+                if (status==1) {
+//            boolean status = response.getBoolean(TagName.TAG_STATUS);
+
+//                    if (status) {
+//                JSONObject jsonData = jsonObject
+//                        .getJSONObject(TagName.TAG_PRODUCT);
 //                    }
-//                    //end reader and close the stream
-//                    jsonReader.endObject();
-//                    jsonReader.close();
-//
-//                }
-//                else{
-//                    //Closes the connection.
-//                    Log.w(LOG_TAG,statusLine.getReasonPhrase());
-//                    response.getEntity().getContent().close();
-//                    throw new IOException(statusLine.getReasonPhrase());
-//                }
-//
-//
-//            } catch (Exception e) {
-//                Log.w(LOG_TAG,e );
-//                error = true;
-//                cancel(true);
-//            }
-//
-//            return null;
-//
+                    JSONArray posts = jsonObject.optJSONArray(TagName.TAG_PRODUCT);
+
+//            Initialize array if null
+                    if (null == services) {
+                        services = new ArrayList<ProductModel>();
+                    }
+
+                    for (int i = 0; i < posts.length(); i++) {
+                        JSONObject post = posts.optJSONObject(i);
+
+                        ProductModel item = new ProductModel();
+                        item.setId(post.optInt(TagName.KEY_ID));
+                        item.setTitle(post.optString(TagName.KEY_NAME));
+                        item.setDescription(post.optString(TagName.KEY_DES));
+                        item.setCost(post.optDouble(TagName.KEY_PRICE));
+                        item.setFinalPrice(post.optDouble(TagName.KEY_FINAL_PRICE));
+//                    item.setCount(post.optInt("finalPrice"));
+//                    Log.e("name", "name");
+                        item.setThumbnail(post.optString(TagName.KEY_THUMB));
+                        JSONObject post1 = post.optJSONObject(TagName.TAG_OFFER_ALL);
+                        item.setShare(post1.optString(TagName.KEY_SHARE));
+                        item.setTag(post1.optString(TagName.KEY_TAG));
+                        item.setDiscount(post1.optInt(TagName.KEY_DISC));
+                        item.setRating(post1.optInt(TagName.KEY_RATING));
+                        services.add(item);
+                    }
+                } else {
+                    message = jsonObject.getString(TagName.TAG_PRODUCT);
+                }
+            }
 //        }
-//
-//        protected void onCancelled() {
-//            Log.e(LOG_TAG,"Error occured during data download");
-//        }
-//
-//        protected void onPostExecute(Void unused) {
-//            if (error) {
-//                Log.e(LOG_TAG,"Data download ended abnormally!");
-//            } else {
-//                displayCountries();
-//            }
-//        }
-//
-//    }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
 
 
     @Override

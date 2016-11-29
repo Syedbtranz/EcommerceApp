@@ -29,13 +29,18 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true" >
+        android:fillViewport="true"
+        android:id="@+id/scrollView"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        >
+
     <LinearLayout
         android:id="@+id/img_slideshout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-
+        android:focusable="true"
         >
 
 
@@ -52,7 +57,7 @@
             android:layout_height="match_parent"
             android:layout_margin="10dp"
             >
-
+            <requestFocus />
             <android.support.v4.view.ViewPager
                 android:id="@+id/view_pager"
                 android:layout_width="match_parent"
@@ -115,6 +120,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:background="@color/color_off_gray"
         card_view:cardCornerRadius="4dp">
        <!-- <LinearLayout
             android:id="@+id/glance_progress_ll"
@@ -134,6 +140,7 @@
         android:layout_width="match_parent"
         android:gravity="center"
         android:layout_margin="2dp"
+        android:background="@color/color_off_gray"
         android:layout_height="match_parent">
 
         <LinearLayout
@@ -145,7 +152,7 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/glance_horizontal_recycler"
                 android:layout_width="match_parent"
-                android:layout_height="230dp" />
+                android:layout_height="240dp" />
 
       </LinearLayout>
         <View
@@ -193,6 +200,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:background="@color/color_off_gray"
         card_view:cardCornerRadius="4dp">
         <LinearLayout
             android:id="@+id/pop_progress_ll"
@@ -213,6 +221,7 @@
             android:layout_width="match_parent"
             android:gravity="center"
             android:layout_margin="2dp"
+            android:background="@color/color_off_gray"
             android:layout_height="match_parent">
             <LinearLayout
                 android:orientation="horizontal"
@@ -222,7 +231,7 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/pop_horizontal_recycler"
                     android:layout_width="match_parent"
-                    android:layout_height="230dp" />
+                    android:layout_height="240dp" />
              <!--   <Gallery
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -274,6 +283,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="8dp"
+            android:background="@color/color_off_gray"
             card_view:cardCornerRadius="4dp">
             <LinearLayout
                 android:id="@+id/brand_progress_ll"
@@ -293,6 +303,7 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:gravity="center"
+                android:background="@color/color_off_gray"
                 android:layout_margin="2dp"
                 android:layout_height="match_parent">
                 <LinearLayout

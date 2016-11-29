@@ -67,7 +67,7 @@
         android:layout_height="wrap_content"
         android:text="INVITE FRIENDS"
         android:textColor="?attr/colorPrimary"
-        android:background="@drawable/button_bg_primary_barder"
+        android:background="?button_bg_primary_border"
         android:layout_margin="30dp"
         android:id="@+id/invite_btn"
         />

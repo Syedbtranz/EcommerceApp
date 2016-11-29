@@ -107,7 +107,7 @@
             />
             </LinearLayout>
         <com.btranz.ecommerceapp.utils.CircleCheckBox
-            android:id="@+id/chbx"
+            android:id="@+id/chbxer"
             android:layout_width="30dp"
             android:layout_height="25dp"
             android:paddingLeft="5dp"
@@ -171,7 +171,7 @@
             />
             </LinearLayout>
         <com.btranz.ecommerceapp.utils.CircleCheckBox
-            android:id="@+id/chbx"
+            android:id="@+id/chbxjk"
             android:layout_width="30dp"
             android:layout_height="25dp"
             android:paddingLeft="5dp"
@@ -235,7 +235,7 @@
             />
             </LinearLayout>
         <com.btranz.ecommerceapp.utils.CircleCheckBox
-            android:id="@+id/chbx"
+            android:id="@+id/chbxhhgg"
             android:layout_width="30dp"
             android:layout_height="25dp"
             android:paddingLeft="5dp"
@@ -299,7 +299,7 @@
             />
             </LinearLayout>
         <com.btranz.ecommerceapp.utils.CircleCheckBox
-            android:id="@+id/chbx"
+            android:id="@+id/chbxjj"
             android:layout_width="30dp"
             android:layout_height="25dp"
             android:paddingLeft="5dp"
@@ -364,7 +364,7 @@
             />
             </LinearLayout>
         <com.btranz.ecommerceapp.utils.CircleCheckBox
-            android:id="@+id/chbx"
+            android:id="@+id/chbxhh"
             android:layout_width="30dp"
             android:layout_height="25dp"
             android:paddingLeft="5dp"
@@ -430,7 +430,7 @@
             />
             </LinearLayout>
         <com.btranz.ecommerceapp.utils.CircleCheckBox
-            android:id="@+id/chbx"
+            android:id="@+id/chbxf"
             android:layout_width="30dp"
             android:layout_height="25dp"
             android:paddingLeft="5dp"
@@ -494,7 +494,7 @@
             />
             </LinearLayout>
         <com.btranz.ecommerceapp.utils.CircleCheckBox
-            android:id="@+id/chbx"
+            android:id="@+id/chbxfds"
             android:layout_width="30dp"
             android:layout_height="25dp"
             android:paddingLeft="5dp"
@@ -558,7 +558,7 @@
             />
             </LinearLayout>
         <com.btranz.ecommerceapp.utils.CircleCheckBox
-            android:id="@+id/chbx"
+            android:id="@+id/chbxdf"
             android:layout_width="30dp"
             android:layout_height="25dp"
             android:paddingLeft="5dp"
@@ -622,7 +622,7 @@
             />
             </LinearLayout>
         <com.btranz.ecommerceapp.utils.CircleCheckBox
-            android:id="@+id/chbx"
+            android:id="@+id/chbxfd"
             android:layout_width="30dp"
             android:layout_height="25dp"
             android:paddingLeft="5dp"

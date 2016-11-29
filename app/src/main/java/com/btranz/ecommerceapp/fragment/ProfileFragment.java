@@ -34,7 +34,7 @@ import com.btranz.ecommerceapp.utils.TypefaceSpan;
  */
 public class ProfileFragment extends Fragment {
     EditText emailET,pswET,forgetPswEt;
-    TextView profileName,custNameTxt, custEmailTxt;
+    TextView profileName,nameTxt, emailTxt;
     FragmentActivity activity;
     SpannableString s1;
     Button logout;
@@ -42,7 +42,7 @@ public class ProfileFragment extends Fragment {
     // shared preference
     SharedPreferences sharedpreferences;
     String PREFS_NAME = "MyPrefs";
-    public static String customerName,customerEmail,customerId,msg;
+    public static String userName,userEmail,customerId,msg;
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -62,8 +62,8 @@ public class ProfileFragment extends Fragment {
 //        }
         sharedpreferences = activity.getSharedPreferences(PREFS_NAME,
                 Context.MODE_PRIVATE);
-        customerName = sharedpreferences.getString("customerName", "");
-        customerEmail = sharedpreferences.getString("customerEmail", "");
+        userName = sharedpreferences.getString("userName", "");
+        userEmail = sharedpreferences.getString("userEmail", "");
 //        customerId = sharedpreferences.getString("password", "");
     }
 
@@ -99,13 +99,13 @@ public class ProfileFragment extends Fragment {
 //        ((SecondActivity)activity).findViewById(R.id.search_bar).setVisibility(View.GONE);
 //        searchBar.setVisibility(View.GONE);
 //        profileName=(TextView)view.findViewById(R.id.profile_name);
-        custNameTxt=(TextView)view.findViewById(R.id.pr_name);
-        custEmailTxt=(TextView)view.findViewById(R.id.pr_email);
+        nameTxt=(TextView)view.findViewById(R.id.pr_name);
+        emailTxt=(TextView)view.findViewById(R.id.pr_email);
 //        backBtn=(ImageView) view.findViewById(R.id.back_btn);
         logout=(Button) view.findViewById(R.id.logout_btn);
 //        profileName.setText(s1);
-        custNameTxt.setText(customerName);
-        custEmailTxt.setText(customerEmail);
+        nameTxt.setText(userName);
+        emailTxt.setText(userEmail);
 
 //        final Toolbar mToolbar= ((SecondActivity)activity).mToolbar;
         final Toolbar mToolbar= (Toolbar)view.findViewById(R.id.toolbar);

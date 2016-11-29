@@ -68,7 +68,6 @@ import java.util.regex.Pattern;
  */
 public class LogRegFragment extends Fragment {
     private Dialog loadingDialog;
-    String mahboob="asr";
     Handler handler;
     EditText emailET,pswET,forgetPswEt;
      String email,password;
@@ -215,9 +214,9 @@ public class LogRegFragment extends Fragment {
         } else if (email.matches(Utils.EMAIL_PATTERN)||email.length()==10
                 && password.length() > 5) {
             login(email,password);
-            Toast.makeText(activity,
-                    "Success",
-                    Toast.LENGTH_SHORT).show();
+//            Toast.makeText(activity,
+//                    "Success",
+//                    Toast.LENGTH_SHORT).show();
         }
     }
     private void login(final String username, final String password) {
@@ -294,10 +293,10 @@ public class LogRegFragment extends Fragment {
                           JSONObject jobcust=jsonObject.getJSONObject(TagName.TAG_CUSTMER);
                             addCart(jobcust.optString("id"));
                           editor = sharedpreferences.edit();
-                          editor.putString("customerID", jobcust.optString("id"));
-                          editor.putString("customerEmail", jobcust.optString("username"));
+                          editor.putString("userID", jobcust.optString("id"));
+                          editor.putString("userEmail", jobcust.optString("username"));
                           editor.putString("password", jobcust.optString("password"));
-                          editor.putString("customerName",jobcust.optString("name"));
+                          editor.putString("userName",jobcust.optString("name"));
                           editor.putString("logged", "logged");
                           editor.commit();
                     activity.finish();

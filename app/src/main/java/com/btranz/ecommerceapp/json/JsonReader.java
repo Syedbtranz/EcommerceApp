@@ -1,6 +1,7 @@
 package com.btranz.ecommerceapp.json;
 
 import com.btranz.ecommerceapp.modal.Product;
+import com.btranz.ecommerceapp.modal.ProductModel;
 import com.btranz.ecommerceapp.utils.TagName;
 
 import org.json.JSONArray;
@@ -12,18 +13,18 @@ import java.util.List;
 
 public class JsonReader {
 
-	public static List<Product> getHome(JSONObject jsonObject)
+	public static List<ProductModel> getHome(JSONObject jsonObject)
 			throws JSONException {
-		List<Product> products = new ArrayList<Product>();
+		List<ProductModel> products = new ArrayList<ProductModel>();
 
 		JSONArray jsonArray = jsonObject.getJSONArray(TagName.TAG_OFFER_BANNER);
-		Product product;
+		ProductModel product;
 		for (int i = 0; i < jsonArray.length(); i++) {
-			product = new Product();
+			product = new ProductModel();
 			JSONObject productObj = jsonArray.getJSONObject(i);
 			product.setId(productObj.getInt(TagName.KEY_ID));
 //			product.setName(productObj.getString(TagName.KEY_NAME));
-			product.setImageUrl(productObj.getString(TagName.KEY_IMG_URL));
+			product.setThumbnail(productObj.getString(TagName.KEY_IMG_URL));
 
 			products.add(product);
 		}

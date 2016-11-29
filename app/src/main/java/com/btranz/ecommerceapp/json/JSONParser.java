@@ -17,6 +17,7 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -66,9 +67,9 @@ public class JSONParser {
 	}
 
 	// using HttpClient for <= Froyo
-	public JSONArray getJSONHttpClient(String url)
+	public JSONObject getJSONHttpClient(String url)
 			throws ClientProtocolException, IOException, JSONException {
-		JSONArray jsonObject = null;
+		JSONObject jsonObject = null;
 		try {
 			openHttpClient(url);
 
@@ -81,7 +82,7 @@ public class JSONParser {
 			json = sb.toString();
 
 //			Log.d("json", json);
-			jsonObject = new JSONArray(json);
+			jsonObject = new JSONObject(json);
 
 		} finally {
 			FileUtils.close(inputStream);
@@ -91,13 +92,13 @@ public class JSONParser {
 	}
 
 	// using HttpURLConnection for > Froyo
-	public JSONArray getJSONHttpURLConnection(String urlString)
+	public JSONObject getJSONHttpURLConnection(String urlString)
 			throws IOException, JSONException {
 
 		BufferedReader reader = null;
 		StringBuffer output = new StringBuffer("");
 		InputStream stream = null;
-		JSONArray jsonObject = null;
+		JSONObject jsonObject = null;
 		try {
 
 			openHttpUrlConnection(urlString);
@@ -112,7 +113,7 @@ public class JSONParser {
 					output.append(line + "\n");
 				json = output.toString();
 				Log.e("JSON PARSER",json);
-				jsonObject = new JSONArray(json);
+				jsonObject = new JSONObject(json);
 			}
 
 		} finally {

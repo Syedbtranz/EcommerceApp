@@ -25,8 +25,8 @@ import com.btranz.ecommerceapp.utils.Utils;
 public class UserDetailsFragment extends Fragment {
     Button nextBtn;
     FragmentActivity activity;
-    EditText userET,emailET,mobileET,forgetPswEt;
-    String name, email, mobile,customerEmail, customerName, userPhone;
+    EditText nameET,emailET,mobileET,forgetPswEt;
+    String userName, userEmail, userMobile,customerEmail, customerName, customerMobile;
     // shared preference
     SharedPreferences sharedpreferences;
     String PREFS_NAME = "MyPrefs";
@@ -44,21 +44,32 @@ public class UserDetailsFragment extends Fragment {
                 Context.MODE_PRIVATE);
         editor = sharedpreferences.edit();
 //        customerId = sharedpreferences.getString("customerID", "");
-        customerName = sharedpreferences.getString("customerName", "");
-        customerEmail = sharedpreferences.getString("customerEmail", "");
-        userPhone = sharedpreferences.getString("checkoutUserContact", "");
+        userName = sharedpreferences.getString("userName", "");
+        userEmail = sharedpreferences.getString("userEmail", "");
+        userMobile = sharedpreferences.getString("userContact", "");
+
+        customerName = sharedpreferences.getString("checkoutCustomerName", "");
+        customerEmail = sharedpreferences.getString("checkoutCustomerEmail", "");
+        customerMobile = sharedpreferences.getString("checkoutCustomerContact", "");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_user_details, container, false);
-        userET=(EditText)rootView.findViewById(R.id.user_name_et);
+        nameET=(EditText)rootView.findViewById(R.id.user_name_et);
         emailET=(EditText)rootView.findViewById(R.id.email_et);
         mobileET=(EditText)rootView.findViewById(R.id.mobile_et);
-        userET.setText(customerName);
-        emailET.setText(customerEmail);
-        mobileET.setText(userPhone);
+
+        if(!customerEmail.equals("")) {
+            nameET.setText(customerName);
+            emailET.setText(customerEmail);
+            mobileET.setText(customerMobile);
+        }else{
+            nameET.setText(userName);
+            emailET.setText(userEmail);
+            mobileET.setText(userMobile);
+        }
         nextBtn=(Button)rootView.findViewById(R.id.next_btn);
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,45 +89,45 @@ public class UserDetailsFragment extends Fragment {
         return rootView;
     }
     public void userDetails(){
-        name=userET.getText().toString();
+        customerName=nameET.getText().toString();
 //        lastName=lastNameEt.getText().toString();
-        email =emailET.getText().toString();
-        mobile=mobileET.getText().toString();
+        customerEmail =emailET.getText().toString();
+        customerMobile=mobileET.getText().toString();
 //        Log.e("subject",subject);
 //        Log.e("desc ",description);
 //        Log.e("issueType",issueType);
 //        Log.e("emailMeStr",emailMeStr);
-        if (name.equals("") && email.equals("")
-                && mobile.equals("")) {
+        if (customerName.equals("") && customerEmail.equals("")
+                && customerMobile.equals("")) {
 //            Log.i("k1", "null");
             Toast.makeText(activity,
                     "Please enter the details", Toast.LENGTH_SHORT).show();
-            userET.requestFocus();
-        } else if (name.equals("")) {
+            nameET.requestFocus();
+        } else if (customerName.equals("")) {
             Toast.makeText(activity,
                     "Please enter the First Name", Toast.LENGTH_SHORT).show();
-            userET.requestFocus();
-        }  else if (email.equals("")) {
+            nameET.requestFocus();
+        }  else if (customerEmail.equals("")) {
             Toast.makeText(activity,
                     "Please enter the Email", Toast.LENGTH_SHORT).show();
             emailET.requestFocus();
-        } else if (!email.matches(Utils.EMAIL_PATTERN)) {
+        } else if (!customerEmail.matches(Utils.EMAIL_PATTERN)) {
             Toast.makeText(activity,
                     "Please enter the valid Email patern", Toast.LENGTH_SHORT).show();
             emailET.requestFocus();
-        } else if (mobile.equals("")) {
+        } else if (customerMobile.equals("")) {
             Toast.makeText(activity,
                     "Please enter the Phone Number", Toast.LENGTH_SHORT).show();
             mobileET.requestFocus();
-        } else if (mobile.length()!=10) {
+        } else if (customerMobile.length()!=10) {
             Toast.makeText(activity,
                     "Please enter the 10 digit Phone Number", Toast.LENGTH_SHORT).show();
             mobileET.requestFocus();
-        } else if (!name.equals("") && email.matches(Utils.EMAIL_PATTERN)
-                && mobile.length()==10) {
-            editor.putString("checkoutUserName", name);
-            editor.putString("checkoutUserEmail", email);
-            editor.putString("checkoutUserContact", mobile);
+        } else if (!customerName.equals("") && customerEmail.matches(Utils.EMAIL_PATTERN)
+                && customerMobile.length()==10) {
+            editor.putString("checkoutCustomerName", customerName);
+            editor.putString("checkoutCustomerEmail", customerEmail);
+            editor.putString("checkoutCustomerContact", customerMobile);
             editor.commit();
             Bundle arguments = new Bundle();
             Fragment fragment = null;

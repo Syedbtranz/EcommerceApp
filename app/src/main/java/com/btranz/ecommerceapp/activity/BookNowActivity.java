@@ -20,7 +20,7 @@ import com.btranz.ecommerceapp.utils.TagName;
  */
 public class BookNowActivity extends AppCompatActivity {
     ImageView closeBtn;
-    String test="Tested";
+    String sajidtest="SAjid Tested";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

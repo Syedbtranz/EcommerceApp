@@ -3,6 +3,7 @@ package com.btranz.ecommerceapp.fragment;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -275,6 +276,24 @@ public class SignUpFragment extends Fragment implements GoogleApiClient.OnConnec
             });
         }
     }
+    protected void sharedPrefernces() {
+        // TODO Auto-generated method stub
+
+        if (sharedpreferences.getString("logged", "").toString()
+                .equals("logged")) {
+
+//            i.putExtra("CUSTOMEREMAIL", sharedpreferences
+//                    .getString("customerEmail", "").toString());
+//            i.putExtra("PASSWORD", sharedpreferences.getString("password", "")
+//                    .toString());
+//             i.putExtra("CUSTOMERNAME",sharedpreferences.getString("customerName",
+//             "").toString());
+            // i.putExtra("CHECK", true);
+//            startActivity(i);
+
+        }
+
+    }
     public void sendData(){
         if (name.equals("") &&email.equals("") && password.equals("")) {
 
@@ -368,7 +387,7 @@ public class SignUpFragment extends Fragment implements GoogleApiClient.OnConnec
 
                 try{
                     HttpClient httpClient = new DefaultHttpClient();
-                    HttpGet httpPost = new HttpGet(Utils.regUrl+uemail+"/"+pass+"/"+uname);
+                    HttpGet httpPost = new HttpGet(Utils.instantRegUrl+uemail+"&password="+pass+"&name="+uname);
 //                    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
                     HttpResponse response = httpClient.execute(httpPost);
@@ -402,31 +421,46 @@ public class SignUpFragment extends Fragment implements GoogleApiClient.OnConnec
                 Log.e("s",s);
                 loadingDialog.dismiss();
                 try {
-                    JSONArray response = new JSONArray(s);
-                    JSONObject jsonObject=response.getJSONObject(0);
+                    JSONObject response = new JSONObject(s);
 
-                    if (jsonObject != null) {
-                        JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+
+                    if (response != null) {
+                        JSONObject jobstatus=response.getJSONObject(TagName.TAG_STATUS);
                         int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
                         String message = jobstatus.optString(TagName.TAG_MSG);
 
                         if (status==1) {
 //            boolean status = response.getBoolean(TagName.TAG_STATUS);
 //                if(message.equalsIgnoreCase("success")){
-                            JSONObject jobcust=jsonObject.getJSONObject(TagName.TAG_CUSTMER);
-                            editor = sharedpreferences.edit();
-                            editor.putString("userID", jobcust.optString("id"));
-                            editor.putString("userEmail", jobcust.optString("username"));
-                            editor.putString("password", jobcust.optString("password"));
-                          editor.putString("userName",jobcust.optString("name"));
-                            editor.putString("logged", "logged");
-                            editor.commit();
-                            activity.finish();
-                            Intent in=new Intent(getActivity(), BookNowActivity.class);
-                            in.putExtra("buynowKey", TagName.BUYNOW_USER_DETAILS);
-                            activity.startActivity(in);
-                            activity.overridePendingTransition(android.R.anim.fade_in,
-                                    android.R.anim.fade_out);
+                            JSONArray regArray=response.getJSONArray(TagName.TAG_REGISTRATION);
+                            JSONObject regObj=regArray.getJSONObject(0);
+                            String message_reg=regObj.getString(TagName.TAG_MSG);
+                            int stcode = regObj.optInt(TagName.TAG_STATUS_CODE);
+                            if(stcode==1){
+                                Toast.makeText(getActivity(), message_reg, Toast.LENGTH_SHORT).show();
+
+                                JSONObject userDetailsObj=regObj.getJSONObject(TagName.TAG_USER_DETAILS);
+                                sharedpreferences = activity.getSharedPreferences(MyPREFERENCES,
+                                        Context.MODE_PRIVATE);
+                                editor = sharedpreferences.edit();
+                                editor.putString("userID", userDetailsObj.optString("id"));
+                                editor.putString("userEmail", userDetailsObj.optString("username"));
+                                editor.putString("password", userDetailsObj.optString("password"));
+                                editor.putString("userName",userDetailsObj.optString("name"));
+                                editor.putString("logged", "logged");
+                                editor.commit();
+                                activity.finish();
+                                Intent in=new Intent(getActivity(), BookNowActivity.class);
+                                in.putExtra("buynowKey", TagName.BUYNOW_USER_DETAILS);
+                                activity.startActivity(in);
+                                activity.overridePendingTransition(android.R.anim.fade_in,
+                                        android.R.anim.fade_out);
+                            }
+                            else{
+                                Toast.makeText(getActivity(), message_reg, Toast.LENGTH_SHORT).show();
+                            }
+
+
                         }else {
                             Toast.makeText(activity, "Invalid User Name or Password", Toast.LENGTH_LONG).show();
                         }

@@ -3,7 +3,7 @@ package com.btranz.ecommerceapp.modal;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class ProductModel implements Parcelable, Comparable<ProductModel> {
+public class ProductModel extends ClassLoader implements Parcelable, Comparable<ProductModel> {
     private int id;
     private String title;
     private String description;
@@ -23,7 +23,7 @@ public class ProductModel implements Parcelable, Comparable<ProductModel> {
         super();
     }
 
-    private ProductModel(Parcel in) {
+     ProductModel(Parcel in) {
         super();
         this.id = in.readInt();
         this.title = in.readString();

@@ -35,6 +35,8 @@ import com.btranz.ecommerceapp.R;
 import com.btranz.ecommerceapp.fragment.CartFragment;
 import com.btranz.ecommerceapp.fragment.CategoriesFragment;
 import com.btranz.ecommerceapp.fragment.OfferDetailFragment;
+import com.btranz.ecommerceapp.fragment.OrderDetailFragment;
+import com.btranz.ecommerceapp.fragment.OrdersFragment;
 import com.btranz.ecommerceapp.fragment.ProductItemFragment;
 import com.btranz.ecommerceapp.fragment.ProductsFragment;
 import com.btranz.ecommerceapp.fragment.ProfileFragment;
@@ -44,7 +46,7 @@ import com.btranz.ecommerceapp.utils.Utils;
 
 
 public class SecondActivity extends AppCompatActivity {
-
+    int key;
     ImageView SearchET;
     private static final long ANIM_VIEWPAGER_DELAY = 5000;
     public Toolbar mToolbar;
@@ -97,7 +99,15 @@ String customerEmail, cartBadge;
 //            recyclerView.setAdapter(new ServicesRecyclerAdapter(activity, services));
 //            recyclerView.scrollToPosition(0);
 //        }
-        int key=getIntent().getIntExtra("key", 0);
+        Bundle b = getIntent().getExtras();
+        if (b != null) {
+            key=b.getInt("key", 0);
+//			Order = b.getParcelable("singleOrder");
+//			setOrderItems(Order);
+        }else {
+            key = getIntent().getIntExtra("key", 0);
+        }
+        Log.e("key", ""+key);
 //        if(key==1) {
             displayView(key);
 //        }else {
@@ -139,6 +149,10 @@ String customerEmail, cartBadge;
                 break;
             case TagName.CRED_PROFILE:
                 fragment = new ProfileFragment();
+//                title=getString(R.string.title_profile);
+                break;
+            case TagName.ORDER_LIST:
+                fragment = new OrdersFragment();
 //                title=getString(R.string.title_profile);
                 break;
         }

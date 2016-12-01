@@ -36,6 +36,7 @@
     <string name="title_cart">SHOPPING CART</string>
     <string name="title_products">PRODUCTS</string>
     <string name="title_offer">OFFER DETAILS</string>
+    <string name="title_order_details">ORDER DETAILS</string>
     <string name="title_product_details">PRODUCTS DETAILS</string>
     <string name="title_profile">PROFILE</string>
 

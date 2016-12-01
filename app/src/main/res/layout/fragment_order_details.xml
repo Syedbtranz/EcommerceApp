@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/color_text"
+    android:weightSum="1">
+
+    <!--<LinearLayout
+        android:id="@+id/empty_cart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/splash"
+            android:gravity="center"
+            android:background="@drawable/emptycart_bg"
+            android:layout_weight="1"/>
+        <Button
+            android:text="CONTINUE SHOPING"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/colorPrimary"
+            android:background="?button_bg_primary_border"
+            android:textSize="15dp"
+            android:layout_margin="20dp"
+            android:layout_gravity="bottom"
+            android:drawableLeft="@drawable/back_checkout_btn"
+            android:id="@+id/continue_shoping_btn" />
+    </LinearLayout>-->
+    <!--<android.support.v7.widget.Toolbar
+        android:id="@+id/checkout_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        >
+       &lt;!&ndash; <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Qnty:"
+            android:layout_gravity="start"
+
+            android:id="@+id/textiew" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:layout_gravity="start"
+
+            android:id="@+id/checkout_bar_count" />&ndash;&gt;
+      &lt;!&ndash;  <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/rupee_symbol"
+            android:layout_gravity="center"
+
+            android:id="@+id/textView25" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+
+            android:layout_gravity="center"
+            android:id="@+id/checkout_bar_amt" />&ndash;&gt;
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="Check Out"
+            android:textStyle="bold"
+            android:gravity="center_vertical"
+            android:id="@+id/checkout_bar"
+            android:paddingRight="2dp"
+            android:layout_gravity="right" />
+    </android.support.v7.widget.Toolbar>-->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:gravity="center_vertical">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.9"
+            >
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.9"
+            >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OrderId: "
+            android:textColor="?attr/colorPrimary"
+             />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="123"
+
+            android:id="@+id/order_id" />
+            </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.9"
+            >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Booking Date: "
+
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="assss0"
+
+            android:id="@+id/booking_date" />
+            </LinearLayout>
+            </LinearLayout>
+       <!-- <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/total_cart_txt"
+            android:gravity="center"
+            android:id="@+id/wwwww" />-->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            >
+            <ImageView
+                android:id="@+id/status_bar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:scaleType="center"
+                android:src="@drawable/pending_statusbar">
+            </ImageView>
+
+        </LinearLayout>
+    </LinearLayout>
+    <android.support.v7.widget.CardView
+        android:id="@+id/checout_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+       >
+   <!-- <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">-->
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:background="@color/view_divider_color">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="S.No"
+                android:textStyle="bold"
+                android:layout_weight="1.1"
+                android:gravity="center"
+                android:id="@+id/tkt_status" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="ITEM"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:id="@+id/tkt_no" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="QUANTITY"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_weight="1"
+
+                android:id="@+id/tkt_subject" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="PRICE"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:id="@+id/tkt_staus" />
+          <!--  <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="ACTION"
+                android:textStyle="bold"
+                android:layout_weight="1.1"
+                android:gravity="center"
+                android:id="@+id/tkt_status" />-->
+        </LinearLayout>
+   <!-- </LinearLayout>-->
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:layout_weight="1.07" />
+
+    <!--<LinearLayout
+        android:id="@+id/toolbarContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="5dp"
+
+        android:layout_gravity="bottom|end"
+        android:background="?attr/colorAccent">
+-->
+
+
+    <LinearLayout
+        android:id="@+id/checkout_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_margin="5dp"
+        android:gravity="center"
+       >
+       <!-- <Button
+            android:text="CONTINUE SHOPING"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_login"
+            android:textSize="15dp"
+            android:layout_marginRight="5dp"
+            android:drawableLeft="@drawable/back_checkout_btn"
+            android:background="@drawable/button_bg_login"
+            android:layout_weight="1"
+            android:id="@+id/button3" />-->
+
+        <!--  <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Qnty:"
+              android:layout_gravity="start"
+              android:textColor="@color/color_text"
+              android:id="@+id/textiew" />
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="0"
+              android:layout_gravity="start"
+              android:textColor="@color/color_text"
+              android:id="@+id/checkout_bar_count" />
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="@string/rupee_symbol"
+              android:layout_gravity="center"
+              android:textColor="@color/color_text"
+              android:id="@+id/textView25" />
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="0"
+              android:textColor="@color/color_text"
+              android:layout_gravity="center"
+              android:id="@+id/checkout_bar_amt" />-->
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cancel Order"
+            android:textSize="15dp"
+            android:layout_margin="10dp"
+            android:textColor="?attr/colorPrimary"
+            android:gravity="center"
+            android:id="@+id/checkout_bar"
+            android:layout_weight="1"
+            android:background="?button_bg_primary_border" />
+    </LinearLayout>
+
+
+
+
+    <!-- </LinearLayout>-->
+</LinearLayout>
+    <!--
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context="info.androidhive.materialdesign.activity.FriendsFragment">
+
+
+        <TextView
+            android:id="@+id/label"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="100dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textSize="45dp"
+            android:text="SERVICES"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_below="@id/label"
+            android:layout_centerInParent="true"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12dp"
+            android:layout_marginTop="10dp"
+            android:gravity="center_horizontal"
+            android:text="Edit fragment_services.xml to change the appearance" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:layout_alignParentTop="true"
+            android:gravity="center"
+            android:padding="10dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/editText"
+                android:hint="@string/abc_search_hint"
+                android:background="#ffffff"
+                android:layout_weight="1" />
+
+            &lt;!&ndash;<SearchView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/searchView"
+                android:layout_weight="1" />&ndash;&gt;
+
+        </LinearLayout>
+
+    </RelativeLayout>-->

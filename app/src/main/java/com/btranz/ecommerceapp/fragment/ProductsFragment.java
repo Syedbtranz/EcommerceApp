@@ -934,7 +934,7 @@ public void showSortDialog() {
             }
         }
     }
-    private void parseResult(String result) {
+   /* private void parseResult(String result) {
         try {
 //            JSONArray response = new JSONArray(result);
             JSONObject jsonObject=new JSONObject(result);
@@ -953,7 +953,7 @@ public void showSortDialog() {
 //                    }
                     JSONArray posts = jsonObject.optJSONArray(TagName.TAG_PRODUCT);
 
-            /*Initialize array if null*/
+            *//*Initialize array if null*//*
                     if (null == services) {
                         services = new ArrayList<ProductModel>();
                     }
@@ -984,8 +984,8 @@ public void showSortDialog() {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
-   /* private void parseResult(String result) {
+    }*/
+    private void parseResult(String result) {
         try {
             JSONArray response = new JSONArray(result);
             JSONObject jsonObject=response.getJSONObject(0);
@@ -1034,7 +1034,7 @@ public void showSortDialog() {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }*/
+    }
 
 
 public void loadData(String url){

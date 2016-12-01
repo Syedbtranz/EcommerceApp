@@ -69,5 +69,6 @@ public class TagName {
 	public static final int WISH_ID = 9;
 	public static final int CARDS_ID = 10;
 	public static final int REFER_ERN_ID = 11;
+	public static final int ORDER_LIST = 12;
 
 }

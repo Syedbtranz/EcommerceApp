@@ -3,6 +3,8 @@ package com.btranz.ecommerceapp.modal;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+
 public class OrdersModel implements Parcelable {
     private int id;
     private String orderId;
@@ -15,6 +17,7 @@ public class OrdersModel implements Parcelable {
     private int process;
     private int qnty;
     private String thumbnail;
+    private ArrayList<ProductModel> orderList=new ArrayList<>();
     public OrdersModel() {
         super();
     }
@@ -32,6 +35,7 @@ public class OrdersModel implements Parcelable {
         this.qnty = in.readInt();
         this.process = in.readInt();
         this.thumbnail = in.readString();
+        this.orderList = in.readArrayList(new ProductModel(in));
     }
     // getter and setter method for order id
     public String getOrderId() {
@@ -132,6 +136,15 @@ public class OrdersModel implements Parcelable {
         this.thumbnail = thumbnail;
     }
 
+    // getter and setter method for thumbnail
+
+    public void setOrderList(ArrayList<ProductModel> orderList) {
+        this.orderList=orderList;
+    }
+    public ArrayList<ProductModel> getOrderList() {
+        return orderList;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -150,6 +163,7 @@ public class OrdersModel implements Parcelable {
         parcel.writeInt(getProcess());
         parcel.writeInt(getQnty());
         parcel.writeString(getThumbnail());
+//        parcel.writeArray(getOrderList());
     }
     public static final Creator<OrdersModel> CREATOR = new Creator<OrdersModel>() {
         public OrdersModel createFromParcel(Parcel in) {
@@ -186,6 +200,6 @@ public class OrdersModel implements Parcelable {
     @Override
     public String toString() {
         return "Product [id=" + id + ", orderId=" + orderId +", name=" + title + ", payment=" + payment + ", date=" + date +", status=" + status + ", grandTotal=" + grandTotal + ", cost=" + cost + ", qnty=" + qnty +  ", process=" + process + ", imageUrl="
-                + thumbnail + "]";
+                + thumbnail + ", orderList=" + orderList +"]";
     }
 }

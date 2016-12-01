@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //                            doInitialize();
                             AppData.currentFlag=true;
                         }
-                    }).setDuration(10000).start();
+                    }).setDuration(8000).start();
 
                 }
             }, 0);
@@ -516,13 +516,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //                fragment = new ReferEarnFragment();
 //                title = getString(R.string.title_ref_ern);
                 Intent inRe = new Intent(getApplicationContext(), CredientialActivity.class);
-                inRe.putExtra("credKey", TagName.REFER_ERN_ID);
+                inRe.putExtra("credKey",TagName.REFER_ERN_ID);
                 startActivity(inRe);
                 this.overridePendingTransition(android.R.anim.fade_in,
                         android.R.anim.fade_out);
                 break;
             case R.id.nav_orders:
-                fragment = new OrdersFragment();
+                Intent i=new Intent(getApplicationContext(),SecondActivity.class);
+                i.putExtra("key", TagName.ORDER_LIST);
+                startActivity(i);
+                this.overridePendingTransition(android.R.anim.fade_in,
+                        android.R.anim.fade_out);
+//                fragment = new OrdersFragment();
 //                title = getString(R.string.title_orders);
                 break;
             case R.id.nav_help:
@@ -539,9 +544,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         android.R.anim.fade_out);
                 break;
             case R.id.nav_wishlist:
-                Intent i=new Intent(getApplicationContext(),SecondActivity.class);
-                i.putExtra("key", TagName.WISH_ID);
-                startActivity(i);
+                Intent iwish=new Intent(getApplicationContext(),SecondActivity.class);
+                iwish.putExtra("key", TagName.WISH_ID);
+                startActivity(iwish);
                 this.overridePendingTransition(android.R.anim.fade_in,
                         android.R.anim.fade_out);
 //                fragment = new WishlistFragment();

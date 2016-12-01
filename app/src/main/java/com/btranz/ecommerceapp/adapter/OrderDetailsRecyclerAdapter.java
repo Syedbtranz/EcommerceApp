@@ -3,12 +3,8 @@ package com.btranz.ecommerceapp.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,14 +16,11 @@ import android.widget.Toast;
 
 import com.btranz.ecommerceapp.R;
 import com.btranz.ecommerceapp.activity.SecondActivity;
-import com.btranz.ecommerceapp.fragment.OrderDetailFragment;
-import com.btranz.ecommerceapp.fragment.OrdersFragment;
 import com.btranz.ecommerceapp.modal.OrdersModel;
 import com.btranz.ecommerceapp.modal.ProductModel;
 import com.btranz.ecommerceapp.utils.TagName;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
@@ -38,18 +31,18 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAdapter.OrdersRecycleViewRowHolder> {
+public class OrderDetailsRecyclerAdapter extends RecyclerView.Adapter<OrderDetailsRecyclerAdapter.OrdersRecycleViewRowHolder> {
 
     ImageLoader imageLoader = ImageLoader.getInstance();
     DisplayImageOptions options;
-    OrdersFragment acti;
+    FragmentActivity acti;
     int layout;
     private ImageLoadingListener imageListener;
-    private List<OrdersModel> feedItemList;
+    private List<ProductModel> feedItemList;
     int count=0;
     private Context mContext;
 
-    public OrdersRecyclerAdapter(OrdersFragment context, List<OrdersModel> feedItemList, int layout) {
+    public OrderDetailsRecyclerAdapter(FragmentActivity context, List<ProductModel> feedItemList, int layout) {
         this.feedItemList = feedItemList;
         this.acti = context;
         this.layout=layout;
@@ -76,52 +69,39 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
 
     @Override
     public void onBindViewHolder(final OrdersRecycleViewRowHolder feedListRowHolder, int i) {
-       OrdersModel feedItem = feedItemList.get(i);
-        final int i1=i;
+       final ProductModel feedItem = feedItemList.get(i);
 //        Picasso.with(mContext).load(feedItem.getThumbnail())
 //                .error(R.drawable.placeholder)
 //                .placeholder(R.drawable.placeholder)
 //                .into(feedListRowHolder.thumbnail);
         feedListRowHolder.title.setText(feedItem.getTitle());
-        feedListRowHolder.cost.setText(String.valueOf(feedItem.getGrandTotal()));
-        feedListRowHolder.num.setText(String.valueOf(feedItem.getQnty()));
-        feedListRowHolder.orderId.setText(String.valueOf(feedItem.getOrderId()));
-        feedListRowHolder.orderDate.setText(feedItem.getDate());
+        feedListRowHolder.cost.setText(String.valueOf(feedItem.getCost()));
+        feedListRowHolder.num.setText(String.valueOf(feedItem.getCount()));
+        feedListRowHolder.orderId.setText(String.valueOf(i+1));
+//        feedListRowHolder.orderDate.setText(feedItem.getDate());
 
-        if(feedItem.getStatus().equalsIgnoreCase("pending")){
-            feedListRowHolder.statusImg.setImageResource(R.drawable.pending_statusbar);
-        }else if(feedItem.getStatus().equalsIgnoreCase("delivered")){
-            feedListRowHolder.statusImg.setImageResource(R.drawable.delivered_statusbar);
-        }else if(feedItem.getStatus().equalsIgnoreCase("cancelled")){
-            feedListRowHolder.statusImg.setImageResource(R.drawable.cancelled_statusbar);
-        }
-        feedListRowHolder.orderClickLL.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ArrayList<ProductModel> orderList=feedItemList.get(i1).getOrderList();
-                Log.d("position orderList", "" + orderList);
-                 final OrdersModel singleOrder = (OrdersModel) feedItemList.get(i1);
-                Toast.makeText(acti.getActivity(),"clicked",Toast.LENGTH_SHORT).show();
-//                acti.itemClick(singleOrder);
-                Bundle arguments = new Bundle();
-				Fragment fragment = null;
-//				Log.d("position adapter", "" + position);
-//                OrdersModel order = (ProductModel) products.get(position);
-				arguments.putParcelable("singleOrder", singleOrder);
-
-				// Start a new fragment
-				fragment = new OrderDetailFragment();
-				fragment.setArguments(arguments);
-
-				FragmentTransaction transaction = acti.getActivity()
-						.getSupportFragmentManager().beginTransaction();
-				transaction.replace(R.id.container_second, fragment,
-                        OrderDetailFragment.ARG_ITEM_ID);
-				transaction.addToBackStack(OrderDetailFragment.ARG_ITEM_ID);
-				transaction.commit();
-//
-            }
-        });
+//        if(feedItem.getStatus().equalsIgnoreCase("pending")){
+//            feedListRowHolder.statusImg.setImageResource(R.drawable.pending_statusbar);
+//        }else if(feedItem.getStatus().equalsIgnoreCase("delivered")){
+//            feedListRowHolder.statusImg.setImageResource(R.drawable.delivered_statusbar);
+//        }else if(feedItem.getStatus().equalsIgnoreCase("cancelled")){
+//            feedListRowHolder.statusImg.setImageResource(R.drawable.cancelled_statusbar);
+//        }
+//        feedListRowHolder.orderClickLL.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                ArrayList<ProductModel> orderList=feedItem.getOrderList();
+//                OrdersModel singleOrder = (OrdersModel) feedItem;
+//                Toast.makeText(acti,"click"+orderList,Toast.LENGTH_SHORT).show();
+//                Intent in=new Intent(acti,SecondActivity.class);
+//                in.putExtra("key", TagName.ORDER_DETAILS);
+//                in.putExtra("singleOrder", singleOrder);
+////                in.putParcelableArrayListExtra("orderList", orderList);
+//                acti.startActivity(in);
+//                acti.overridePendingTransition(android.R.anim.fade_in,
+//                        android.R.anim.fade_out);
+//            }
+//        });
 
 
 //        feedListRowHolder.orderPayment.setText(feedItem.getPayment());
@@ -155,7 +135,7 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
 //            }
 //        });
         imageLoader.displayImage(
-               ((OrdersModel) feedItem).getThumbnail(), feedListRowHolder.thumbnail,
+               ((ProductModel) feedItem).getThumbnail(), feedListRowHolder.thumbnail,
                options, imageListener);
 
     }
@@ -164,7 +144,7 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
     public int getItemCount() {
         return feedItemList == null ? 0 : feedItemList.size();
     }
-    public class OrdersRecycleViewRowHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class OrdersRecycleViewRowHolder extends RecyclerView.ViewHolder {
         public  ImageView thumbnail,incr,decre,statusImg;
         public TextView title, cost,num,orderId, orderDate,orderPayment;
         LinearLayout orderClickLL;
@@ -177,11 +157,11 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         public OrdersRecycleViewRowHolder(View view) {
             super(view);
 //        mListener = listener;
-            this.orderClickLL = (LinearLayout) view.findViewById(R.id.order_click_ll);
-            this.orderId = (TextView) view.findViewById(R.id.order_id);
-            this.orderDate = (TextView) view.findViewById(R.id.order_date);
+//            this.orderClickLL = (LinearLayout) view.findViewById(R.id.order_click_ll);
+            this.orderId = (TextView) view.findViewById(R.id.s_no);
+//            this.orderDate = (TextView) view.findViewById(R.id.order_date);
             this.thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
-            this.statusImg = (ImageView) view.findViewById(R.id.status_bar);
+//            this.statusImg = (ImageView) view.findViewById(R.id.status_bar);
 ////            this.incr = (ImageView) view.findViewById(R.id.incre_image);
 ////            this.decre = (ImageView) view.findViewById(R.id.decre_image);
             this.title = (TextView) view.findViewById(R.id.title);
@@ -199,52 +179,6 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
 //        view.setOnClickListener(this);
         }
 
-        @Override
-        public void onClick(View v) {
-//        clickListener.onClick(v, getAdapterPosition() , false);
-        /*switch (v.getId()) {
-            case R.id.incre_image:
-                int i = Integer.parseInt(num.getText().toString());
-                i++;
-                num.setText(String.valueOf(i));
-//                notifyItemChanged(getAdapterPosition());
-                break;
-            case R.id.decre_image:
-                i = Integer.parseInt(num.getText().toString());
-                if(i>0){
-                    i--;
-                    num.setText(String.valueOf(i));
-                }
-
-//                notifyItemChanged(getAdapterPosition());
-                break;
-        }*/
-
-//        if (v instanceof ImageView){
-//            mListener.onServiceImageView((ImageView) v);
-//        }
-////        else if(v.getId()==R.id.incre_image){
-////            mListener.onServiceViewIncre(v.getId());
-////            Log.e("Poh-count++", "count++");
-////            num.setText(String.valueOf(count++));
-////        }else if(v.getId()==R.id.decre_image){
-////            mListener.onServiceViewDecre(v.getId());
-////            Log.e("Poh-count--", "count--");
-////            num.setText(String.valueOf(count--));
-////        }
-//        else {
-//            mListener.onServiceView(v);
-//        }
-        }
-        //    public  void setClickListener(ItemClickListener itemClickListener) {
-//        this.clickListener = itemClickListener;
-//    }
-//        public static interface IMyViewHolderClicks {
-//            public void onServiceView(View caller);
-//            //        public void onServiceViewIncre(int caller);
-////        public void onServiceViewDecre(int caller);
-//            public void onServiceImageView(ImageView callerImage);
-//        }
 
     }
 

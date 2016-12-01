@@ -12,10 +12,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,15 +28,18 @@ import android.widget.Toast;
 
 import com.btranz.ecommerceapp.R;
 import com.btranz.ecommerceapp.activity.CredientialActivity;
+import com.btranz.ecommerceapp.activity.SecondActivity;
 import com.btranz.ecommerceapp.adapter.CartServicesRecyclerAdapter;
 import com.btranz.ecommerceapp.adapter.HorizontalListAdapter;
 import com.btranz.ecommerceapp.adapter.OrdersRecyclerAdapter;
 import com.btranz.ecommerceapp.adapter.ProductGridAdapter;
 import com.btranz.ecommerceapp.modal.OrdersModel;
+import com.btranz.ecommerceapp.modal.Product;
 import com.btranz.ecommerceapp.modal.ProductModel;
 import com.btranz.ecommerceapp.utils.CheckNetworkConnection;
 import com.btranz.ecommerceapp.utils.DatabaseHandler;
 import com.btranz.ecommerceapp.utils.TagName;
+import com.btranz.ecommerceapp.utils.TypefaceSpan;
 import com.btranz.ecommerceapp.utils.Utils;
 
 import org.json.JSONArray;
@@ -53,8 +59,9 @@ import java.util.List;
  * Created by Ravi on 29/07/15.
  */
 public class OrdersFragment extends Fragment {
+    public OrdersModel singleOrder;
     ArrayList<OrdersModel> services;// = new ArrayList<ProductModel>();
-    ArrayList<OrdersModel> orderList;// = new ArrayList<ProductModel>();
+    ArrayList<ProductModel> orderList;// = new ArrayList<ProductModel>();
     List<String> cartList= new ArrayList<String>();
     FragmentActivity activity;
     private RecyclerView recyclerView;
@@ -95,6 +102,28 @@ public class OrdersFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        final Toolbar mToolbar= ((SecondActivity) getActivity()).mToolbar;
+        SpannableString s = new SpannableString(getString(R.string.title_orders));
+        s.setSpan(new TypefaceSpan(getActivity(), "hallo_sans_black.otf"), 0, s.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        final  TextView toolTitle=((SecondActivity) getActivity()).toolbarTitle;
+        //Title
+        toolTitle.setText(s);
+        mToolbar.setNavigationIcon(ContextCompat.getDrawable(getActivity(), R.drawable.back_btn));
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("MrE", "home selected");
+                activity.onBackPressed();
+//                getActivity().finish();
+//                ((MainActivity) getActivity()).startActivity(new Intent(((MainActivity) getActivity()), MainActivity.class));
+//                ((MainActivity) getActivity()).overridePendingTransition(android.R.anim.fade_in,
+//                        android.R.anim.fade_out);
+
+            }
+        });
+
         if (services == null) {
             sendRequest();
 
@@ -103,7 +132,7 @@ public class OrdersFragment extends Fragment {
 //            Log.e("onResume", "onResume");
         } else {
             Log.e("onResume else", "onResume else");
-            recyclerView.setAdapter(new OrdersRecyclerAdapter(activity, services, R.layout.order_inflate));
+            recyclerView.setAdapter(new OrdersRecyclerAdapter(OrdersFragment.this, services, R.layout.order_inflate));
 //            progressLL.setVisibility(View.GONE);
 //            pb.setVisibility(View.GONE);
 //            recyclerView.scrollToPosition(0);
@@ -148,7 +177,7 @@ public class OrdersFragment extends Fragment {
 //        recyclerView.setPadding(recyclerView.getPaddingLeft(), recyclerView.getPaddingTop(), recyclerView.getPaddingRight(), paddingBottom);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
-        adapter = new OrdersRecyclerAdapter(activity, services, R.layout.order_inflate);
+        adapter = new OrdersRecyclerAdapter(OrdersFragment.this, services, R.layout.order_inflate);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 //
@@ -251,6 +280,7 @@ public class OrdersFragment extends Fragment {
             /* Download complete. Lets update UI */
             if (result == 1) {
                 Log.e("onPostExecute", "onPostExecute");
+                Log.e("services",""+services);
 //                if(services.size()!=0) {
 //                    for (int i = 0; i < services.size(); i++) {
 //                        ProductModel item = services.get(i);
@@ -263,7 +293,7 @@ public class OrdersFragment extends Fragment {
 //                        tempAmt = amt1;
 //                    }
 //                    emptyCart.setVisibility(View.GONE);
-                    adapter = new OrdersRecyclerAdapter(activity, services, R.layout.order_inflate);
+                    adapter = new OrdersRecyclerAdapter(OrdersFragment.this, services, R.layout.order_inflate);
                     recyclerView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
 //                recyclerView.setAdapter(new ServicesRecyclerAdapter(activity, services));
@@ -312,25 +342,31 @@ public class OrdersFragment extends Fragment {
                         JSONArray jarray = post.optJSONArray("order_item_list");
                         JSONObject job1 = jarray.optJSONObject(0);
                         item.setThumbnail(job1.optString(TagName.KEY_THUMB));
+                        item.setTitle(job1.optString(TagName.KEY_NAME));
                           /*Initialize array if null*/
                         if (null == orderList) {
-                            orderList = new ArrayList<OrdersModel>();
+                            orderList = new ArrayList<ProductModel>();
                         }
                         for (int j = 0; j < jarray.length(); j++) {
                             JSONObject job = jarray.optJSONObject(j);
-                            OrdersModel item1 = new OrdersModel();
+                            ProductModel item1 = new ProductModel();
                             item1.setId(job.optInt("product_id"));
                             item1.setTitle(job.optString(TagName.KEY_NAME));
 //                        item.setDescription(post.optString(TagName.KEY_DES));
                             item1.setCost(job.optDouble(TagName.KEY_PRICE));
 //                        item.setFinalPrice(post.optDouble(TagName.KEY_FINAL_PRICE));
 //                            item.setPayment(post.optString("sku"));
-                            item1.setQnty(job.optInt(TagName.KEY_COUNT));
+                            item1.setCount(job.optInt(TagName.KEY_COUNT));
 ////                    Log.e("name", "name");
                             item1.setThumbnail(job.optString(TagName.KEY_THUMB));
                             orderList.add(item1);
+//                            item.addOrderList(item1);
+                            item.setOrderList(orderList);
+//                            item.setOd(item1);
                         }
+
                         services.add(item);
+
                     }
                 } else {
                     message = jsonObject.getString(TagName.TAG_PRODUCT);
@@ -340,6 +376,27 @@ public class OrdersFragment extends Fragment {
             e.printStackTrace();
         }
     }
+
+    public void itemClick(OrdersModel singleOrder1 ){
+//         singleOrder= singleOrder1;
+//        Log.e("singleOrder",""+singleOrder);
+//        Bundle arguments = new Bundle();
+//        arguments.putParcelable("singleOrder", singleOrder);
+//        Intent in=new Intent(activity,SecondActivity.class);
+//        Bundle extras = new Bundle();
+//        extras.putInt("key",TagName.ORDER_DETAILS);
+//        extras.putParcelable("singleOrder", singleOrder);
+////        extras.putString("place", propPlace);
+////        extras.putString("station", propStation);
+//        in.putExtras(extras);
+////        in.putExtra("key",TagName.ORDER_DETAILS);
+////        in.putExtra("singleOrder", singleOrder);
+////                in.putParcelableArrayListExtra("orderList", orderList);
+//       startActivity(in);
+//        activity.overridePendingTransition(android.R.anim.fade_in,
+//                android.R.anim.fade_out);
+    }
+
 
     @Override
     public void onAttach(Activity activity) {

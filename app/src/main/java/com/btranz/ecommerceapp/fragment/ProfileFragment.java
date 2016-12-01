@@ -34,7 +34,7 @@ import com.btranz.ecommerceapp.utils.TypefaceSpan;
  */
 public class ProfileFragment extends Fragment {
     EditText emailET,pswET,forgetPswEt;
-    TextView profileName,nameTxt, emailTxt;
+    TextView profileName,nameTxt, emailTxt,editProfile;
     FragmentActivity activity;
     SpannableString s1;
     Button logout;
@@ -101,6 +101,9 @@ public class ProfileFragment extends Fragment {
 //        profileName=(TextView)view.findViewById(R.id.profile_name);
         nameTxt=(TextView)view.findViewById(R.id.pr_name);
         emailTxt=(TextView)view.findViewById(R.id.pr_email);
+        editProfile=(TextView)view.findViewById(R.id.txtv_edit);
+
+
 //        backBtn=(ImageView) view.findViewById(R.id.back_btn);
         logout=(Button) view.findViewById(R.id.logout_btn);
 //        profileName.setText(s1);
@@ -146,6 +149,12 @@ public class ProfileFragment extends Fragment {
                 editor.commit();
                 activity.finish();
                 Toast.makeText(activity, "LogOut success!", Toast.LENGTH_SHORT).show();
+            }
+        });
+        editProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
     }

@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_text"
+    >
+    <include
+        layout="@layout/toolbar"
+        />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_text"
+    android:layout_margin="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/color_black"
+            android:text="First Name"
+
+            />
+
+
+
+
+        <EditText
+            android:id="@+id/input_f_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:padding="10dp"
+            android:background="@drawable/edittext_bg"
+            android:ems="10"
+            android:textColorHint="@color/view_divider_color"
+             />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Last Name"
+        android:textColor="@color/color_black"
+        />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:padding="10dp"
+        android:background="@drawable/edittext_bg"
+        android:ems="10"
+        android:textColorHint="@color/view_divider_color"
+        android:id="@+id/input_last_name" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Date of Birth"
+            android:textColor="@color/color_black"
+            />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:padding="10dp"
+            android:background="@drawable/edittext_bg"
+            android:ems="10"
+            android:textColorHint="@color/view_divider_color"
+            android:id="@+id/input_data_of_birth" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Mobile Number"
+            android:textColor="@color/color_black"
+            />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:padding="10dp"
+            android:background="@drawable/edittext_bg"
+            android:ems="10"
+            android:textColorHint="@color/view_divider_color"
+            android:id="@+id/input_mobile_number" />
+        <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Email Id"
+        android:textColor="@color/color_black"
+        />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:padding="10dp"
+            android:background="@drawable/edittext_bg"
+            android:ems="10"
+            android:textColorHint="@color/view_divider_color"
+            android:id="@+id/input_email_id" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Adress"
+            android:textStyle="bold"
+            />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:padding="10dp"
+            android:background="@drawable/edittext_bg"
+            android:ems="10"
+            android:textColorHint="@color/view_divider_color"
+            android:id="@+id/input_address_one" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:padding="10dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/edittext_bg"
+            android:ems="10"
+            android:textColorHint="@color/view_divider_color"
+            android:id="@+id/input_address_two" />
+        <EditText
+
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:padding="10dp"
+            android:background="@drawable/edittext_bg"
+            android:ems="10"
+
+            android:textColorHint="@color/view_divider_color"
+            android:id="@+id/input_email_three" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="date"
+            android:padding="10dp"
+            android:background="@drawable/edittext_bg"
+            android:ems="10"
+            android:textColorHint="@color/view_divider_color"
+            android:layout_weight="1"
+            android:layout_marginRight="5dp"
+            android:id="@+id/card_expiry" />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:padding="10dp"
+                android:background="@drawable/edittext_bg"
+                android:ems="10"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="1"
+                android:id="@+id/card_no" />
+        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Saved Card"
+            android:textStyle="bold"
+            />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+           android:weightSum="2"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:padding="10dp"
+                android:background="@drawable/edittext_bg"
+                android:ems="10"
+                android:hint="123"
+                android:textColorHint="@color/view_divider_color"
+                android:layout_weight="1.70"
+                android:id="@+id/card_cvv_no" />
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+             android:src="@drawable/ic_menu_catg"
+                android:id="@+id/imageView10"
+                android:layout_weight=".30" />
+        </LinearLayout>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SUBMIT"
+            android:textColor="?attr/colorPrimary"
+            android:background="?button_bg_primary_border"
+            android:paddingRight="10dp"
+            android:layout_margin="20dp"
+            android:id="@+id/card_details_submit_btn"
+            />
+
+    </LinearLayout>
+    </ScrollView>
+</LinearLayout>

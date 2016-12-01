@@ -9,7 +9,9 @@ public class TagName {
 
 	public static final String TAG_FORGOT_PWD = "forgotpassword";
 	public static final String TAG_SUCCESS = "success";
+	public static final String TAG_USER_DETAILS = "user_detail";
 	public static final String TAG_CUSTMER = "customer";
+	public static final String TAG_REGISTRATION = "registration";
 	public static final String TAG_OFFER_BANNER = "offersbanners";
 	public static final String TAG_OFFER_ALL = "offferTag";
 	public static final String TAG_HOME = "home";

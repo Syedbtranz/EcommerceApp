@@ -55,6 +55,7 @@
     <color name="color_gp">#dd4b39</color>
     <color name="color_guest">#999966</color>
     <color name="color_invite">#ff0033</color>
+    <color name="color_black">#000000</color>
 
     <!--&lt;!&ndash;menu text color&ndash;&gt; &lt;!&ndash;font type Helvetica&ndash;&gt;
     <color name="menu_text_color">#666666</color>

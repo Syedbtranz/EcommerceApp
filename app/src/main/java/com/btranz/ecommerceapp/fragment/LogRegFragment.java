@@ -436,21 +436,24 @@ public void showDialog(String message){
                           JSONArray jarry=response.getJSONArray("userlogin");
                     for(int i=0;i<jarry.length();i++){
                         JSONObject jobLogin=jarry.getJSONObject(i);
-//                        if(i==0){
-                            JSONObject jobsuccess=jobLogin.getJSONObject("status");
-                            Toast.makeText(activity, jobsuccess.optString("message"), Toast.LENGTH_LONG).show();
+                        if(jobLogin.optInt("code")!=0) {
+//                            JSONObject jobsuccess=jobLogin.getJSONObject("status");
+                            Toast.makeText(activity, jobLogin.optString("message"), Toast.LENGTH_LONG).show();
 //                        }
 //                        if(i==1){
-                            JSONObject jobcust=jobLogin.getJSONObject(TagName.TAG_CUSTMER);
+                            JSONObject jobcust = jobLogin.getJSONObject("user_detail");
                             addCart(jobcust.optString("id"));
                             editor = sharedpreferences.edit();
                             editor.putString("userID", jobcust.optString("id"));
                             editor.putString("userEmail", jobcust.optString("username"));
                             editor.putString("password", jobcust.optString("password"));
-                            editor.putString("userName",jobcust.optString("name"));
+                            editor.putString("userName", jobcust.optString("name"));
                             editor.putString("logged", "logged");
                             editor.commit();
                             activity.finish();
+                        }else{
+                            Toast.makeText(activity, jobLogin.optString("message"), Toast.LENGTH_LONG).show();
+                        }
 //                        }
                     }
 

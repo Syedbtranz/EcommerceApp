@@ -48,6 +48,7 @@ public static final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@
     public static String promoRemoveUrl = serverUrl+"removecoupon/";
     public static String directCheckoutUrl = serverUrl+"customcheckoutdirect/";
     public static String deliveryTypeUrl = serverUrl+"applydeleverytype/";
+    public static String getCountryListUrl = serverUrl+"countylist";
     public static String checkoutPaymentInfoUrl = serverUrl+"customcheckoutcarttotal/";
     public static String checkoutUrl = serverUrl+"customcheckout/";
     public static String ordersUrl = serverUrl+"orderhistory/";

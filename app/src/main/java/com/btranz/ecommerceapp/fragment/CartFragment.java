@@ -160,13 +160,13 @@ public class CartFragment extends Fragment {
                 sendRequest();
             }
 //            adapter = new ServicesRecyclerAdapter(activity, services);
-            Log.e("onResume", "onResume");
+//            Log.e("onResume", "onResume");
         } else {
 //            Log.e("onResume else", "onResume else");
 //            System.out.println(services);
-            recyclerView.setAdapter(new CartServicesRecyclerAdapter(CartFragment.this, services));
-            recyclerView.scrollToPosition(0);
-            emptyCart.setVisibility(View.GONE);
+//            recyclerView.setAdapter(new CartServicesRecyclerAdapter(CartFragment.this, services));
+//            recyclerView.scrollToPosition(0);
+//            emptyCart.setVisibility(View.VISIBLE);
         }
         super.onResume();
     }

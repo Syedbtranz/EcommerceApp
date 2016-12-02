@@ -78,7 +78,7 @@ public class CheckOutFragment extends Fragment {
     TextView   typeTxt, addressTxt, nameTxt,emailTxt, mobileTxt,typeED, addressED, nameED, emailED, mobileED, summaryView, modeTXT, amtTXT, discountTXT, shippingTXT, totalAmtTXT;
 //    Button buyNowBtn;
     LinearLayout buyNowBtn;
-    String deliveryType, userId, customerName, customerEmail, customerContact, customerStreet, customerCity, customerCountry, customerPincode, quoteId, paymentMode;
+    String deliveryType, userId, customerName, customerEmail, customerContact, customerStreet, customerCity, customerCountry,customerCountryCode, customerPincode, quoteId, paymentMode;
     double subtot;
     double subwithdisc;
     double shippingCharge;
@@ -112,7 +112,8 @@ public class CheckOutFragment extends Fragment {
         customerContact = sharedpreferences.getString("checkoutCustomerContact", "");
         customerStreet = sharedpreferences.getString("checkoutCustomerStreet", "");
         customerCity = sharedpreferences.getString("checkoutCustomerCity", "");
-        customerCountry="in";
+        customerCountry=sharedpreferences.getString("checkoutCustomerCountry", "");
+        customerCountryCode=sharedpreferences.getString("checkoutCustomerCountryCode", "");
         customerPincode = sharedpreferences.getString("checkoutCustomerPincode", "");
         deliveryType = sharedpreferences.getString("checkoutCustomerDeliveryType", "");
         paymentMode = sharedpreferences.getString("checkoutCustomerPaymentMode", "");
@@ -162,7 +163,7 @@ public class CheckOutFragment extends Fragment {
         buyNowBtn=(LinearLayout) rootView.findViewById(R.id.buynow_btn);
 
         typeTxt.setText(deliveryType);
-        addressTxt.setText(customerStreet+"\n"+customerCity+"\n"+customerPincode);
+        addressTxt.setText(customerStreet+"\n"+customerCity+"\n"+customerCountry+"\n"+customerPincode);
         nameTxt.setText(customerName);
         emailTxt.setText(customerEmail);
         mobileTxt.setText(customerContact);
@@ -743,10 +744,10 @@ public class AsyncHttpTask extends AsyncTask<String, Void, Integer> {
 
                 try{
 //                    String restUrl = URLEncoder.encode(Utils.checkoutUrl+userId+"/"+customerEmail+"/"+customerName+"/"+customerStreet+"/"+customerCity+"/"+customerCountry+"/"+customerPincode+"/"+customerContact+"/"+shippingRate+"/"+paymentMode+"/"+quoteId, "UTF-8");
-                    String restUrl = Utils.checkoutUrl+userId+"/"+customerEmail+"/"+customerName+"/"+customerStreet+"/"+customerCity+"/"+customerCountry+"/"+customerPincode+"/"+customerContact+"/"+shippingRate+"/"+paymentMode+"/"+quoteId ;
-
+                    String restUrl = Utils.checkoutUrl+userId+"/"+customerEmail+"/"+customerName+"/"+customerStreet+"/"+customerCity+"/"+customerCountryCode+"/"+customerPincode+"/"+customerContact+"/"+shippingRate+"/"+paymentMode+"/"+quoteId ;
+                    Log.e("restUrl",restUrl.replace(" ","%20"));
                     HttpClient httpClient = new DefaultHttpClient();
-                    HttpGet httpPost = new HttpGet(restUrl);
+                    HttpGet httpPost = new HttpGet(restUrl.replace(" ","%20"));
 //                    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
                     HttpResponse response = httpClient.execute(httpPost);

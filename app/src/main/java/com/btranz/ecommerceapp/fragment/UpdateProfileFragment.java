@@ -1,12 +1,12 @@
 package com.btranz.ecommerceapp.fragment;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
@@ -22,7 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.btranz.ecommerceapp.R;
-import com.btranz.ecommerceapp.activity.SecondActivity;
 import com.btranz.ecommerceapp.utils.TagName;
 import com.btranz.ecommerceapp.utils.TypefaceSpan;
 
@@ -30,14 +29,15 @@ import com.btranz.ecommerceapp.utils.TypefaceSpan;
 /**
  * Created by Sajid on 01/12/16.
  */
-public class CardsDetailsFragment extends Fragment {
+public class UpdateProfileFragment extends Fragment {
     Button cardDetailsSubmitBtn;
     EditText cardTypeEd, cardNoEd, cardNameEd, cardExpiryEd, cardCvvEd;
     String cardType,cardNo, cardExpiry, cardCvv, cardName;
     FragmentActivity activity;
+    TextView changPwd;
     public static final String CARD_DETAILS_FRAG = "card_details_fragment";
 
-    public CardsDetailsFragment() {
+    public UpdateProfileFragment() {
         // Required empty public constructor
     }
 
@@ -52,7 +52,7 @@ public class CardsDetailsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_card_details, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_update_profile, container, false);
         findViewById(rootView);
 
 
@@ -106,8 +106,47 @@ public class CardsDetailsFragment extends Fragment {
         cardNameEd=(EditText) view.findViewById(R.id.card_name);
         cardExpiryEd=(EditText) view.findViewById(R.id.card_expiry);
         cardCvvEd=(EditText) view.findViewById(R.id.card_cvv_no);
+        changPwd=(TextView)view.findViewById(R.id.txtv_change_pwd);
         cardDetailsSubmitBtn=(Button)view.findViewById(R.id.card_details_submit_btn);
 
+        changPwd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+LayoutInflater inflater=getActivity().getLayoutInflater();
+                View view1=inflater.inflate(R.layout.change_pwd_otp_alert,null);
+                AlertDialog.Builder dialogBuilder=new AlertDialog.Builder(getActivity());
+                dialogBuilder.setView(view1);
+                final EditText otpEdit=(EditText)view1.findViewById(R.id.input_otp);
+                Button applyBtn=(Button)view1.findViewById(R.id.btn_apply);
+                final AlertDialog alertDialog=dialogBuilder.create();
+                applyBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String otp=otpEdit.getText().toString();
+                        if(otp.equals("")){
+                            Toast.makeText(getActivity(), "Enter OTP.", Toast.LENGTH_SHORT).show();
+                        }else if(otp.equals("1234")){
+                            alertDialog.cancel();
+                            Bundle arguments = new Bundle();
+                            Fragment fragment = null;
+
+                            // Start a new fragment
+                            fragment = new ChangePasswordFragment();
+                            fragment.setArguments(arguments);
+                            FragmentTransaction transaction = activity
+                                    .getSupportFragmentManager().beginTransaction();
+                            transaction.replace(R.id.container_booknow, fragment,
+                                    TagName.FRAGMENT_PROFILE_UPDATE);
+                            transaction.addToBackStack(TagName.FRAGMENT_PROFILE_UPDATE);
+                            transaction.commit();
+                        }else{
+                            Toast.makeText(getActivity(), "Enter valid OTP.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                alertDialog.show();
+            }
+        });
         //card details Action
         cardDetailsSubmitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,6 +185,7 @@ public class CardsDetailsFragment extends Fragment {
         }  else if (cardName.equals("")) {
             Toast.makeText(activity,
                     "Please enter the CARD HOLDER NAME", Toast.LENGTH_SHORT).show();
+
             cardNameEd.requestFocus();
         } else if (cardExpiry.equals("")) {
             Toast.makeText(activity,

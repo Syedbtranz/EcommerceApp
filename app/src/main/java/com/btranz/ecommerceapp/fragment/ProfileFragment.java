@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -26,11 +27,12 @@ import android.widget.Toast;
 
 import com.btranz.ecommerceapp.R;
 import com.btranz.ecommerceapp.activity.SecondActivity;
+import com.btranz.ecommerceapp.utils.TagName;
 import com.btranz.ecommerceapp.utils.TypefaceSpan;
 
 
 /**
- * Created by Ravi on 29/07/15.
+ * Created by Sajid on 01/12/16.
  */
 public class ProfileFragment extends Fragment {
     EditText emailET,pswET,forgetPswEt;
@@ -154,7 +156,18 @@ public class ProfileFragment extends Fragment {
         editProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Bundle arguments = new Bundle();
+          Fragment fragment = null;
 
+           // Start a new fragment
+           fragment = new UpdateProfileFragment();
+                fragment.setArguments(arguments);
+                FragmentTransaction transaction = activity
+                   .getSupportFragmentManager().beginTransaction();
+           transaction.replace(R.id.container_booknow, fragment,
+                    TagName.FRAGMENT_PROFILE_UPDATE);
+           transaction.addToBackStack(TagName.FRAGMENT_PROFILE_UPDATE);
+           transaction.commit();
             }
         });
     }

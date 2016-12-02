@@ -1,11 +1,9 @@
 package com.btranz.ecommerceapp.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -19,12 +17,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.btranz.ecommerceapp.R;
-import com.btranz.ecommerceapp.activity.SecondActivity;
 import com.btranz.ecommerceapp.fragment.OrderDetailFragment;
 import com.btranz.ecommerceapp.fragment.OrdersFragment;
 import com.btranz.ecommerceapp.modal.OrdersModel;
 import com.btranz.ecommerceapp.modal.ProductModel;
-import com.btranz.ecommerceapp.utils.TagName;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 

@@ -1,11 +1,9 @@
 package com.btranz.ecommerceapp.fragment;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,22 +20,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.btranz.ecommerceapp.R;
-import com.btranz.ecommerceapp.activity.SecondActivity;
-import com.btranz.ecommerceapp.utils.TagName;
 import com.btranz.ecommerceapp.utils.TypefaceSpan;
 
 
 /**
- * Created by Sajid on 01/12/16.
+ * Created by SAjid on 01/12/16.
  */
-public class CardsDetailsFragment extends Fragment {
+public class ChangePasswordFragment extends Fragment {
     Button cardDetailsSubmitBtn;
     EditText cardTypeEd, cardNoEd, cardNameEd, cardExpiryEd, cardCvvEd;
     String cardType,cardNo, cardExpiry, cardCvv, cardName;
     FragmentActivity activity;
     public static final String CARD_DETAILS_FRAG = "card_details_fragment";
 
-    public CardsDetailsFragment() {
+    public ChangePasswordFragment() {
         // Required empty public constructor
     }
 
@@ -52,7 +48,7 @@ public class CardsDetailsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_card_details, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_change_pwd, container, false);
         findViewById(rootView);
 
 

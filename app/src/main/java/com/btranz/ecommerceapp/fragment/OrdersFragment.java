@@ -361,11 +361,11 @@ public class OrdersFragment extends Fragment {
                             item1.setThumbnail(job.optString(TagName.KEY_THUMB));
                             orderList.add(item1);
 //                            item.addOrderList(item1);
-
+                            item.setOrderList(orderList);
 //                            item.setOd(item1);
                         }
-                        item.setOrderList(orderList);
-                        services.add(i,item);
+
+                        services.add(item);
 
                     }
                 } else {

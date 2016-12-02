@@ -127,6 +127,7 @@
             android:padding="10dp"
             android:background="@drawable/edittext_bg"
             android:ems="10"
+            android:hint="Address 1"
             android:textColorHint="@color/view_divider_color"
             android:id="@+id/input_address_one" />
 
@@ -135,6 +136,7 @@
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:padding="10dp"
+            android:hint="Address 2"
             android:layout_marginTop="5dp"
             android:background="@drawable/edittext_bg"
             android:ems="10"
@@ -147,9 +149,9 @@
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:padding="10dp"
+            android:hint="Address 3"
             android:background="@drawable/edittext_bg"
             android:ems="10"
-
             android:textColorHint="@color/view_divider_color"
             android:id="@+id/input_email_three" />
         <LinearLayout
@@ -164,6 +166,7 @@
             android:padding="10dp"
             android:background="@drawable/edittext_bg"
             android:ems="10"
+            android:hint="State"
             android:textColorHint="@color/view_divider_color"
             android:layout_weight="1"
             android:layout_marginRight="5dp"
@@ -175,15 +178,17 @@
                 android:padding="10dp"
                 android:background="@drawable/edittext_bg"
                 android:ems="10"
+                android:hint="Pincode"
                 android:layout_marginLeft="5dp"
                 android:layout_weight="1"
                 android:id="@+id/card_no" />
         </LinearLayout>
-        <TextView
+       <!-- <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="Saved Card"
+            android:textColor="@color/color_black"
             android:textStyle="bold"
             />
         <LinearLayout
@@ -199,7 +204,7 @@
                 android:padding="10dp"
                 android:background="@drawable/edittext_bg"
                 android:ems="10"
-                android:hint="123"
+                android:hint="XXXXXXXXX31223"
                 android:textColorHint="@color/view_divider_color"
                 android:layout_weight="1.70"
                 android:id="@+id/card_cvv_no" />
@@ -208,14 +213,63 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-             android:src="@drawable/ic_menu_catg"
-                android:id="@+id/imageView10"
+             android:src="@drawable/addcard_btn"
+                android:id="@+id/img_add_card"
                 android:layout_weight=".30" />
+        </LinearLayout>-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_marginTop="15dp"
+            android:layout_height="wrap_content">
+            <TextView
+                android:text="AccountStatus"
+                android:textStyle="bold"
+                android:textColor="@color/color_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Switch
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/switch1"
+                android:shadowColor="@color/color_green"
+                android:checked="true"
+                android:layout_weight="1" />
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="15dp"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+            <TextView
+                android:text="Password"
+                android:textStyle="bold"
+
+                android:textColor="@color/color_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+<View
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"/>
+            <TextView
+
+                android:text="Change Password"
+                android:textColor="@color/theme_blue_colorAccent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/txtv_change_pwd"
+               />
+        </LinearLayout>
+
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="SUBMIT"
+            android:layout_marginTop="10dp"
             android:textColor="?attr/colorPrimary"
             android:background="?button_bg_primary_border"
             android:paddingRight="10dp"

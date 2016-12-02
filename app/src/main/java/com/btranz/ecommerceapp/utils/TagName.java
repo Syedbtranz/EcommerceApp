@@ -54,6 +54,7 @@ public class TagName {
 	public static final String FRAGMENT_USER_ADDRESS= "fragment_user_address";
 	public static final String FRAGMENT_USER_BILLING= "fragment_user_billing";
 	public static final String FRAGMENT_USER_CHECKOUT= "fragment_user_checkout";
+	public static final String FRAGMENT_PROFILE_UPDATE= "fragment_profile_update";
 	public static final String CART_FRAG= "fragment_cart";
 
 	public static final String FRAGMENT_LOGIN= "fragment_profile";

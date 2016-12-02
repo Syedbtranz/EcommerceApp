@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:text="To Proceed Enter OTP send to your registered Mobile number and click on apply"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="45dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:id="@+id/text" />
+    <TextView
+        android:text="TextView"
+        android:layout_marginTop="65dp"
+        android:textColor="@color/color_black"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView10" />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:inputType="textPersonName"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/edittext_bg"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+       android:hint=""
+        android:ems="10"
+        android:id="@+id/input_otp" />
+
+    <Button
+        android:text="Apply"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/button_bg_default_primary"
+        android:layout_width="100dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="45dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_apply" />
+
+</LinearLayout>

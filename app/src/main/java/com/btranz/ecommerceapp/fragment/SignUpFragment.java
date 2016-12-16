@@ -445,7 +445,7 @@ public class SignUpFragment extends Fragment implements GoogleApiClient.OnConnec
                                 editor = sharedpreferences.edit();
                                 editor.putString("userID", userDetailsObj.optString("id"));
                                 editor.putString("userEmail", userDetailsObj.optString("username"));
-                                editor.putString("password", userDetailsObj.optString("password"));
+//                                editor.putString("password", userDetailsObj.optString("password"));
                                 editor.putString("userName",userDetailsObj.optString("name"));
                                 editor.putString("logged", "logged");
                                 editor.commit();

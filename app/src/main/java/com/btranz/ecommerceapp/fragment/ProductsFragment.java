@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
@@ -80,6 +81,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -87,10 +90,11 @@ import okhttp3.Response;
 
 
 /**
- * Created by Ravi on 29/07/15.
+ * Created by Mahboob on 12/14/2016.
  */
 public class ProductsFragment extends Fragment implements NavigationView.OnNavigationItemSelectedListener{
     View div;
+    View dialogView;
     ImageView dis_image, arr_image, htol_image, ltoh_image, pop_image;
     TextView disTxt, arrTxt, htolTxt, ltohTxt, popTxt;
     LinearLayout filterBrand, filterPrice, filterRating, filterDiscount;
@@ -106,6 +110,7 @@ public class ProductsFragment extends Fragment implements NavigationView.OnNavig
     LinearLayout sortBtn, filterBtn;
     LinearLayout progressLL;
     ProgressBar pb;
+    android.os.Handler handler;
     boolean view_flag=true;
     ImageView viewBtn;
     String prdtsUrl, prdtsTitle;
@@ -124,7 +129,7 @@ public class ProductsFragment extends Fragment implements NavigationView.OnNavig
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity=getActivity();
-
+        handler = new android.os.Handler();
 //        initList();
 //        sendRequest();
 //        Log.e("onCreate","test");
@@ -175,7 +180,64 @@ public class ProductsFragment extends Fragment implements NavigationView.OnNavig
             filterBtn = (LinearLayout) rootView.findViewById(R.id.filter_btn);
 //            adapter = new ProductGridAdapter(activity, services);
 //            ProductsGrid.setAdapter(adapter);
-            ProductsGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        //Sort Btn
+        sortBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "Sort", Toast.LENGTH_LONG).show();
+                showSortDialog();
+            }
+        });
+
+        //Filter Btn
+        filterBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "Filter", Toast.LENGTH_SHORT).show();
+//                    showFilter();
+                try {
+//                    handler.postDelayed(new Runnable() {
+//                        @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
+//                        @Override
+//                        public void run() {
+//                            showFilter();
+                            showFilterDialog();
+//                        }
+//                    }, 1000);
+                }catch (Exception e){
+
+                }
+
+            }
+        });
+        //View Btn
+        viewBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "ViewList", Toast.LENGTH_LONG).show();
+                if (view_flag) {
+                    ProductsGrid.setBackgroundColor(getResources().getColor(R.color.view_divider_color));
+                    ProductsGrid.setNumColumns(1);
+                    ProductsGrid.setVerticalSpacing(2);
+                    ProductsGrid.setHorizontalSpacing(0);
+//                        div.setVisibility(View.VISIBLE);
+                    viewBtn.setImageResource(R.drawable.view_grid_btn);
+                    view_flag = false;
+                } else {
+                    ProductsGrid.setBackgroundColor(getResources().getColor(R.color.color_text));
+                    ProductsGrid.setNumColumns(2);
+                    ProductsGrid.setVerticalSpacing(0);
+                    ProductsGrid.setHorizontalSpacing(5);
+//                        div.setVisibility(View.GONE);
+                    viewBtn.setImageResource(R.drawable.view_icon);
+                    view_flag = true;
+                }
+
+//                showFilterDialog();
+            }
+        });
+        // Product Click
+        ProductsGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Toast.makeText(getActivity(), "Id:" + services.get(position).getTitle(), Toast.LENGTH_LONG).show();
@@ -195,49 +257,6 @@ public class ProductsFragment extends Fragment implements NavigationView.OnNavig
                             ProductItemFragment.ARG_ITEM_ID);
                     transaction.addToBackStack(ProductItemFragment.ARG_ITEM_ID);
                     transaction.commit();
-                }
-            });
-            //Sort Btn
-            sortBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(getActivity(), "Sort", Toast.LENGTH_LONG).show();
-                    showSortDialog();
-                }
-            });
-
-            //Filter Btn
-            filterBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(getActivity(), "Filter", Toast.LENGTH_LONG).show();
-                    showFilterDialog();
-                }
-            });
-            //View Btn
-            viewBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(getActivity(), "ViewList", Toast.LENGTH_LONG).show();
-                    if (view_flag) {
-                        ProductsGrid.setBackgroundColor(getResources().getColor(R.color.view_divider_color));
-                        ProductsGrid.setNumColumns(1);
-                        ProductsGrid.setVerticalSpacing(2);
-                        ProductsGrid.setHorizontalSpacing(0);
-//                        div.setVisibility(View.VISIBLE);
-                        viewBtn.setImageResource(R.drawable.view_grid_btn);
-                        view_flag = false;
-                    } else {
-                        ProductsGrid.setBackgroundColor(getResources().getColor(R.color.color_text));
-                        ProductsGrid.setNumColumns(2);
-                        ProductsGrid.setVerticalSpacing(0);
-                        ProductsGrid.setHorizontalSpacing(5);
-//                        div.setVisibility(View.GONE);
-                        viewBtn.setImageResource(R.drawable.view_icon);
-                        view_flag = true;
-                    }
-
-//                showFilterDialog();
                 }
             });
 
@@ -355,16 +374,44 @@ private void initList() {
 
 
 }
+    public void  showFilter(){
+//        Bundle arguments = new Bundle();
+//        Fragment fragment = null;
+////                Log.d("position adapter", "" + position);
+////                Product product = (Product) products.get(position);
+////                arguments.putParcelable("singleProduct", product);
+//
+//        // Start a new fragment
+//        fragment = new FilterFragment();
+////                fragment.setArguments(arguments);
+//
+//        FragmentTransaction transaction = activity
+//                .getSupportFragmentManager().beginTransaction();
+//        transaction.replace(R.id.container_second, fragment,
+//                FilterFragment.FILTER_FRAG);
+//        transaction.addToBackStack(FilterFragment.FILTER_FRAG);
+//        transaction.commit();
+
+//        FragmentTransaction  fm = getFragmentManager().beginTransaction();
+        FragmentTransaction  fm = activity
+                .getSupportFragmentManager().beginTransaction();;
+        FilterFragment dialogFragment = new FilterFragment ();
+        dialogFragment.show(fm, "Sample Fragment");
+    }
 public void showFilterDialog() {
-    android.support.v7.app.AlertDialog.Builder dialogBuilder = new android.support.v7.app.AlertDialog.Builder(this.getActivity());
-    LayoutInflater inflater = getActivity().getLayoutInflater();
-    final View dialogView = inflater.inflate(R.layout.filter_dialog, null);
+    android.support.v7.app.AlertDialog.Builder dialogBuilder = new android.support.v7.app.AlertDialog.Builder(activity,R.style.AppTheme);
+    LayoutInflater inflater = activity.getLayoutInflater();
+    dialogView = inflater.inflate(R.layout.filter_dialog, null);
+    dialogBuilder.setView(dialogView);
+    final android.support.v7.app.AlertDialog b = dialogBuilder.create();
+//    b.getWindow().getAttributes().windowAnimations = R.style.CustomAnimations_slide;
+    b.show();
+
     ImageView close = (ImageView) dialogView.findViewById(R.id.filter_close);
     Button reset = (Button) dialogView.findViewById(R.id.reset_btn);
     Button filterApply = (Button) dialogView.findViewById(R.id.filter_apply);
     NavigationView navigationView = (NavigationView)dialogView.findViewById(R.id.filter_nav_view);
-    getRatingCount(dialogView);
-    getDiscountCount(dialogView);
+
      filterList = (ListView) dialogView.findViewById(R.id.filter_listView);
     // This is a simple adapter that accepts as parameter
     // Context
@@ -427,32 +474,8 @@ public void showFilterDialog() {
      filterRating = (LinearLayout) dialogView.findViewById(R.id.filter_rating_list);
     filterDiscount = (LinearLayout) dialogView.findViewById(R.id.filter_discount_list);
     navigationView.setNavigationItemSelectedListener(ProductsFragment.this);
-    // get seekbar from view
-    final CrystalRangeSeekbar rangeSeekbar = (CrystalRangeSeekbar) dialogView.findViewById(R.id.rangeSeekbar1);
 
-// get min and max text view
-    final TextView tvMin = (TextView) dialogView.findViewById(R.id.textMin1);
-    final TextView tvMax = (TextView) dialogView.findViewById(R.id.textMax1);
 
-// set listener
-    rangeSeekbar.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
-        @Override
-        public void valueChanged(Number minValue, Number maxValue) {
-            //get entered texts from the edittexts,and convert to integers.
-            int value1 = Integer.parseInt(minValue.toString());
-            int value2 = Integer.parseInt(maxValue.toString());
-//            Double value2 = Double.parseDouble(mEditText2.getText().toString());
-//            Double value3 = Double.parseDouble(mEditText3.getText().toString());
-            //do the calculation
-//            Double calculatedValue = (value2/value1)*value3;
-            tvMin.setText(String.valueOf(value1));
-            tvMax.setText(String.valueOf(value2));
-        }
-    });
-    dialogBuilder.setView(dialogView);
-    final android.support.v7.app.AlertDialog b = dialogBuilder.create();
-    b.getWindow().getAttributes().windowAnimations = R.style.CustomAnimations_slide;
-    b.show();
     close.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -778,7 +801,7 @@ public void showSortDialog() {
 //            task.execute(Utils.productsUrl);
             task.execute(prdtsUrl);
 //            task.execute(Utils.instantServerUrl);
-            Log.e("sendrequest","sendrequest");
+            Log.e("sendrequest",prdtsUrl);
         } else {
             message = getResources().getString(R.string.no_internet_connection);
             showAlertDialog(message, true);
@@ -812,18 +835,43 @@ public void showSortDialog() {
                 filterDiscount.setVisibility(View.GONE);
                 break;
             case R.id.filter_price:
+                // get seekbar from view
+                final CrystalRangeSeekbar rangeSeekbar = (CrystalRangeSeekbar) dialogView.findViewById(R.id.rangeSeekbar1);
+
+// get min and max text view
+                final TextView tvMin = (TextView) dialogView.findViewById(R.id.textMin1);
+                final TextView tvMax = (TextView) dialogView.findViewById(R.id.textMax1);
+
+// set listener
+                rangeSeekbar.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
+                    @Override
+                    public void valueChanged(Number minValue, Number maxValue) {
+                        //get entered texts from the edittexts,and convert to integers.
+                        int value1 = Integer.parseInt(minValue.toString());
+                        int value2 = Integer.parseInt(maxValue.toString());
+//            Double value2 = Double.parseDouble(mEditText2.getText().toString());
+//            Double value3 = Double.parseDouble(mEditText3.getText().toString());
+                        //do the calculation
+//            Double calculatedValue = (value2/value1)*value3;
+                        tvMin.setText(String.valueOf(value1));
+                        tvMax.setText(String.valueOf(value2));
+                    }
+                });
                 filterBrand.setVisibility(View.GONE);
                 filterPrice.setVisibility(View.VISIBLE);
                 filterRating.setVisibility(View.GONE);
                 filterDiscount.setVisibility(View.GONE);
+
                 break;
             case R.id.filter_rating:
+                getRatingCount(dialogView);
                 filterBrand.setVisibility(View.GONE);
                 filterPrice.setVisibility(View.GONE);
                 filterRating.setVisibility(View.VISIBLE);
                 filterDiscount.setVisibility(View.GONE);
                 break;
             case R.id.filter_dicount:
+                getDiscountCount(dialogView);
                 filterBrand.setVisibility(View.GONE);
                 filterPrice.setVisibility(View.GONE);
                 filterRating.setVisibility(View.GONE);
@@ -923,13 +971,13 @@ public void showSortDialog() {
 //                recyclerView.setAdapter(new ServicesRecyclerAdapter(activity, services));
                 }else {
                     message = getResources().getString(R.string.no_products);
-                    showAlertDialog(message, true);
+//                    showAlertDialog(message, true);
                 }
             } else {
                 Log.e("hello", "Failed to fetch data!");
                 pb.setVisibility(View.GONE);
 //                message = getResources().getString(R.string.no_products);
-                showAlertDialog(message, true);
+//                showAlertDialog(message, true);
 //                Toast.makeText(activity,"No Prodructs Found",Toast.LENGTH_SHORT).show();
             }
         }
@@ -1020,6 +1068,7 @@ public void showSortDialog() {
 //                    item.setCount(post.optInt("finalPrice"));
 //                    Log.e("name", "name");
                     item.setThumbnail(post.optString(TagName.KEY_THUMB));
+                    item.setWishlist(post.optInt(TagName.KEY_WISHLIST));
                     JSONObject post1 = post.optJSONObject(TagName.TAG_OFFER_ALL);
                     item.setShare(post1.optString(TagName.KEY_SHARE));
                     item.setTag(post1.optString(TagName.KEY_TAG));
@@ -1037,75 +1086,6 @@ public void showSortDialog() {
     }
 
 
-public void loadData(String url){
-    Log.d("NGVL", "WEB");
-    OkHttpClient client = new OkHttpClient();
-    Request request = new Request.Builder()
-            .url(url)
-            .build();
-
-    try {
-        Response response = client.newCall(request).execute();
-        String jsonString = response.body().string();
-        Log.d("NGVL", jsonString);
-//        JSONArray jsonArray = new JSONArray(jsonString);
-
-        services = new ArrayList<>();
-
-//        int lenght = jsonArray.length();
-//        for (int i = 0; i < lenght; i++) {
-//            String city = jsonArray.getString(i);
-//            services.add(city);
-            JSONArray jArry = new JSONArray(jsonString);
-            JSONObject jsonObject=jArry.getJSONObject(0);
-
-            if (jsonObject != null) {
-                JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
-                int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
-
-                if (status==1) {
-//            boolean status = response.getBoolean(TagName.TAG_STATUS);
-
-//                    if (status) {
-//                JSONObject jsonData = jsonObject
-//                        .getJSONObject(TagName.TAG_PRODUCT);
-//                    }
-                    JSONArray posts = jsonObject.optJSONArray(TagName.TAG_PRODUCT);
-
-//            Initialize array if null
-                    if (null == services) {
-                        services = new ArrayList<ProductModel>();
-                    }
-
-                    for (int i = 0; i < posts.length(); i++) {
-                        JSONObject post = posts.optJSONObject(i);
-
-                        ProductModel item = new ProductModel();
-                        item.setId(post.optInt(TagName.KEY_ID));
-                        item.setTitle(post.optString(TagName.KEY_NAME));
-                        item.setDescription(post.optString(TagName.KEY_DES));
-                        item.setCost(post.optDouble(TagName.KEY_PRICE));
-                        item.setFinalPrice(post.optDouble(TagName.KEY_FINAL_PRICE));
-//                    item.setCount(post.optInt("finalPrice"));
-//                    Log.e("name", "name");
-                        item.setThumbnail(post.optString(TagName.KEY_THUMB));
-                        JSONObject post1 = post.optJSONObject(TagName.TAG_OFFER_ALL);
-                        item.setShare(post1.optString(TagName.KEY_SHARE));
-                        item.setTag(post1.optString(TagName.KEY_TAG));
-                        item.setDiscount(post1.optInt(TagName.KEY_DISC));
-                        item.setRating(post1.optInt(TagName.KEY_RATING));
-                        services.add(item);
-                    }
-                } else {
-                    message = jsonObject.getString(TagName.TAG_PRODUCT);
-                }
-            }
-//        }
-
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-}
 
 
     @Override

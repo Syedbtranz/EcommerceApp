@@ -2,8 +2,10 @@ package com.btranz.ecommerceapp.fragment;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -59,7 +61,10 @@ public class CategoriesFragment extends Fragment {
     CategoryGridAdapter adapter,gadAdapter,hlAdapter;
     AsyncHttpTask task;
     AlertDialog alertDialog;
-    String message;
+    String message, userId;
+    // shared preference
+    SharedPreferences sharedpreferences;
+    String PREFS_NAME = "MyPrefs";
     public CategoriesFragment() {
         // Required empty public constructor
 
@@ -69,7 +74,9 @@ public class CategoriesFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity=getActivity();
-
+        sharedpreferences = activity.getSharedPreferences(PREFS_NAME,
+                Context.MODE_PRIVATE);
+        userId = sharedpreferences.getString("userID", "");
     }
 
     @Override
@@ -88,6 +95,12 @@ public class CategoriesFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 int id1= services.get(position).getId();
+                String user;
+                if(userId.equals("")){
+                    user="0";
+                }else{
+                    user=userId;
+                }
 //                Intent in=new Intent(activity,SecondActivity.class);
 //                in.putExtra("key", TagName.FRAGMENT_PRODUCTS);
 //                in.putExtra("prdtsUrl", Utils.catgProductListUrl+id1+"/"+Utils.sellerId);
@@ -99,7 +112,7 @@ public class CategoriesFragment extends Fragment {
 //                Log.d("position adapter", "" + position);
 //                Product product = (Product) products.get(position);
 //                arguments.putParcelable("singleProduct", product);
-                arguments.putString("prdtsUrl", Utils.catgProductListUrl+id1+"/"+Utils.sellerId);
+                arguments.putString("prdtsUrl", Utils.catgProductListUrl+id1+"/"+Utils.sellerId+"/"+user);
                 arguments.putString("prdtsTitle", services.get(position).getTitle());
                 // Start a new fragment
                 fragment = new ProductsFragment();
@@ -119,6 +132,12 @@ public class CategoriesFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //                Intent in=new Intent(activity,SecondActivity.class);
                 int gadId= gadServices.get(position).getId();
+                String user;
+                if(userId.equals("")){
+                    user="0";
+                }else{
+                    user=userId;
+                }
 //                Toast.makeText(getActivity(), "Id:" + gadServices.get(position).getId(), Toast.LENGTH_LONG).show();
 //                in.putExtra("key", TagName.FRAGMENT_PRODUCTS);
 //                in.putExtra("prdtsUrl", Utils.catgProductListUrl+gadId+"/"+Utils.sellerId);
@@ -130,7 +149,7 @@ public class CategoriesFragment extends Fragment {
 //                Log.d("position adapter", "" + position);
 //                Product product = (Product) products.get(position);
 //                arguments.putParcelable("singleProduct", product);
-                arguments.putString("prdtsUrl", Utils.catgProductListUrl+gadId+"/"+Utils.sellerId);
+                arguments.putString("prdtsUrl", Utils.catgProductListUrl+gadId+"/"+Utils.sellerId+"/"+user);
                 arguments.putString("prdtsTitle", gadServices.get(position).getTitle());
 
                 // Start a new fragment
@@ -151,6 +170,12 @@ public class CategoriesFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //                Intent in=new Intent(activity,SecondActivity.class);
                 int hlId= hlServices.get(position).getId();
+                String user;
+                if(userId.equals("")){
+                    user="0";
+                }else{
+                    user=userId;
+                }
 //                Toast.makeText(getActivity(), "Id:" + hlServices.get(position).getId(), Toast.LENGTH_LONG).show();
 //                in.putExtra("key", TagName.FRAGMENT_PRODUCTS);
 //                in.putExtra("prdtsUrl", Utils.catgProductListUrl+hlId+"/"+Utils.sellerId);
@@ -162,7 +187,7 @@ public class CategoriesFragment extends Fragment {
 //                Log.d("position adapter", "" + position);
 //                Product product = (Product) products.get(position);
 //                arguments.putParcelable("singleProduct", product);
-                arguments.putString("prdtsUrl", Utils.catgProductListUrl+hlId+"/"+Utils.sellerId);
+                arguments.putString("prdtsUrl", Utils.catgProductListUrl+hlId+"/"+Utils.sellerId+"/"+user);
                 arguments.putString("prdtsTitle", hlServices.get(position).getTitle());
                 // Start a new fragment
                 fragment = new ProductsFragment();

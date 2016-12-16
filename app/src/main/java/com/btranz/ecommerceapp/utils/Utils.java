@@ -26,7 +26,7 @@ public class Utils extends Activity{
 public static final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@"
         + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     //Services
-    public static String serverUrl = "http://btranz.website/index.php/rest//V1/marketplace/";
+    public static String serverUrl = "http://btranz.website/index.php/rest/V1/marketplace/";
     public  static String sellerId =AppData.getContext().getResources().getString(R.string.seller_id);
     public static String regUrl = serverUrl+"registration/";
     public static String loginUrl = serverUrl+"userlogin/";
@@ -52,18 +52,29 @@ public static final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@
     public static String checkoutPaymentInfoUrl = serverUrl+"customcheckoutcarttotal/";
     public static String checkoutUrl = serverUrl+"customcheckout/";
     public static String ordersUrl = serverUrl+"orderhistory/";
+    public static String ordersDetailsUrl = serverUrl+"orderitemlist/";
+    public static String cancelOrderUrl = serverUrl+"cancelorderbuyer/";
     public static String getwishlistUrl = serverUrl+"getwishlist/";
     public static String addwishlistUrl = serverUrl+"addwishlist/";
+    public static String wishlisttagUrl = serverUrl+"wishlisttag/";
     public static String itemremovewishlistUrl = serverUrl+"itemremovewishlist/";
+    public static String getProfileUrl = serverUrl+"getaccountinfo/";
+    public static String updateProfileUrl = serverUrl+"editaccountinfo/";
+    public static String deacivateaccountUrl = serverUrl+"deacivateaccount/";
+    public static String acivateaccountUrl = serverUrl+"acivateaccount/";
+    public static String changepasswordUrl = serverUrl+"changepassword/";
+    public static String getaddressUrl = serverUrl+"getaddress/";
+    public static String editbillingaddressUrl = serverUrl+"editbillingaddress/";
 
     public static String instantServerUrl = "http://btranz.website/instantapp_services.php";
-    public static String homeUrl = instantServerUrl+"?tag=home&sellerid="+sellerId;
+    public static String homeUrl = instantServerUrl+"?tag=home&sellerid="+sellerId+"&userid=";
     public static String bannerUrl = instantServerUrl+"?tag=offersbanners&sellerid="+sellerId;
     public static String prdtGlanceUrl = instantServerUrl+"?tag=productglance&sellerid="+sellerId;
     public static String addtoCartUrl = instantServerUrl+"?tag=addtocart";
     public static String forgotPwdUrl = instantServerUrl+"?tag=forgotpassword&email=";
     public static String instantRegUrl = instantServerUrl+"?tag=registration&username=";
     public static String instantLoginUrl = instantServerUrl+"?tag=userlogin&username=";
+    public static String instantChangePswUrl = instantServerUrl+"?tag=changepassword&userid=";
 
 
    /* public static String btranzUrl = "http://192.168.1.136/";

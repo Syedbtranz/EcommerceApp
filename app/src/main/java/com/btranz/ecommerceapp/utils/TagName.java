@@ -34,6 +34,7 @@ public class TagName {
 	public static final String KEY_PRICE = "price";
 	public static final String KEY_FINAL_PRICE= "finalPrice";
 	public static final String KEY_THUMB= "thumbnail";
+	public static final String KEY_WISHLIST= "wishlisttag";
 	public static final String KEY_IMAGE_URL = "image_url";
 	public static final String KEY_IMG_URL = "img";
 	public static final String KEY_COUNT = "qty";
@@ -54,7 +55,7 @@ public class TagName {
 	public static final String FRAGMENT_USER_ADDRESS= "fragment_user_address";
 	public static final String FRAGMENT_USER_BILLING= "fragment_user_billing";
 	public static final String FRAGMENT_USER_CHECKOUT= "fragment_user_checkout";
-	public static final String FRAGMENT_PROFILE_UPDATE= "fragment_profile_update";
+
 	public static final String CART_FRAG= "fragment_cart";
 
 	public static final String FRAGMENT_LOGIN= "fragment_profile";

@@ -10,6 +10,7 @@ public class ProductModel extends ClassLoader implements Parcelable, Comparable<
     private double cost;
     private double finalPrice;
     private int count;
+    private int wishlist;
     private String thumbnail;
     private String share;
     private String tag;
@@ -31,6 +32,7 @@ public class ProductModel extends ClassLoader implements Parcelable, Comparable<
         this.cost = in.readDouble();
         this.finalPrice = in.readDouble();
         this.count = in.readInt();
+        this.wishlist = in.readInt();
         this.thumbnail = in.readString();
         this.share = in.readString();
         this.tag = in.readString();
@@ -88,6 +90,14 @@ public class ProductModel extends ClassLoader implements Parcelable, Comparable<
 
     public void setCount(int count) {
         this.count = count;
+    }
+
+    public int getWishlist() {
+        return wishlist;
+    }
+
+    public void setWishlist(int wishlist) {
+        this.wishlist = wishlist;
     }
 
     public String getThumbnail() {
@@ -174,6 +184,7 @@ public class ProductModel extends ClassLoader implements Parcelable, Comparable<
         parcel.writeDouble(getCost());
         parcel.writeDouble(getFinalPrice());
         parcel.writeInt(getCount());
+        parcel.writeInt(getWishlist());
         parcel.writeString(getThumbnail());
         parcel.writeString(getShare());
         parcel.writeString(getTag());
@@ -218,7 +229,7 @@ public class ProductModel extends ClassLoader implements Parcelable, Comparable<
 
     @Override
     public String toString() {
-        return "Product [id=" + id + ", name=" + title +  ", description=" + description +", cost=" + cost +", finalPrice=" + finalPrice +", count=" + count + ", imageUrl="
+        return "Product [id=" + id + ", name=" + title +  ", description=" + description +", cost=" + cost +", finalPrice=" + finalPrice +", count=" + count +", wishlist=" + wishlist + ", imageUrl="
                 + thumbnail +  ", share=" + share + ", Tag=" + tag +", Discount=" + discount + ", rating=" + rating + ", standCost=" + standCost + ", expCost=" + expCost +", subTitle=" + subTitle +", subTitle1=" + subTitle1 +"]";
     }
 
@@ -228,4 +239,6 @@ public class ProductModel extends ClassLoader implements Parcelable, Comparable<
 //        int compareFinalPrice = ((ProductModel) other).getFinalPrice();
         return 0;
     }
+
+
 }

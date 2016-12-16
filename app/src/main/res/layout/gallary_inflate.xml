@@ -22,12 +22,17 @@
             android:src="@drawable/share_icon"
             android:layout_marginRight="20dp">
         </ImageView>
-        <ImageView
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@drawable/wishlist_checkbox"
+            android:id="@+id/prdt_like_btn"/>
+       <!-- <ImageView
             android:id="@+id/prdt_like"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/like_icon">
-        </ImageView>
+        </ImageView>-->
     </LinearLayout>
     <RelativeLayout
         android:layout_width="110dp"

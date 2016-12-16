@@ -1,8 +1,13 @@
 package com.btranz.ecommerceapp.activity;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -24,12 +29,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.btranz.ecommerceapp.R;
+import com.btranz.ecommerceapp.adapter.ProductGridAdapter;
+import com.btranz.ecommerceapp.fragment.ProductsFragment;
 import com.btranz.ecommerceapp.modal.Post;
 import com.btranz.ecommerceapp.modal.ProductModel;
+import com.btranz.ecommerceapp.utils.CheckNetworkConnection;
 import com.btranz.ecommerceapp.utils.DatabaseHandler;
 import com.btranz.ecommerceapp.utils.TagName;
 import com.btranz.ecommerceapp.utils.Utils;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -37,11 +54,16 @@ import java.util.regex.Pattern;
 
 public class SearchActivity extends AppCompatActivity {
     public Toolbar toolbar;
+    private Dialog loadingDialog;
     TextView clearHistory;
     SearchView searchView;
     private ListView recentSearchListView,searchingListview;
     private MyAppAdapter myAppAdapter,seachingAdapter;
     private ArrayList<Post> recentSearchList, searchingList;
+    ArrayList<ProductModel> services;
+    AsyncHttpTask task;
+    AlertDialog alertDialog;
+    String message,searchQuery;
     List<String> searchList= new ArrayList<String>();
     List<String> checkList= new ArrayList<String>();
     DatabaseHandler db;
@@ -59,7 +81,7 @@ public class SearchActivity extends AppCompatActivity {
 
         }
         searchingList();
-
+//        sendRequest();
         initToolbar();
         myAppAdapter=new MyAppAdapter(recentSearchList,SearchActivity.this,R.layout.recent_search_inflate);
         recentSearchListView.setAdapter(myAppAdapter);
@@ -104,15 +126,7 @@ public class SearchActivity extends AppCompatActivity {
 //                    db.insertSearchItem(qry);
 //                }
 
-                Intent in=new Intent(SearchActivity.this,SecondActivity.class);
-                in.putExtra("key", TagName.FRAGMENT_PRODUCTS);
-                in.putExtra("prdtsUrl", Utils.searchUrl+qry);
-                in.putExtra("prdtsTitle", "Products for "+qry);
-                Log.e("prdtsUrl",Utils.searchUrl+qry);
-                startActivity(in);
-                SearchActivity.this.overridePendingTransition(android.R.anim.fade_in,
-                        android.R.anim.fade_out);
-                finish();
+               sendRequest(qry);
             }
         });
     }
@@ -160,15 +174,7 @@ public class SearchActivity extends AppCompatActivity {
 //                    e.printStackTrace();
 //                    db.insertSearchItem(qry);
 //                }
-                Intent in=new Intent(SearchActivity.this,SecondActivity.class);
-                in.putExtra("key", TagName.FRAGMENT_PRODUCTS);
-                in.putExtra("prdtsUrl", Utils.searchUrl+qry);
-                in.putExtra("prdtsTitle", "Products for "+qry);
-                Log.e("prdtsUrl",Utils.searchUrl+qry);
-                startActivity(in);
-                SearchActivity.this.overridePendingTransition(android.R.anim.fade_in,
-                        android.R.anim.fade_out);
-                finish();
+              sendRequest(qry);
             }
         });
     }
@@ -291,6 +297,36 @@ public void getSearchDbList(){
 //    public void addtosearchText(String str){
 //        searchView.setQuery(str,false);
 //    }
+    private void sendRequest(String query) {
+        searchQuery=query;
+    if (CheckNetworkConnection.isConnectionAvailable(getApplicationContext())) {
+//            task = new RequestImgTask(activity);
+//            task.execute(url);
+        task = new AsyncHttpTask();
+//            task.execute(Utils.productsUrl);
+        task.execute(Utils.searchUrl+searchQuery);
+//            task.execute(Utils.instantServerUrl);
+        Log.e("sendrequest","sendrequest");
+    } else {
+        message = getResources().getString(R.string.no_internet_connection);
+        showAlertDialog(message, true);
+    }
+}
+    public void showAlertDialog(String message, final boolean finish) {
+        alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+        alertDialog.setMessage(message);
+        alertDialog.setCancelable(false);
+
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        if (finish)
+                            finish();
+                    }
+                });
+        alertDialog.show();
+    }
     public void initToolbar(){
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        toolbar_title =(TextView)toolbar.findViewById(R.id.toolbar_txt);
@@ -362,14 +398,7 @@ public void getSearchDbList(){
 //                }else{
 //                    Toast.makeText(getApplicationContext(), "This Product is already Added please check in CART!", Toast.LENGTH_SHORT).show();
 //                }
-                Intent in=new Intent(SearchActivity.this,SecondActivity.class);
-                            in.putExtra("key", TagName.FRAGMENT_PRODUCTS);
-                            in.putExtra("prdtsUrl", Utils.searchUrl+query);
-                            in.putExtra("prdtsTitle", "Products for "+query);
-                startActivity(in);
-                SearchActivity.this.overridePendingTransition(android.R.anim.fade_in,
-                        android.R.anim.fade_out);
-                finish();
+                sendRequest(query);
                 return false;
             }
 
@@ -422,5 +451,210 @@ public void getSearchDbList(){
         }
         return super.onOptionsItemSelected(item);
     }
+    public class AsyncHttpTask extends AsyncTask<String, Void, Integer> {
 
+        @Override
+        protected void onPreExecute() {
+//            setProgressBarIndeterminateVisibility(true);
+            loadingDialog = ProgressDialog.show(SearchActivity.this, "", "Loading...");
+            try {
+//                progressLL.setVisibility(View.VISIBLE);
+//                pb.setVisibility(View.VISIBLE);
+            }catch(Exception e){
+
+            }
+
+        }
+
+        @Override
+        protected Integer doInBackground(String... params) {
+            InputStream inputStream = null;
+            Integer result = 0;
+            HttpURLConnection urlConnection = null;
+
+//                OkHttpClient client = new OkHttpClient();
+//                Request request = new Request.Builder()
+//                        .url(params[0])
+//                        .build();
+
+            try {
+//                    Response response = client.newCall(request).execute();
+//                    String jsonString = response.body().string();
+//                    Log.e("NGVL", jsonString);
+
+//                 forming th java.net.URL object
+                URL url = new URL(params[0]);
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+
+//                 for Get request
+                urlConnection.setRequestMethod("GET");
+
+                int statusCode = urlConnection.getResponseCode();
+//                int statusCode = response.code();
+//                    Log.e("response.code", ""+response.hashCode());
+//                 200 represents HTTP OK
+                if (statusCode ==  200) {
+
+                    BufferedReader r = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = r.readLine()) != null) {
+                        response.append(line);
+                    }
+                    Log.e("response.toString()", response.toString());
+                    parseResult(response.toString());
+                    result = 1; // Successful
+                }else{
+                    result = 0; //"Failed to fetch data!";
+                }
+
+            } catch (Exception e) {
+                Log.d("hello", e.getLocalizedMessage());
+            }
+
+            return result; //"Failed to fetch data!";
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            loadingDialog.dismiss();
+//            progressLL.setVisibility(View.GONE);
+//            pb.setVisibility(View.GONE);
+//             Download complete. Lets update UI
+            if (result == 1) {
+                Log.e("onPostExecute", "onPostExecute");
+//                if(services!=null&&services.size()!=0) {
+//                    adapter = new ProductGridAdapter(activity, services);
+//                    ProductsGrid.setAdapter(adapter);
+//                    adapter.notifyDataSetChanged();
+//                    progressLL.setVisibility(View.GONE);
+////                pb.setVisibility(View.GONE);
+//
+////                recyclerView.setAdapter(new ServicesRecyclerAdapter(activity, services));
+//                }else {
+//                    message = getResources().getString(R.string.no_products);
+//                    showAlertDialog(message, true);
+//                }
+                finish();
+                Intent in=new Intent(SearchActivity.this,SecondActivity.class);
+                in.putExtra("key", TagName.FRAGMENT_PRODUCTS);
+                in.putExtra("prdtsUrl", Utils.searchUrl);
+                in.putExtra("prdtsTitle", "Products for "+searchQuery);
+                in.putParcelableArrayListExtra("productList",services);
+                Log.e("prdtsUrl",Utils.searchUrl+searchQuery);
+                startActivity(in);
+                SearchActivity.this.overridePendingTransition(android.R.anim.fade_in,
+                        android.R.anim.fade_out);
+
+            } else {
+                Log.e("hello", "Failed to fetch data!");
+//                pb.setVisibility(View.GONE);
+////                message = getResources().getString(R.string.no_products);
+                showAlertDialog("No Products Found", true);
+//                Toast.makeText(activity,"No Prodructs Found",Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    /* private void parseResult(String result) {
+         try {
+ //            JSONArray response = new JSONArray(result);
+             JSONObject jsonObject=new JSONObject(result);
+
+             if (jsonObject != null) {
+                 JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                 int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+ //                message = jsonObject.optString(TagName.TAG_MSG);
+
+ //               if (message.equals("success")) {
+ //            boolean status = response.getBoolean(TagName.TAG_STATUS);
+
+                 if (status!=0) {
+ //                JSONObject jsonData = jsonObject
+ //                        .getJSONObject(TagName.TAG_PRODUCT);
+ //                    }
+                     JSONArray posts = jsonObject.optJSONArray(TagName.TAG_PRODUCT);
+
+             *//*Initialize array if null*//*
+                    if (null == services) {
+                        services = new ArrayList<ProductModel>();
+                    }
+
+                    for (int i = 0; i < posts.length(); i++) {
+                        JSONObject post = posts.optJSONObject(i);
+
+                        ProductModel item = new ProductModel();
+                        item.setId(post.optInt(TagName.KEY_ID));
+                        item.setTitle(post.optString(TagName.KEY_NAME));
+                        item.setDescription(post.optString(TagName.KEY_DES));
+                        item.setCost(post.optDouble(TagName.KEY_PRICE));
+                        item.setFinalPrice(post.optDouble(TagName.KEY_FINAL_PRICE));
+//                    item.setCount(post.optInt("finalPrice"));
+//                    Log.e("name", "name"+ post.optDouble("finalPrice"));
+                        item.setThumbnail(post.optString(TagName.KEY_THUMB));
+                        JSONObject post1 = post.optJSONObject(TagName.TAG_OFFER_ALL);
+                        item.setShare(post1.optString(TagName.KEY_SHARE));
+                        item.setTag(post1.optString(TagName.KEY_TAG));
+                        item.setDiscount(post1.optInt(TagName.KEY_DISC));
+                        item.setRating(post1.optInt(TagName.KEY_RATING));
+                        services.add(item);
+                    }
+                } else {
+                    message = jsonObject.optString(TagName.TAG_MSG);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }*/
+    private void parseResult(String result) {
+        try {
+            JSONArray response = new JSONArray(result);
+            JSONObject jsonObject=response.getJSONObject(0);
+
+            if (jsonObject != null) {
+                JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+
+                if (status==1) {
+//            boolean status = response.getBoolean(TagName.TAG_STATUS);
+
+//                    if (status) {
+//                JSONObject jsonData = jsonObject
+//                        .getJSONObject(TagName.TAG_PRODUCT);
+//                    }
+                    JSONArray posts = jsonObject.optJSONArray(TagName.TAG_PRODUCT);
+
+//            Initialize array if null
+                    if (null == services) {
+                        services = new ArrayList<ProductModel>();
+                    }
+
+                    for (int i = 0; i < posts.length(); i++) {
+                        JSONObject post = posts.optJSONObject(i);
+
+                        ProductModel item = new ProductModel();
+                        item.setId(post.optInt(TagName.KEY_ID));
+                        item.setTitle(post.optString(TagName.KEY_NAME));
+                        item.setDescription(post.optString(TagName.KEY_DES));
+                        item.setCost(post.optDouble(TagName.KEY_PRICE));
+                        item.setFinalPrice(post.optDouble(TagName.KEY_FINAL_PRICE));
+//                    item.setCount(post.optInt("finalPrice"));
+//                    Log.e("name", "name");
+                        item.setThumbnail(post.optString(TagName.KEY_THUMB));
+                        JSONObject post1 = post.optJSONObject(TagName.TAG_OFFER_ALL);
+                        item.setShare(post1.optString(TagName.KEY_SHARE));
+                        item.setTag(post1.optString(TagName.KEY_TAG));
+                        item.setDiscount(post1.optInt(TagName.KEY_DISC));
+                        item.setRating(post1.optInt(TagName.KEY_RATING));
+                        services.add(item);
+                    }
+                } else {
+                    message = jsonObject.getString(TagName.TAG_PRODUCT);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 }

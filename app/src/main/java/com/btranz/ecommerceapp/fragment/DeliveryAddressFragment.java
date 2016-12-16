@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -32,15 +33,23 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.btranz.ecommerceapp.R;
+import com.btranz.ecommerceapp.adapter.CountryAdapter;
 import com.btranz.ecommerceapp.modal.ProductModel;
 import com.btranz.ecommerceapp.utils.TagName;
 import com.btranz.ecommerceapp.utils.Utils;
 
+import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,12 +59,12 @@ import java.util.List;
  */
 public class DeliveryAddressFragment extends Fragment {
     Button backBtn, nextBtn;
-    Spinner countrySpinner;
-    CountryAdapter countryAdp;
     EditText addressET, streetET, cityET, countryET,pincodeET;
     FragmentActivity activity;
-    String userId,quoteId, deliveryType, shippingRate, customerStreet, customertCity,customerPincode;
+    String userId,quoteId, deliveryType, shippingRate, customerStreet, customertCity,customertCountry, customerPincode;
     int countryPosition;
+    Spinner countrySpinner;
+    public CountryAdapter countryAdp;
     ArrayList<ProductModel> countryList;//=new ArrayList<>();
     // shared preference
     SharedPreferences sharedpreferences;
@@ -77,6 +86,7 @@ public class DeliveryAddressFragment extends Fragment {
         quoteId = sharedpreferences.getString("quoteId", "");
         customerStreet = sharedpreferences.getString("checkoutCustomerStreet", "");
         customertCity = sharedpreferences.getString("checkoutCustomerCity", "");
+        customertCountry = sharedpreferences.getString("checkoutCustomerCountry", "");
         customerPincode = sharedpreferences.getString("checkoutCustomerPincode", "");
 //        userAddress = sharedpreferences.getString("checkoutUserStreet", "");
 
@@ -205,7 +215,19 @@ public class DeliveryAddressFragment extends Fragment {
         }
 
     }
+    private int getIndex(Spinner spinner, String myString){
 
+        int index = 0;
+        Log.e("spinner",""+spinner.getCount());
+
+        for (int i=0;i<spinner.getCount();i++){
+            ProductModel m=countryList.get(i);
+            if (m.getTitle().equals(myString)){
+                index = i;
+            }
+        }
+        return index;
+    }
     public  void sendData(){
      customerStreet=streetET.getText().toString();
      customertCity=cityET.getText().toString();
@@ -250,97 +272,120 @@ public class DeliveryAddressFragment extends Fragment {
 
     }
 }
-    private void getCountryList(){
-        final Dialog loadingDialog;
-        try {
-            RequestQueue requestQueue = Volley.newRequestQueue(activity);
-            loadingDialog = ProgressDialog.show(activity, "", "Pease Wait...");
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, Utils.getCountryListUrl, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    Log.e("VOLLEY", response);
-                    loadingDialog.dismiss();
+    public void getCountryList(){
+        class CountryListAsync extends AsyncTask<String, Void, String> {
+            Dialog loadingDialog;
 
-                    try {
-                        JSONArray jsonArray=new JSONArray(response);
-                        JSONObject jsonObject=jsonArray.getJSONObject(0);
-                        if(jsonObject!=null) {
-                            JSONObject job=jsonObject.optJSONObject(TagName.TAG_STATUS);
-                            String status=job.optString(TagName.TAG_MSG);
-                            if(status.equalsIgnoreCase("success")){
-                                if(countryList==null){
-                                    countryList=new ArrayList<ProductModel>();
-                                }
-                                JSONArray jarray=jsonObject.getJSONArray("country");
-                                for(int i=0;i<jarray.length();i++){
-                                    JSONObject job1=jarray.optJSONObject(i);
-                                    ProductModel item=new ProductModel();
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                loadingDialog = ProgressDialog.show(activity, "", "Please wait...");
+            }
 
-                                    item.setTitle(job1.optString("label"));
-                                    item.setSubTitle(job1.optString("value"));
+            @Override
+            protected String doInBackground(String... params) {
+//                String oldpsw = params[0];
+//                String newpsw = params[1];
+//                Log.e("uname",oldpsw);
+//                Log.e("pass",newpsw);
+                InputStream is = null;
+//                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+//                nameValuePairs.add(new BasicNameValuePair("username", uname));
+//                nameValuePairs.add(new BasicNameValuePair("password", pass));
+                String result = null;
+                HttpURLConnection urlConnection = null;
+                try{
+//                    HttpClient httpClient = new DefaultHttpClient();
+//                    HttpGet httpPost = new HttpGet( Utils.instantChangePswUrl+userId+"&oldpassword="+oldpsw+"&newpassword="+newpsw);
+////                    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+//
+//                    HttpResponse response = httpClient.execute(httpPost);
+//
+//                    HttpEntity entity = response.getEntity();
+//
+//                    is = entity.getContent();
+
+                    URL url = new URL(params[0]);
+
+                    urlConnection = (HttpURLConnection) url.openConnection();
+
+                /* for Get request */
+                    urlConnection.setRequestMethod("GET");
+
+                    int statusCode = urlConnection.getResponseCode();
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"), 8);
+                    StringBuilder sb = new StringBuilder();
+
+                    String line = null;
+                    while ((line = reader.readLine()) != null)
+                    {
+                        sb.append(line + "\n");
+                    }
+                    result = sb.toString();
+                } catch (ClientProtocolException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return result;
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                String response = result.trim();
+                Log.e("s", response);
+                loadingDialog.dismiss();
+
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    JSONObject jsonObject = jsonArray.getJSONObject(0);
+                    if (jsonObject != null) {
+                        JSONObject job = jsonObject.optJSONObject(TagName.TAG_STATUS);
+                        String status = job.optString(TagName.TAG_MSG);
+                        if (status.equalsIgnoreCase("success")) {
+                            if (countryList == null) {
+                                countryList = new ArrayList<ProductModel>();
+                            }
+                            JSONArray jarray = jsonObject.getJSONArray("country");
+                            for (int i = 0; i < jarray.length(); i++) {
+                                JSONObject job1 = jarray.optJSONObject(i);
+                                ProductModel item = new ProductModel();
+
+                                item.setTitle(job1.optString("label"));
+                                item.setSubTitle(job1.optString("value"));
 //                                    Log.e("job1.optString(\"label\")", job1.optString("label"));
-                                   countryList.add(item);
+                                countryList.add(item);
 
-                                }
-                                // Creating adapter for spinner
-                                countryAdp = new CountryAdapter(activity, R.layout.country_list_inflate, countryList);
+                            }
+                            // Creating adapter for spinner
+                            countryAdp = new CountryAdapter(activity, R.layout.country_list_inflate, countryList);
 
-                                // Drop down layout style - list view with radio button
+                            // Drop down layout style - list view with radio button
 //        dataAdapter.(android.R.layout.simple_spinner_dropdown_item);
 
-                                // attaching data adapter to spinner
-                                countrySpinner.setAdapter(countryAdp);
-                                countryAdp.notifyDataSetChanged();
-                            }
+                            // attaching data adapter to spinner
+                            countrySpinner.setAdapter(countryAdp);
+                            countryAdp.notifyDataSetChanged();
+                            countrySpinner.setSelection(getIndex(countrySpinner, customertCountry));
+                        }
 
 //
 
-                        }
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
 
-                    Log.e("VOLLEY", error.toString());
-                    Toast.makeText(activity,"Following detais are incorrect",Toast.LENGTH_SHORT).show();
-                }
-            }) {
-                @Override
-                public String getBodyContentType() {
-                    return "application/json; charset=utf-8";
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
 
-             /*   @Override
-                public byte[] getBody() throws AuthFailureError {
-                    try {
-                        return mRequestBody == null ? null : mRequestBody.getBytes("utf-8");
-                    } catch (UnsupportedEncodingException uee) {
-                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", mRequestBody, "utf-8");
-                        return null;
-                    }
-                }*/
-
-                /*@Override
-                protected Response<String> parseNetworkResponse(NetworkResponse response) {
-                    String responseString = "";
-                    if (response != null) {
-                        responseString = String.valueOf(response);
-//                        Log.e(" response.data", response);
-
-                        // can get more details such as response.headers
-                    }
-                    return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
-                }*/
-            };
-
-            requestQueue.add(stringRequest);
-        } catch (Exception e) {
-            e.printStackTrace();
+            }
         }
+
+        CountryListAsync la = new CountryListAsync();
+        la.execute(Utils.getCountryListUrl);
+
     }
     private void delivaryTypeCheck(){
         deliveryType = sharedpreferences.getString("checkoutCustomerDeliveryType", "");
@@ -423,74 +468,8 @@ public class DeliveryAddressFragment extends Fragment {
         }
     }
 
-    private static class CountryAdapter extends BaseAdapter {
 
 
-        ArrayList<ProductModel> modelList;
-        int Resource;
-        private LayoutInflater inflater;
-
-
-//        private DisplayImageOptions options;
-
-        CountryAdapter(Context context, int resource, ArrayList<ProductModel> objects) {
-            Resource = resource;
-            modelList = objects;
-            inflater = LayoutInflater.from(context);
-//            ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(context));
-//            options = new DisplayImageOptions.Builder()
-//                    .showImageOnLoading(R.drawable.ic_stub)
-//                    .showImageForEmptyUri(R.drawable.ic_empty)
-//                    .showImageOnFail(R.drawable.ic_error)
-//                    .cacheInMemory(true)
-//                    .cacheOnDisk(true)
-//                    .considerExifParams(true)
-//                    .bitmapConfig(Bitmap.Config.RGB_565)
-//                    .build();
-        }
-
-        @Override
-        public int getCount() {
-            return modelList.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return position;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            View view = convertView;
-            final ViewHolder holder;
-            if (convertView == null) {
-                view = inflater.inflate(R.layout.country_list_inflate, parent, false);
-                holder = new ViewHolder();
-                holder.text = (TextView) view.findViewById(R.id.text);
-//                holder.desc = (TextView) view.findViewById(R.id.des);
-//                holder.image = (ImageView) view.findViewById(R.id.imageView);
-                view.setTag(holder);
-            } else {
-                holder = (ViewHolder) view.getTag();
-            }
-
-            holder.text.setText(modelList.get(position).getSubTitle()+"-"+modelList.get(position).getTitle());
-//            holder.desc.setText(modelList.get(position).getDescription());
-//            ImageLoader.getInstance().displayImage(modelList.get(position).getThumbnail(), holder.image, options);
-
-            return view;
-        }
-    }
-    static class ViewHolder {
-        TextView text;
-        TextView desc;
-        ImageView image;
-    }
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

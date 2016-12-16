@@ -7,13 +7,16 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.btranz.ecommerceapp.R;
@@ -128,9 +131,29 @@ public class CartServicesRecyclerAdapter extends RecyclerView.Adapter<CartServic
         feedListRowHolder.finalPrice.setText(String.valueOf(feedItem.getFinalPrice()));
         feedListRowHolder.num.setText(String.valueOf(feedItem.getCount()));
         feedListRowHolder.prdtTotPrice.setText(String.valueOf(feedItem.getFinalPrice()*feedItem.getCount()));
+
+        feedListRowHolder.offerTag.setText(feedItem.getTag());
+        if(feedItem.getTag().equalsIgnoreCase("new")){
+            feedListRowHolder.offerTag.setBackgroundColor(ContextCompat.getColor(acti.getActivity(), R.color.color_green));
+        }else  if(feedItem.getTag().equalsIgnoreCase("best offer")){
+            feedListRowHolder.offerTag.setBackgroundColor(ContextCompat.getColor(acti.getActivity(), R.color.color_blue));
+        }else  if(feedItem.getDiscount()!=0){
+            feedListRowHolder.offerTag.setText("Sale "+feedItem.getDiscount()+"% Off");
+            feedListRowHolder.offerTag.setBackgroundColor(ContextCompat.getColor(acti.getActivity(), R.color.color_red));
+        }else {
+            feedListRowHolder.offerTag.setVisibility(View.INVISIBLE);
+        }
+        //RAtingBar
+        if(feedItem.getRating()==0){
+            feedListRowHolder.rating.setRating(0);
+
+        }else{
+            feedListRowHolder.rating.setRating((float)feedItem.getRating()/20);
+        }
         imageLoader.displayImage(
                 ((ProductModel) feedItem).getThumbnail(), feedListRowHolder.thumbnail,
                 options, imageListener);
+       //click
         feedListRowHolder.thumbnail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -264,6 +287,8 @@ public class CartServicesRecyclerAdapter extends RecyclerView.Adapter<CartServic
         public ImageView thumbnail,incr,decre;
         public TextView title, price,num, finalPrice,prdtTotPrice;
         public ImageView deleteBtn;
+        RatingBar rating;
+        Button offerTag;
         //    public IMyViewHolderClicks mListener;
         int count=0;
         private ItemClickListener clickListener;
@@ -280,6 +305,8 @@ public class CartServicesRecyclerAdapter extends RecyclerView.Adapter<CartServic
             this.num = (TextView) view.findViewById(R.id.num_text);
             this.prdtTotPrice = (TextView) view.findViewById(R.id.prdt_total_cost);
             this.deleteBtn = (ImageView) view.findViewById(R.id.cart_delete_btn);
+            this.rating = (RatingBar) view.findViewById(R.id.ratingBar);
+            this.offerTag = (Button) view.findViewById(R.id.offer_tag_btn);
             view.setTag(view);
         this.incr.setTag(this.incr);
         this.decre.setTag(this.decre);

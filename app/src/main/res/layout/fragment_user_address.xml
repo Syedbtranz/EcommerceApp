@@ -63,7 +63,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/spinner_country"
-            android:padding="10dp"
             android:background="@drawable/edittext_bg"
             android:prompt="@string/spinner_title"/>
        <!-- <EditText

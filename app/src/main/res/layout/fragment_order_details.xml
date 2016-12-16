@@ -89,13 +89,13 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.9"
+            android:layout_weight="1"
             >
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1.9"
+
             >
         <TextView
             android:layout_width="wrap_content"
@@ -106,7 +106,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="123"
+            android:text=""
 
             android:id="@+id/order_id" />
             </LinearLayout>
@@ -114,7 +114,6 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1.9"
             >
         <TextView
             android:layout_width="wrap_content"
@@ -125,7 +124,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="assss0"
+            android:text=""
 
             android:id="@+id/booking_date" />
             </LinearLayout>
@@ -138,9 +137,9 @@
             android:id="@+id/wwwww" />-->
         <LinearLayout
             android:orientation="horizontal"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1.5"
+
             >
             <ImageView
                 android:id="@+id/status_bar"
@@ -291,10 +290,9 @@
             android:layout_height="wrap_content"
             android:text="Cancel Order"
             android:textSize="15dp"
-            android:layout_margin="10dp"
             android:textColor="?attr/colorPrimary"
             android:gravity="center"
-            android:id="@+id/checkout_bar"
+            android:id="@+id/cancel_order_btn"
             android:layout_weight="1"
             android:background="?button_bg_primary_border" />
     </LinearLayout>

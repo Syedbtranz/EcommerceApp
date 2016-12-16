@@ -5,13 +5,16 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.btranz.ecommerceapp.R;
@@ -77,39 +80,24 @@ public class WislistRecyclerAdapter extends RecyclerView.Adapter<WislistRecycler
         feedListRowHolder.price.setText(String.valueOf(feedItem.getCost()));
         feedListRowHolder.price.setPaintFlags(feedListRowHolder.price.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
         feedListRowHolder.finalPrice.setText(String.valueOf(feedItem.getFinalPrice()));
-//        feedListRowHolder.num.setText(String.valueOf(feedItem.getCount()));
-//        feedListRowHolder.orderId.setText(String.valueOf(feedItem.getId()));
-//        feedListRowHolder.orderDate.setText(feedItem.getDate());
-//        feedListRowHolder.orderPayment.setText(feedItem.getPayment());
-//        feedListRowHolder.orderProgress.setScaleY(3f);
-//        feedListRowHolder.orderProgress.setProgress(feedItem.getProcess());
+        feedListRowHolder.offerTag.setText(feedItem.getTag());
+        if(feedItem.getTag().equalsIgnoreCase("new")){
+            feedListRowHolder.offerTag.setBackgroundColor(ContextCompat.getColor(acti.getActivity(), R.color.color_green));
+        }else  if(feedItem.getTag().equalsIgnoreCase("best offer")){
+            feedListRowHolder.offerTag.setBackgroundColor(ContextCompat.getColor(acti.getActivity(), R.color.color_blue));
+        }else  if(feedItem.getDiscount()!=0){
+            feedListRowHolder.offerTag.setText("Sale "+feedItem.getDiscount()+"% Off");
+            feedListRowHolder.offerTag.setBackgroundColor(ContextCompat.getColor(acti.getActivity(), R.color.color_red));
+        }else {
+            feedListRowHolder.offerTag.setVisibility(View.INVISIBLE);
+        }
+        //RAtingBar
+        if(feedItem.getRating()==0){
+            feedListRowHolder.rating.setRating(0);
 
-//        feedListRowHolder.setClickListener(new ItemClickListener() {
-//            @Override
-//            public void onClick(View view, int position, boolean isLongClick) {
-//                int i = Integer.parseInt(feedListRowHolder.num.getText().toString());
-//                switch (view.getId()) {
-//                    case R.id.incre_image:
-////                        int i = Integer.parseInt(feedListRowHolder.num.getText().toString());
-////                        i++;
-//                        feedListRowHolder.num.setText(String.valueOf(i + 1));
-////                notifyItemChanged(position);
-//                        break;
-//                    case R.id.decre_image:
-////                        i = Integer.parseInt(feedListRowHolder.num.getText().toString());
-//                        if (i > 0) {
-////                            i--;
-//                            feedListRowHolder.num.setText(String.valueOf(i - 1));
-//                        }
-//
-////                notifyItemChanged(position);
-//                        break;
-//                }
-////                notifyItemChanged(position);
-////                notifyDataSetChanged();
-////                notifyItemInserted(position);
-//            }
-//        });
+        }else{
+            feedListRowHolder.rating.setRating((float)feedItem.getRating()/20);
+        }
         imageLoader.displayImage(
                ((ProductModel) feedItem).getThumbnail(), feedListRowHolder.thumbnail,
                options, imageListener);
@@ -163,6 +151,8 @@ public class WislistRecyclerAdapter extends RecyclerView.Adapter<WislistRecycler
         public  ImageView thumbnail,incr,decre;
         public ImageView deleteBtn;
         public TextView title, price,num, finalPrice, orderDate,orderPayment;
+        RatingBar rating;
+        Button offerTag;
         public ProgressBar orderProgress;
 //        public IMyViewHolderClicks mListener;
         int count=0;
@@ -180,6 +170,8 @@ public class WislistRecyclerAdapter extends RecyclerView.Adapter<WislistRecycler
             this.price = (TextView) view.findViewById(R.id.price);
             this.finalPrice = (TextView) view.findViewById(R.id.final_price);
             this.deleteBtn = (ImageView) view.findViewById(R.id.wishlist_delete_btn);
+            this.rating = (RatingBar) view.findViewById(R.id.ratingBar);
+            this.offerTag = (Button) view.findViewById(R.id.offer_tag_btn);
 //            this.num = (TextView) view.findViewById(R.id.num_text);
 //            this.orderDate = (TextView) view.findViewById(R.id.order_date);
 //            this.orderPayment = (TextView) view.findViewById(R.id.order_payment);

@@ -1,10 +1,13 @@
 package com.btranz.ecommerceapp.activity;
 
+import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -25,6 +28,7 @@ public class BookNowActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booknow);
+
         closeBtn=(ImageView)findViewById(R.id.close_btn);
         closeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,5 +70,30 @@ public class BookNowActivity extends AppCompatActivity {
             // set the toolbar title
 //            getSupportActionBar().setTitle(title);
         }
+    }
+    @Override
+    public Resources.Theme getTheme() {
+        Resources res = getResources();
+        Resources.Theme theme = super.getTheme();
+
+        String theme_id = res.getString(R.string.theme);
+        switch (theme_id)
+        {
+            case "Default":
+
+                theme.applyStyle(R.style.AppTheme_Default, true);
+                break;
+
+            case "Blue":
+
+                theme.applyStyle(R.style.AppTheme_blue, true);
+                break;
+            case "Yellow":
+
+                theme.applyStyle(R.style.AppTheme_yellow, true);
+                break;
+        }
+        // you could also use a switch if you have many themes that could apply
+        return theme;
     }
 }

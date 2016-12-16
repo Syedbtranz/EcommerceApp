@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">ECOMMERCE STORE</string>
     <string name="seller_id">2</string>
-    <string name="theme">Blue</string>
+    <string name="theme">Default</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -39,8 +39,10 @@
     <string name="title_order_details">ORDER DETAILS</string>
     <string name="title_product_details">PRODUCTS DETAILS</string>
     <string name="title_profile">PROFILE</string>
+    <string name="title_profile_details">EDIT PROFILE</string>
 
     <string name="dummy_txt">Just to let you know that Jacob has added you as a collaborator on the project Ecommerce</string>
+    <string name="deactivate_txt">Just to let you know that Jacob has added you as a collaborator on the project Ecommerce \n Just to let you know that Jacob has added you as a collaborator on the project Ecommerce/\nJust to let you know that Jacob has added you as a collaborator on the project EcommerceJust to let you know that Jacob has added you as a collaborator on the project Ecommerce</string>
     <string name="product_glance">Product At Glance</string>
     <string name="pop_prdts">Top Buying Products</string>
     <string name="top_brand">Top Brands</string>

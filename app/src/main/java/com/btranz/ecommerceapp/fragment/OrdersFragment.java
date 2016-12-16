@@ -339,31 +339,32 @@ public class OrdersFragment extends Fragment {
                         item.setStatus(post.optString("status"));
                         item.setGrandTotal(post.optString("grand_total"));
                         item.setQnty(post.optInt("total_qty_ordered"));
-                        JSONArray jarray = post.optJSONArray("order_item_list");
+                        item.setId(post.optInt("order_item_list"));
+                        JSONArray jarray = post.optJSONArray("order_single_itemdetails");
                         JSONObject job1 = jarray.optJSONObject(0);
                         item.setThumbnail(job1.optString(TagName.KEY_THUMB));
                         item.setTitle(job1.optString(TagName.KEY_NAME));
                           /*Initialize array if null*/
-                        if (null == orderList) {
-                            orderList = new ArrayList<ProductModel>();
-                        }
-                        for (int j = 0; j < jarray.length(); j++) {
-                            JSONObject job = jarray.optJSONObject(j);
-                            ProductModel item1 = new ProductModel();
-                            item1.setId(job.optInt("product_id"));
-                            item1.setTitle(job.optString(TagName.KEY_NAME));
-//                        item.setDescription(post.optString(TagName.KEY_DES));
-                            item1.setCost(job.optDouble(TagName.KEY_PRICE));
-//                        item.setFinalPrice(post.optDouble(TagName.KEY_FINAL_PRICE));
-//                            item.setPayment(post.optString("sku"));
-                            item1.setCount(job.optInt(TagName.KEY_COUNT));
-////                    Log.e("name", "name");
-                            item1.setThumbnail(job.optString(TagName.KEY_THUMB));
-                            orderList.add(item1);
-//                            item.addOrderList(item1);
-                            item.setOrderList(orderList);
-//                            item.setOd(item1);
-                        }
+//                        if (null == orderList) {
+//                            orderList = new ArrayList<ProductModel>();
+//                        }
+//                        for (int j = 0; j < jarray.length(); j++) {
+//                            JSONObject job = jarray.optJSONObject(j);
+//                            ProductModel item1 = new ProductModel();
+//                            item1.setId(job.optInt("product_id"));
+//                            item1.setTitle(job.optString(TagName.KEY_NAME));
+////                        item.setDescription(post.optString(TagName.KEY_DES));
+//                            item1.setCost(job.optDouble(TagName.KEY_PRICE));
+////                        item.setFinalPrice(post.optDouble(TagName.KEY_FINAL_PRICE));
+////                            item.setPayment(post.optString("sku"));
+//                            item1.setCount(job.optInt(TagName.KEY_COUNT));
+//////                    Log.e("name", "name");
+//                            item1.setThumbnail(job.optString(TagName.KEY_THUMB));
+//                            orderList.add(item1);
+////                            item.addOrderList(item1);
+//                            item.setOrderList(orderList);
+////                            item.setOd(item1);
+//                        }
 
                         services.add(item);
 

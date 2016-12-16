@@ -104,6 +104,7 @@ public class HomeFragment extends Fragment  {
     ArrayList<ProductModel> services;
     ArrayList<ProductModel> popServices;
     ArrayList<ProductModel> brandServices;
+    public ArrayList<ProductModel> wishlistServices;
     HomeAsyncHttpTask taskHome;
     RequestImgTask task;
     AsyncHttpTask taskAsynk;
@@ -389,6 +390,7 @@ public class HomeFragment extends Fragment  {
         services= ((MainActivity)activity).services;
         popServices= ((MainActivity)activity).popServices;
         brandServices= ((MainActivity)activity).brandServices;
+        wishlistServices= ((MainActivity)activity).wishlistServices;
 
         glanceProgressLL.setVisibility(View.GONE);
         popProgressLL.setVisibility(View.GONE);
@@ -409,14 +411,14 @@ public class HomeFragment extends Fragment  {
         }
         if(services!=null&&services.size()!=0) {
             //Glance
-            horizontalAdapter = new HorizontalListAdapter(activity, services, R.layout.gallary_inflate);
+            horizontalAdapter = new HorizontalListAdapter(activity, services, R.layout.gallary_inflate, wishlistServices);
             horizontalList.setAdapter(horizontalAdapter);
             horizontalAdapter.notifyDataSetChanged();
 //                    scroll.fullScroll(ScrollView.FOCUS_UP);
         }
         if(popServices!=null&&popServices.size()!=0) {
             //POP
-            popHorizontalAdapter = new HorizontalListAdapter(activity, popServices, R.layout.gallary_inflate);
+            popHorizontalAdapter = new HorizontalListAdapter(activity, popServices, R.layout.gallary_inflate, wishlistServices);
             popHorizontalList.setAdapter(popHorizontalAdapter);
             popHorizontalAdapter.notifyDataSetChanged();
 //                    scroll.fullScroll(ScrollView.FOCUS_UP);
@@ -729,14 +731,14 @@ public class HomeFragment extends Fragment  {
 //                scroll.fullScroll(ScrollView.FOCUS_UP);
                 if(services!=null&&services.size()!=0) {
                     //Glance
-                    horizontalAdapter = new HorizontalListAdapter(activity, services, R.layout.gallary_inflate);
+                    horizontalAdapter = new HorizontalListAdapter(activity, services, R.layout.gallary_inflate,wishlistServices);
                     horizontalList.setAdapter(horizontalAdapter);
                     horizontalAdapter.notifyDataSetChanged();
 //                    scroll.fullScroll(ScrollView.FOCUS_UP);
                 }
                 if(popServices!=null&&popServices.size()!=0) {
                     //POP
-                    horizontalAdapter = new HorizontalListAdapter(activity, popServices, R.layout.gallary_inflate);
+                    horizontalAdapter = new HorizontalListAdapter(activity, popServices, R.layout.gallary_inflate,wishlistServices);
                     popHorizontalList.setAdapter(horizontalAdapter);
                     horizontalAdapter.notifyDataSetChanged();
 //                    scroll.fullScroll(ScrollView.FOCUS_UP);
@@ -973,7 +975,7 @@ public class HomeFragment extends Fragment  {
             /* Download complete. Lets update UI */
             if (result == 1) {
                 Log.e("onPostExecute", "Asyntask");
-                horizontalAdapter = new HorizontalListAdapter(activity, services,R.layout.gallary_inflate);
+                horizontalAdapter = new HorizontalListAdapter(activity, services,R.layout.gallary_inflate,wishlistServices);
                 horizontalList.setAdapter(horizontalAdapter);
 //                grid1.setAdapter(adapter);
                 horizontalAdapter.notifyDataSetChanged();
@@ -1095,7 +1097,7 @@ public class HomeFragment extends Fragment  {
             /* Download complete. Lets update UI */
             if (result == 1) {
                 Log.e("onPostExecute", "onPostExecute");
-                horizontalAdapter = new HorizontalListAdapter(activity, popServices,R.layout.gallary_inflate);
+                horizontalAdapter = new HorizontalListAdapter(activity, popServices,R.layout.gallary_inflate, wishlistServices);
                 popHorizontalList.setAdapter(horizontalAdapter);
                 horizontalAdapter.notifyDataSetChanged();
 //                popAdapter = new PopProductGridAdapter(activity, popServices);

@@ -148,7 +148,7 @@ public class CartFragment extends Fragment {
 
             }
         });
-        if (services == null) {
+//        if (services == null) {
 //            sendRequest();
 //            emptyCart.setVisibility(View.VISIBLE);
             tempCount=0;
@@ -161,20 +161,20 @@ public class CartFragment extends Fragment {
             }
 //            adapter = new ServicesRecyclerAdapter(activity, services);
 //            Log.e("onResume", "onResume");
-        } else {
-//            Log.e("onResume else", "onResume else");
-//            System.out.println(services);
-//            recyclerView.setAdapter(new CartServicesRecyclerAdapter(CartFragment.this, services));
-//            recyclerView.scrollToPosition(0);
-//            emptyCart.setVisibility(View.VISIBLE);
-        }
+//        } else {
+////            Log.e("onResume else", "onResume else");
+////            System.out.println(services);
+////            recyclerView.setAdapter(new CartServicesRecyclerAdapter(CartFragment.this, services));
+////            recyclerView.scrollToPosition(0);
+////            emptyCart.setVisibility(View.VISIBLE);
+//        }
         super.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-//        services.clear();
+        services.clear();
     }
 
     public void runnable(final int size) {
@@ -568,6 +568,11 @@ public class CartFragment extends Fragment {
                     item.setCount(post.optInt(TagName.KEY_COUNT));
 //                    Log.e("name", "name");
                 item.setThumbnail(post.optString(TagName.KEY_THUMB));
+                JSONObject post1 = post.optJSONObject(TagName.TAG_OFFER_ALL);
+                item.setShare(post1.optString(TagName.KEY_SHARE));
+                item.setTag(post1.optString(TagName.KEY_TAG));
+                item.setDiscount(post1.optInt(TagName.KEY_DISC));
+                item.setRating(post1.optInt(TagName.KEY_RATING));
                 services.add(item);
             }
                 } else {

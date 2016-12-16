@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -43,6 +44,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.btranz.ecommerceapp.R;
+import com.btranz.ecommerceapp.adapter.WislistRecyclerAdapter;
 import com.btranz.ecommerceapp.fragment.CardsFragment;
 import com.btranz.ecommerceapp.fragment.CategoriesFragment;
 import com.btranz.ecommerceapp.fragment.HelpCenterFragment;
@@ -103,13 +105,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public ArrayList<ProductModel> services;
     public ArrayList<ProductModel> popServices;
     public ArrayList<ProductModel> brandServices;
-    String message;
+    public ArrayList<ProductModel> wishlistServices;
+    String message, userId;
     HomeAsyncHttpTask taskHome;
+    WishlistAsyncTask taskWishlist;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
+        sharedpreferences = this.getSharedPreferences(PREFS_NAME,
+                Context.MODE_PRIVATE);
+        userId = sharedpreferences.getString("userID", "");
         sendRequest();
         setContentView(R.layout.activity_main);
 
@@ -583,8 +590,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void sendRequest() {
         if (CheckNetworkConnection.isConnectionAvailable(getApplicationContext())) {
             //Home
+            String user;
+            if(userId.equals("")){
+                user="0";
+            }else{
+                user=userId;
+            }
             taskHome = new HomeAsyncHttpTask();
-            taskHome.execute(Utils.homeUrl);
+            taskHome.execute(Utils.homeUrl+user);
 //            //offer banner
 //            task = new RequestImgTask(activity);
 //            task.execute(Utils.bannerUrl);
@@ -597,6 +610,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //            //Brands
 //            taskBrand = new BrandAsyncHttpTask();
 //            taskBrand.execute(Utils.brandUrl);
+
         } else {
             message = getResources().getString(R.string.no_internet_connection);
 //            showAlertDialog(message, true);
@@ -753,41 +767,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
     }
-    /*private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException
-    {
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
-
-        for (NameValuePair pair : params)
-        {
-            if (first)
-                first = false;
-            else
-                result.append("&");
-
-            result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
-            result.append("=");
-            result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
-        }
-
-        return result.toString();
-    }*/
-    private String getPostDataString(HashMap<String, String> params) throws UnsupportedEncodingException{
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
-        for(Map.Entry<String, String> entry : params.entrySet()){
-            if (first)
-                first = false;
-            else
-                result.append("&");
-
-            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
-            result.append("=");
-            result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-        }
-
-        return result.toString();
-    }
     private void parseHomeResult(String result) {
         try {
 //            JSONArray response = new JSONArray(result);
@@ -856,6 +835,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //                    item.setCount(post.optInt("finalPrice"));
 //                                Log.e("name", "name"+ jobjPop.optDouble("finalPrice"));
                                 item.setThumbnail(jobjPop.optString(TagName.KEY_THUMB));
+                                item.setWishlist(jobjPop.optInt(TagName.KEY_WISHLIST));
                                 JSONObject post1 = jobjPop.optJSONObject(TagName.TAG_OFFER_ALL);
                                 item.setShare(post1.optString(TagName.KEY_SHARE));
                                 item.setTag(post1.optString(TagName.KEY_TAG));
@@ -883,6 +863,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //                    item.setCount(post.optInt("finalPrice"));
 //                                Log.e("name", "name"+ jobjGlance.optDouble("finalPrice"));
                                 item.setThumbnail(jobjGlance.optString(TagName.KEY_THUMB));
+                                item.setWishlist(jobjGlance.optInt(TagName.KEY_WISHLIST));
                                 JSONObject post1 = jobjGlance.optJSONObject(TagName.TAG_OFFER_ALL);
                                 item.setShare(post1.optString(TagName.KEY_SHARE));
                                 item.setTag(post1.optString(TagName.KEY_TAG));
@@ -923,6 +904,132 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             e.printStackTrace();
         }
     }
+    public class WishlistAsyncTask extends AsyncTask<String, Void, Integer> {
+
+        @Override
+        protected void onPreExecute() {
+//            setProgressBarIndeterminateVisibility(true);
+//            loadingDialog = ProgressDialog.show(activity, "", "Loading...");
+        }
+
+        @Override
+        protected Integer doInBackground(String... params) {
+            InputStream inputStream = null;
+            Integer result = 0;
+            HttpURLConnection urlConnection = null;
+
+            try {
+                /* forming th java.net.URL object */
+                URL url = new URL(params[0]);
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+
+                /* for Get request */
+                urlConnection.setRequestMethod("GET");
+
+                int statusCode = urlConnection.getResponseCode();
+
+                /* 200 represents HTTP OK */
+                if (statusCode ==  200) {
+
+                    BufferedReader r = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = r.readLine()) != null) {
+                        response.append(line);
+                    }
+                    Log.e("response.toString()", response.toString());
+                    parseResult(response.toString());
+                    result = 1; // Successful
+                }else{
+                    result = 0; //"Failed to fetch data!";
+                }
+
+            } catch (Exception e) {
+                Log.d("catch", e.getLocalizedMessage());
+            }
+
+            return result; //"Failed to fetch data!";
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+
+//            setProgressBarIndeterminateVisibility(false);
+//            loadingDialog.dismiss();
+            /* Download complete. Lets update UI */
+            if (result == 1) {
+                Log.e("onPostExecute", "onPostExecute");
+//                if(services.size()!=0) {
+//                    for (int i = 0; i < services.size(); i++) {
+//                        ProductModel item = services.get(i);
+//                        int count1 = tempCount + item.getCount();
+//                        double amt1 = tempAmt + (item.getFinalPrice() * item.getCount());
+//                        Log.e("onPostExecute", " " + item.getFinalPrice());
+//                        coutTxt.setText(String.valueOf(count1));
+//                        amtTxt.setText(String.valueOf(amt1));
+//                        tempCount = count1;
+//                        tempAmt = amt1;
+//                    }
+//                emptyWishlist.setVisibility(View.GONE);
+//                adapter = new WislistRecyclerAdapter(WishlistFragment.this, services, R.layout.wishlist_inflate);
+//                recyclerView.setAdapter(adapter);
+//                adapter.notifyDataSetChanged();
+//                recyclerView.setAdapter(new ServicesRecyclerAdapter(activity, services));
+//                }else{
+//                    emptyCart.setVisibility(View.VISIBLE);
+//                }
+            } else {
+                Log.e("hello", "Failed to fetch data!");
+//                emptyWishlist.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+    private void parseResult(String result) {
+        try {
+            JSONArray response = new JSONArray(result);
+            JSONObject jsonObject=response.getJSONObject(0);
+
+            if (jsonObject != null) {
+                JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+
+                if (status==1) {
+//            boolean status = response.getBoolean(TagName.TAG_STATUS);
+
+//                    if (status) {
+//                JSONObject jsonData = jsonObject
+//                        .getJSONObject(TagName.TAG_PRODUCT);
+//                    }
+                    JSONArray posts = jsonObject.optJSONArray(TagName.TAG_PRODUCT);
+
+            /*Initialize array if null*/
+                    if (null == wishlistServices) {
+                        wishlistServices = new ArrayList<ProductModel>();
+                    }
+
+                    for (int i = 0; i < posts.length(); i++) {
+                        JSONObject post = posts.optJSONObject(i);
+
+                        ProductModel item = new ProductModel();
+                        item.setId(post.optInt(TagName.KEY_ID));
+                        item.setTitle(post.optString(TagName.KEY_NAME));
+                        item.setDescription(post.optString(TagName.KEY_DES));
+                        item.setCost(post.optDouble(TagName.KEY_PRICE));
+                        item.setFinalPrice(post.optDouble(TagName.KEY_FINAL_PRICE));
+//                        item.setCount(post.optInt(TagName.KEY_COUNT));
+//                    Log.e("name", "name");
+                        item.setThumbnail(post.optString(TagName.KEY_THUMB));
+                        wishlistServices.add(item);
+                    }
+                } else {
+                    message = jobstatus.getString(TagName.TAG_MSG);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
     @Override
     public Resources.Theme getTheme() {
         Resources res = getResources();
@@ -933,7 +1040,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         {
             case "Default":
 
-                theme.applyStyle(R.style.AppTheme, true);
+                theme.applyStyle(R.style.AppTheme_Default, true);
                 break;
 
             case "Blue":

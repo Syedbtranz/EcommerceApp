@@ -402,6 +402,11 @@ public class WishlistFragment extends Fragment {
 //                        item.setCount(post.optInt(TagName.KEY_COUNT));
 //                    Log.e("name", "name");
                         item.setThumbnail(post.optString(TagName.KEY_THUMB));
+                        JSONObject post1 = post.optJSONObject(TagName.TAG_OFFER_ALL);
+                        item.setShare(post1.optString(TagName.KEY_SHARE));
+                        item.setTag(post1.optString(TagName.KEY_TAG));
+                        item.setDiscount(post1.optInt(TagName.KEY_DISC));
+                        item.setRating(post1.optInt(TagName.KEY_RATING));
                         services.add(item);
                     }
                 } else {

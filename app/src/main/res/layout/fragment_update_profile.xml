@@ -55,7 +55,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="number"
+        android:inputType="text"
         android:padding="10dp"
         android:background="@drawable/edittext_bg"
         android:ems="10"
@@ -68,8 +68,21 @@
             android:text="Date of Birth"
             android:textColor="@color/color_black"
             />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:drawableRight="@drawable/cards_icon"
+            android:hint="Date"
+            android:textStyle="bold"
+            android:padding="10dp"
 
-        <EditText
+            android:background="#E0E0E0"
+            android:textSize="15dp"
+            android:inputType="text"
+            android:drawablePadding="10dp"
+            android:id="@+id/date_edit"
+            android:textColorHint="#9E9E9E"/>
+        <!--<EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
@@ -77,7 +90,8 @@
             android:background="@drawable/edittext_bg"
             android:ems="10"
             android:textColorHint="@color/view_divider_color"
-            android:id="@+id/input_data_of_birth" />
+            android:id="@+id/input_data_of_birth" />-->
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -89,12 +103,17 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"
+            android:inputType="phone"
             android:padding="10dp"
-            android:background="@drawable/edittext_bg"
+            android:background="@color/view_divider_color"
             android:ems="10"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:textColorHint="@color/view_divider_color"
             android:id="@+id/input_mobile_number" />
+
         <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -106,17 +125,31 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"
+            android:inputType="textEmailAddress"
             android:padding="10dp"
-            android:background="@drawable/edittext_bg"
+            android:editable="false"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:background="@color/view_divider_color"
             android:ems="10"
             android:textColorHint="@color/view_divider_color"
             android:id="@+id/input_email_id" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Update Profile"
+            android:textColor="?attr/colorPrimary"
+            android:background="?button_bg_primary_border"
+            android:paddingRight="10dp"
+            android:layout_margin="20dp"
+            android:id="@+id/edit_profile_submit_btn"
+            />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Adress"
+            android:text="Address"
             android:textStyle="bold"
             />
 
@@ -153,24 +186,31 @@
             android:background="@drawable/edittext_bg"
             android:ems="10"
             android:textColorHint="@color/view_divider_color"
-            android:id="@+id/input_email_three" />
+            android:id="@+id/input_address_three" />
         <LinearLayout
             android:orientation="horizontal"
             android:layout_marginTop="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        <EditText
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/spinner_country"
+                android:layout_weight="1"
+                android:background="@drawable/edittext_bg"
+                android:prompt="@string/spinner_title"/>
+       <!-- <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="date"
             android:padding="10dp"
             android:background="@drawable/edittext_bg"
             android:ems="10"
-            android:hint="State"
+            android:hint="Country"
             android:textColorHint="@color/view_divider_color"
             android:layout_weight="1"
             android:layout_marginRight="5dp"
-            android:id="@+id/card_expiry" />
+            android:id="@+id/input_address_country" />-->
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -181,8 +221,18 @@
                 android:hint="Pincode"
                 android:layout_marginLeft="5dp"
                 android:layout_weight="1"
-                android:id="@+id/card_no" />
+                android:id="@+id/input_address_postcode" />
         </LinearLayout>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="UPDATE ADDRESS"
+            android:textColor="?attr/colorPrimary"
+            android:background="?button_bg_primary_border"
+            android:paddingRight="10dp"
+            android:layout_margin="20dp"
+            android:id="@+id/update_address_btn"
+            />
        <!-- <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -223,7 +273,7 @@
             android:layout_marginTop="15dp"
             android:layout_height="wrap_content">
             <TextView
-                android:text="AccountStatus"
+                android:text="Account Status"
                 android:textStyle="bold"
                 android:textColor="@color/color_black"
                 android:layout_width="wrap_content"
@@ -233,7 +283,7 @@
 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/switch1"
+                android:id="@+id/account_switch"
                 android:shadowColor="@color/color_green"
                 android:checked="true"
                 android:layout_weight="1" />
@@ -241,16 +291,19 @@
 
         <LinearLayout
             android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:paddingBottom="15dp"
             android:layout_width="match_parent"
             android:orientation="horizontal"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
             <TextView
                 android:text="Password"
                 android:textStyle="bold"
 
                 android:textColor="@color/color_black"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"/>
 <View
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -265,17 +318,7 @@
                />
         </LinearLayout>
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="SUBMIT"
-            android:layout_marginTop="10dp"
-            android:textColor="?attr/colorPrimary"
-            android:background="?button_bg_primary_border"
-            android:paddingRight="10dp"
-            android:layout_margin="20dp"
-            android:id="@+id/card_details_submit_btn"
-            />
+
 
     </LinearLayout>
     </ScrollView>

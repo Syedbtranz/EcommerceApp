@@ -25,13 +25,21 @@
             android:padding="10dp"
             android:layout_marginRight="20dp">
         </ImageView>
-        <ImageView
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:button="@drawable/wishlist_checkbox"
+            android:id="@+id/prdt_like_btn"/>
+       <!-- <ImageView
             android:id="@+id/prdt_like"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:src="@drawable/like_icon">
-        </ImageView>
+        </ImageView>-->
     </LinearLayout>
     <RelativeLayout
         android:orientation="vertical"

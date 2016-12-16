@@ -30,6 +30,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -97,6 +98,7 @@ public class ProductItemFragment extends Fragment {
     CardView cardView;
     TextView pdtIdTxt, pdtNameTxt,desTxt,priceTxt, finalPriceTxt, ratingTxtBtm, standTxt,expTxt, standSubTitle, expSubTitle;
     ImageView pdtImg, share, like;
+    CheckBox likeBtn;
     FragmentActivity activity;
     LinearLayout addToCartBtn, buyNowBtn;
     ImageLoader imageLoader = ImageLoader.getInstance();
@@ -218,7 +220,7 @@ public class ProductItemFragment extends Fragment {
 //            Log.e("onResume", "onResume");
         } else {
             Log.e("onResume else", "onResume else");
-            horizontalList.setAdapter(new HorizontalListAdapter(activity, services,R.layout.gallary_inflate));
+            horizontalList.setAdapter(new HorizontalListAdapter(activity, services,R.layout.gallary_inflate,services));
             cardView.setVisibility(View.GONE);
             setProductItem(item1);
 //            progressLL.setVisibility(View.GONE);
@@ -253,7 +255,8 @@ public class ProductItemFragment extends Fragment {
 
         pdtImg = (ImageView) view.findViewById(R.id.item_image);
         share = (ImageView) view.findViewById(R.id.prdt_share);
-        like = (ImageView) view.findViewById(R.id.prdt_like);
+//        like = (ImageView) view.findViewById(R.id.prdt_like);
+        likeBtn = (CheckBox) view.findViewById(R.id.prdt_like_btn);
 
         ratingBar = (RatingBar) view.findViewById(R.id.ratingBar);
         ratingBarBtm = (RatingBar) view.findViewById(R.id.ratingbar_btm);
@@ -319,31 +322,6 @@ public class ProductItemFragment extends Fragment {
             }
         });
 
-        //image color change when change the theme colors
-        TypedValue typedValue = new TypedValue();
-        Resources.Theme theme = activity.getTheme();
-        theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
-        int color = typedValue.data;
-//        int color = Color.parseColor("#2e4567"); //The color u want
-        like.setColorFilter(color);
-        //LIKE ACTION
-        like.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(activity, " liked ", Toast.LENGTH_SHORT).show();
-                if(flag){
-//
-                    ((ImageView)v).setImageResource(R.drawable.like_icon_filled);
-                    addtoWishlist();
-                    flag=false;
-                }else{
-
-                    ((ImageView)v).setImageResource(R.drawable.like_icon);
-                    reomvewishlistItem(singlePrdtId);
-                    flag=true;
-                }
-            }
-        });
 
         //SIMILAR PRODUCTS ACTION
         simiPrdtBtn.setOnClickListener(new View.OnClickListener() {
@@ -408,19 +386,8 @@ public class ProductItemFragment extends Fragment {
         if(userId.equals("")){
             wishList=dbHandler.checkWishlistProduct(String.valueOf(singlePrdtId));
             if(wishList.size()<1){
-                Toast.makeText(getActivity(), "Added to Wishlist!", Toast.LENGTH_SHORT).show();
                 dbHandler.insertWishlist(String.valueOf(singlePrdtId),item1.getTitle(),String.valueOf(item1.getCost()),String.valueOf(item1.getFinalPrice()),item1.getThumbnail());
-
-//                if(cartBadge.equals("")){
-//                    ((SecondActivity) getActivity()).writeBadge(1);
-//                    editor.putString("cartBadge", String.valueOf(1));
-//                    editor.commit();
-////                            writeBadge(0);
-//                }else{
-//                    ((SecondActivity) getActivity()).writeBadge(Integer.parseInt(cartBadge)+1);
-//                    editor.putString("cartBadge", String.valueOf(Integer.parseInt(cartBadge)+1));
-//                    editor.commit();
-//                }
+                Toast.makeText(getActivity(), "Added to Wishlist!", Toast.LENGTH_SHORT).show();
             }else{
                 Toast.makeText(getActivity(), "This Product is already Added please check in CART!", Toast.LENGTH_SHORT).show();
             }
@@ -428,6 +395,87 @@ public class ProductItemFragment extends Fragment {
         }else{
             addWishlistItem(String.valueOf(singlePrdtId),userId);
 
+        }
+    }
+    public void addWishlistItem(String prdtId,String userId){
+        try {
+            RequestQueue requestQueue = Volley.newRequestQueue(activity);
+            String URL = "http://...";
+//            JSONObject jsonBody = new JSONObject();
+//            jsonBody.put("reference_id", "1");
+//            jsonBody.put("service_id", "1");
+//            jsonBody.put("client_id", userId);
+//            jsonBody.put("service_type", "1");
+//            final String mRequestBody = jsonBody.toString();
+
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, Utils.addwishlistUrl+userId+"/"+prdtId, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.i("VOLLEY", response);
+
+                    try {
+                        JSONObject jsonObject=new JSONObject(response);
+                        if(jsonObject!=null) {
+                            String status=jsonObject.optString(TagName.TAG_STATUS);
+                            if(status.equalsIgnoreCase("success")){
+//                                String status=jsonObject.optString(TagName.KEY_MSG);
+                                Toast.makeText(activity,jsonObject.optString(TagName.TAG_MSG),Toast.LENGTH_SHORT).show();
+//                                activity.finish();
+                            }
+//                            JSONObject job=jsonObject.optJSONObject(TagName.TAG_DATA);
+//                            editor = sharedpreferences.edit();
+//                            editor.putString("userId", job.optString("user_id"));
+//                            editor.putString("userName", job.optString("user_name"));
+////                            editor.putString("password", jsonObject.optString("password"));
+////                            editor.putString("userName",jobcust.optString("name"));
+//                            editor.putString("logged", "logged");
+//                            editor.commit();
+
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                    Log.e("VOLLEY", error.toString());
+                    Toast.makeText(activity,"Following detais are incorrect",Toast.LENGTH_SHORT).show();
+                }
+            }) {
+                @Override
+                public String getBodyContentType() {
+                    return "application/json; charset=utf-8";
+                }
+
+             /*   @Override
+                public byte[] getBody() throws AuthFailureError {
+                    try {
+                        return mRequestBody == null ? null : mRequestBody.getBytes("utf-8");
+                    } catch (UnsupportedEncodingException uee) {
+                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", mRequestBody, "utf-8");
+                        return null;
+                    }
+                }*/
+
+                /*@Override
+                protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                    String responseString = "";
+                    if (response != null) {
+                        responseString = String.valueOf(response);
+//                        Log.e(" response.data", response);
+
+                        // can get more details such as response.headers
+                    }
+                    return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+                }*/
+            };
+
+            requestQueue.add(stringRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     public void reomvewishlistItem(int prdtId){
@@ -563,6 +611,36 @@ public class ProductItemFragment extends Fragment {
 //        pdtIdTxt.setText("Product Id: " + resultProduct.getId());
         imageLoader.displayImage(resultProduct.getThumbnail(), pdtImg, options,
                 imageListener);
+
+        //LIKE BUTTON
+        if(resultProduct.getWishlist()==0){
+            likeBtn.setChecked(false);
+
+        }else{
+            likeBtn.setChecked(true);
+        }
+        //image color change when change the theme colors
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = activity.getTheme();
+        theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
+        int color = typedValue.data;
+//        int color = Color.parseColor("#2e4567"); //The color u want
+//        like.setColorFilter(color);
+
+        likeBtn.setHighlightColor(color);
+        //LIKE ACTION
+        likeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (((CheckBox)v).isChecked()) {
+                    addtoWishlist();
+
+                } else {
+                    reomvewishlistItem(singlePrdtId);
+                }
+            }
+        });
         //SHARE ACTION
         share.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -604,13 +682,19 @@ public class ProductItemFragment extends Fragment {
     }
     private void sendRequest() {
         if (CheckNetworkConnection.isConnectionAvailable(activity)) {
+            String user;
+            if(userId.equals("")){
+                user="0";
+            }else{
+                user=userId;
+            }
             //Product Details
             task = new ProductDetailsAsyncTask();
 //            Log.e("singlePrdtId",""+singlePrdtId);
-            task.execute(Utils.prdtDetailsUrl+singlePrdtId);
+            task.execute(Utils.prdtDetailsUrl+singlePrdtId+"/"+user);
             //Product on Glance
             taskAsynk = new AsyncHttpTask();
-            taskAsynk.execute(Utils.similarPrdtsUrl+singlePrdtId);
+            taskAsynk.execute(Utils.similarPrdtsUrl+singlePrdtId+"/"+user);
         } else {
             message = getResources().getString(R.string.no_internet_connection);
             showAlertDialog(message, true);
@@ -761,7 +845,7 @@ public class ProductItemFragment extends Fragment {
                         item1.setCount(1);
 //                    Log.e("name", "name"+ post.optDouble("finalPrice"));
                         item1.setThumbnail(post.optString(TagName.KEY_THUMB));
-
+                        item1.setWishlist(post.optInt(TagName.KEY_WISHLIST));
                         JSONObject post1 = post.optJSONObject(TagName.TAG_OFFER_ALL);
                         item1.setShare(post1.optString(TagName.KEY_SHARE));
                         item1.setTag(post1.optString(TagName.KEY_TAG));
@@ -856,7 +940,7 @@ public class ProductItemFragment extends Fragment {
 //                grid.setAdapter(adapter);
 ////                grid1.setAdapter(adapter);
 //                adapter.notifyDataSetChanged();
-                horizontalAdapter = new HorizontalListAdapter(activity, services,R.layout.gallary_inflate);
+                horizontalAdapter = new HorizontalListAdapter(activity, services,R.layout.gallary_inflate, services);
                 horizontalList.setAdapter(horizontalAdapter);
 //                grid1.setAdapter(adapter);
                 horizontalAdapter.notifyDataSetChanged();
@@ -901,6 +985,7 @@ public class ProductItemFragment extends Fragment {
 //                    item.setCount(post.optInt("finalPrice"));
 //                    Log.e("name", "name"+ post.optDouble("finalPrice"));
                         item.setThumbnail(post.optString(TagName.KEY_THUMB));
+                        item.setWishlist(post.optInt(TagName.KEY_WISHLIST));
                         JSONObject post1 = post.optJSONObject(TagName.TAG_OFFER_ALL);
                         item.setShare(post1.optString(TagName.KEY_SHARE));
                         item.setTag(post1.optString(TagName.KEY_TAG));
@@ -1229,87 +1314,7 @@ public class ProductItemFragment extends Fragment {
         la.execute(userid, productid);
 
     }
-    public void addWishlistItem(String prdtId,String userId){
-        try {
-            RequestQueue requestQueue = Volley.newRequestQueue(activity);
-            String URL = "http://...";
-//            JSONObject jsonBody = new JSONObject();
-//            jsonBody.put("reference_id", "1");
-//            jsonBody.put("service_id", "1");
-//            jsonBody.put("client_id", userId);
-//            jsonBody.put("service_type", "1");
-//            final String mRequestBody = jsonBody.toString();
 
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, Utils.addwishlistUrl+userId+"/"+prdtId, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    Log.i("VOLLEY", response);
-
-                    try {
-                        JSONObject jsonObject=new JSONObject(response);
-                        if(jsonObject!=null) {
-                            String status=jsonObject.optString(TagName.TAG_STATUS);
-                            if(status.equalsIgnoreCase("success")){
-//                                String status=jsonObject.optString(TagName.KEY_MSG);
-                                Toast.makeText(activity,jsonObject.optString(TagName.TAG_MSG),Toast.LENGTH_SHORT).show();
-//                                activity.finish();
-                            }
-//                            JSONObject job=jsonObject.optJSONObject(TagName.TAG_DATA);
-//                            editor = sharedpreferences.edit();
-//                            editor.putString("userId", job.optString("user_id"));
-//                            editor.putString("userName", job.optString("user_name"));
-////                            editor.putString("password", jsonObject.optString("password"));
-////                            editor.putString("userName",jobcust.optString("name"));
-//                            editor.putString("logged", "logged");
-//                            editor.commit();
-
-                        }
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-
-                    Log.e("VOLLEY", error.toString());
-                    Toast.makeText(activity,"Following detais are incorrect",Toast.LENGTH_SHORT).show();
-                }
-            }) {
-                @Override
-                public String getBodyContentType() {
-                    return "application/json; charset=utf-8";
-                }
-
-             /*   @Override
-                public byte[] getBody() throws AuthFailureError {
-                    try {
-                        return mRequestBody == null ? null : mRequestBody.getBytes("utf-8");
-                    } catch (UnsupportedEncodingException uee) {
-                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", mRequestBody, "utf-8");
-                        return null;
-                    }
-                }*/
-
-                /*@Override
-                protected Response<String> parseNetworkResponse(NetworkResponse response) {
-                    String responseString = "";
-                    if (response != null) {
-                        responseString = String.valueOf(response);
-//                        Log.e(" response.data", response);
-
-                        // can get more details such as response.headers
-                    }
-                    return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
-                }*/
-            };
-
-            requestQueue.add(stringRequest);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
    /* private void getQuoteId(final String username, final String password) {
 
         class QuoteAsync extends AsyncTask<String, Void, String> {

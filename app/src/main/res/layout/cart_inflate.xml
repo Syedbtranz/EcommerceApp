@@ -8,7 +8,6 @@
     card_view:cardCornerRadius="4dp">
 
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,14 +21,49 @@
             android:layout_height="match_parent"
             android:layout_weight="0.9"
             android:layout_gravity="center_vertical">
-            <ImageView
+            <RelativeLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_gravity="center"
+                android:layout_weight="1">
+                <ImageView
+                    android:id="@+id/thumbnail"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingBottom="10dp"
+                    android:paddingRight="5dp"
+                    android:paddingLeft="5dp"
+                    android:scaleType="fitXY"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:src="@drawable/preloader_product">
+                </ImageView>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:background="@color/color_blue"
+                    android:text="best offer"
+                    android:textSize="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+
+                    android:textColor="@color/color_text"
+                    android:id="@+id/offer_tag_btn"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:layout_alignBottom="@id/thumbnail"
+                    android:layout_centerHorizontal="true" />
+            </RelativeLayout>
+           <!-- <ImageView
                 android:id="@+id/thumbnail"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:layout_weight="1"
                 android:scaleType="fitXY"
                 android:src="@drawable/preloader_product">
-            </ImageView>
+            </ImageView>-->
             <TextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"

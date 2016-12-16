@@ -121,7 +121,7 @@ public class CredientialActivity extends AppCompatActivity {
         {
             case "Default":
 
-                theme.applyStyle(R.style.AppTheme, true);
+                theme.applyStyle(R.style.AppTheme_Default, true);
                 break;
 
             case "Blue":

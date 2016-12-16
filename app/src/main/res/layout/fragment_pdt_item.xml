@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
        android:background="@color/color_text"
+        android:visibility="gone"
         android:gravity="center">
         <ProgressBar
             android:id="@+id/progressbar"
@@ -46,13 +47,18 @@
             android:src="@drawable/share_icon"
             android:layout_marginRight="30dp">
         </ImageView>
-        <ImageView
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:button="@drawable/wishlist_checkbox"
+            android:id="@+id/prdt_like_btn"/>
+        <!--<ImageView
             android:id="@+id/prdt_like"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@drawable/like_icon">
 
-        </ImageView>
+        </ImageView>-->
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"

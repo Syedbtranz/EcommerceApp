@@ -606,7 +606,7 @@ String customerEmail, cartBadge;
         {
             case "Default":
 
-                theme.applyStyle(R.style.AppTheme, true);
+                theme.applyStyle(R.style.AppTheme_Default, true);
                 break;
 
             case "Blue":

@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
+import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -43,9 +44,15 @@ import com.nostra13.universalimageloader.core.display.SimpleBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -139,13 +146,13 @@ public class ProductGridAdapter extends BaseAdapter {
         holder.finalPrice.setText(""+modelList.get(position).getFinalPrice());
 //        holder.desc.setText(modelList.get(position).getDescription());
         holder.offerTag.setText(modelList.get(position).getTag());
-        if(modelList.get(position).getTag().equalsIgnoreCase("new")){
-            holder.offerTag.setBackgroundColor(ContextCompat.getColor(context, R.color.color_green));
-        }else  if(modelList.get(position).getTag().equalsIgnoreCase("best offer")){
-            holder.offerTag.setBackgroundColor(ContextCompat.getColor(context, R.color.color_blue));
-        }else  if(modelList.get(position).getDiscount()!=0){
+        if(modelList.get(position).getDiscount()!=0){
             holder.offerTag.setText("Sale "+modelList.get(position).getDiscount()+"% Off");
             holder.offerTag.setBackgroundColor(ContextCompat.getColor(context, R.color.color_red));
+        }else  if(modelList.get(position).getTag().equalsIgnoreCase("best offer")){
+            holder.offerTag.setBackgroundColor(ContextCompat.getColor(context, R.color.color_blue));
+        }else if(modelList.get(position).getTag().equalsIgnoreCase("new")){
+            holder.offerTag.setBackgroundColor(ContextCompat.getColor(context, R.color.color_green));
         }else {
             holder.offerTag.setVisibility(View.INVISIBLE);
         }
@@ -226,7 +233,7 @@ public class ProductGridAdapter extends BaseAdapter {
                         wishList=dbHandler.checkWishlistProduct(String.valueOf(modelList.get(position).getId()));
                         if(wishList.size()<1){
                             Toast.makeText(context, "Added to Wishlist!", Toast.LENGTH_SHORT).show();
-                            dbHandler.insertWishlist(String.valueOf(modelList.get(position).getId()),modelList.get(position).getTitle(),String.valueOf(modelList.get(position).getCost()),String.valueOf(modelList.get(position).getFinalPrice()),modelList.get(position).getThumbnail());
+                            dbHandler.insertWishlist(String.valueOf(modelList.get(position).getId()),modelList.get(position).getTitle(),String.valueOf(modelList.get(position).getCost()),String.valueOf(modelList.get(position).getFinalPrice()),modelList.get(position).getThumbnail(),modelList.get(position).getTag(),String.valueOf(modelList.get(position).getDiscount()),String.valueOf(modelList.get(position).getRating()));
                             modelList.get(position).setWishlist(1);
                             modelList.remove(position);
                             modelList.add(position, modelList.get(position));
@@ -291,19 +298,19 @@ public class ProductGridAdapter extends BaseAdapter {
         CheckBox likeBtn;
         ProgressBar progressBar;
     }
-    public void filter(String lowPrice, String highPrice) {
+    public void filter(int lowPrice, int highPrice) {
 
 //        charText = charText.toLowerCase(Locale.getDefault());
-        lowPrice = lowPrice.toLowerCase(Locale.getDefault());
-        highPrice = highPrice.toLowerCase(Locale.getDefault());
+//        lowPrice = lowPrice.toLowerCase(Locale.getDefault());
+//        highPrice = highPrice.toLowerCase(Locale.getDefault());
 
         modelList.clear();
-        if (lowPrice.length() == 0&&highPrice.length() == 0) {
+        if (lowPrice == 0&&highPrice == 0) {
             modelList.addAll(arraylist);
 
         } else {
             for (ProductModel postDetail : arraylist) {
-                if (lowPrice.length() != 0&&highPrice.length() != 0 && Double.valueOf(lowPrice)<=postDetail.getFinalPrice()&&postDetail.getFinalPrice()<=Double.valueOf(highPrice)) {
+                if (lowPrice != 0&&highPrice != 0 && Double.valueOf(lowPrice)<=postDetail.getFinalPrice()&&postDetail.getFinalPrice()<=Double.valueOf(highPrice)) {
                     modelList.add(postDetail);
                 }
 
@@ -314,8 +321,125 @@ public class ProductGridAdapter extends BaseAdapter {
         }
         notifyDataSetChanged();
     }
+//    public void filter(int lowPrice, int highPrice) {
+//
+////        charText = charText.toLowerCase(Locale.getDefault());
+////        lowPrice = lowPrice.toLowerCase(Locale.getDefault());
+////        highPrice = highPrice.toLowerCase(Locale.getDefault());
+//
+//        modelList.clear();
+//        if (lowPrice == 0&&highPrice == 0) {
+//            modelList.addAll(arraylist);
+//
+//        } else {
+//            for (ProductModel postDetail : arraylist) {
+//                if (lowPrice != 0&&highPrice != 0 && Double.valueOf(lowPrice)<=postDetail.getFinalPrice()&&postDetail.getFinalPrice()<=Double.valueOf(highPrice)) {
+//                    modelList.add(postDetail);
+//                }
+//
+////                else if (charText.length() != 0 && postDetail.getPostSubTitle().toLowerCase(Locale.getDefault()).contains(charText)) {
+////                    modelList.add(postDetail);
+////                }
+//            }
+//        }
+//        notifyDataSetChanged();
+//    }
     public void addWishlistItem(String prdtId,String userId){
-        try {
+        class Async extends AsyncTask<String, Void, String> {
+
+//            private Dialog loadingDialog;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+//                loadingDialog = ProgressDialog.show(activity, "", "Pease Wait...");
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+                String userid = params[0];
+                String pid = params[1];
+//                String price = params[2];
+                InputStream inputStream = null;
+                String result= null;;
+                HttpURLConnection urlConnection = null;
+
+                try {
+                /* forming th java.net.URL object */
+                    URL url = new URL(Utils.instantAddtoWishlistUrl+userid+"&productid="+pid);
+//                    Log.e("URL", Utils.instantAddWishlistUrl+userid+"&productid="+pid);
+
+                    urlConnection = (HttpURLConnection) url.openConnection();
+
+                /* for Get request */
+                    urlConnection.setRequestMethod("GET");
+
+                    int statusCode = urlConnection.getResponseCode();
+
+                /* 200 represents HTTP OK */
+                    if (statusCode ==  200) {
+
+                        BufferedReader r = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                        StringBuilder response = new StringBuilder();
+                        String line;
+                        while ((line = r.readLine()) != null) {
+                            response.append(line);
+                        }
+                        Log.e("response.toString()", response.toString());
+//                        parseResult(response.toString());
+                        result = response.toString(); // Successful
+                    }else{
+                        result = null; //"Failed to fetch data!";
+                    }
+
+                } catch (Exception e) {
+                    Log.d("catch", e.getLocalizedMessage());
+                }
+
+                return result; //"Failed to fetch data!";
+
+            }
+
+            @Override
+            protected void onPostExecute(String result){
+                String s = result.trim();
+//                Log.e("s",s);
+//                loadingDialog.dismiss();
+                try {
+                    JSONObject jsonObject = new JSONObject(s);
+//                    JSONObject jsonObject=response.getJSONObject(0);
+
+                    if (jsonObject != null) {
+                        JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                        int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+                        String message = jobstatus.optString(TagName.TAG_MSG);
+
+                        if (status==1) {
+
+                            JSONArray jarr=jsonObject.optJSONArray("addwishlist");
+                            JSONObject job=jarr.optJSONObject(0);
+                            JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+                            int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                            String message1 = jobstat.optString(TagName.TAG_MSG);
+                            if(status1==1) {
+//                                Toast.makeText(context, "Wishlist Product Added", Toast.LENGTH_SHORT).show();
+                            }else{
+//                                Toast.makeText(context, "Wishlist Product Not Added", Toast.LENGTH_SHORT).show();
+                            }
+                        }else {
+                            Toast.makeText(context, "Net work Error", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        Async la = new Async();
+        la.execute(userId, prdtId);
+
+      /*  try {
             RequestQueue requestQueue = Volley.newRequestQueue(context);
             String URL = "http://...";
 //            JSONObject jsonBody = new JSONObject();
@@ -367,7 +491,7 @@ public class ProductGridAdapter extends BaseAdapter {
                     return "application/json; charset=utf-8";
                 }
 
-             /*   @Override
+             *//*   @Override
                 public byte[] getBody() throws AuthFailureError {
                     try {
                         return mRequestBody == null ? null : mRequestBody.getBytes("utf-8");
@@ -375,9 +499,9 @@ public class ProductGridAdapter extends BaseAdapter {
                         VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", mRequestBody, "utf-8");
                         return null;
                     }
-                }*/
+                }*//*
 
-                /*@Override
+                *//*@Override
                 protected Response<String> parseNetworkResponse(NetworkResponse response) {
                     String responseString = "";
                     if (response != null) {
@@ -387,13 +511,13 @@ public class ProductGridAdapter extends BaseAdapter {
                         // can get more details such as response.headers
                     }
                     return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
-                }*/
+                }*//*
             };
 
             requestQueue.add(stringRequest);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
     public void reomvewishlistItem(int prdtId){
         if(userId.equals("")) {
@@ -405,7 +529,102 @@ public class ProductGridAdapter extends BaseAdapter {
 
     }
     public void deleteWishlistItem(String prdtId,String userId){
-        try {
+        class Async extends AsyncTask<String, Void, String> {
+
+//            private Dialog loadingDialog;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+//                loadingDialog = ProgressDialog.show(activity, "", "Pease Wait...");
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+                String userid = params[0];
+                String pid = params[1];
+//                String price = params[2];
+                InputStream inputStream = null;
+                String result= null;;
+                HttpURLConnection urlConnection = null;
+
+                try {
+                /* forming th java.net.URL object */
+                    URL url = new URL(Utils.instantDeleteWishlistItemUrl+userid+"&productid="+pid);
+//                    Log.e("URL", Utils.quoteBuynowUrl+userid+"/"+pid);
+
+                    urlConnection = (HttpURLConnection) url.openConnection();
+
+                /* for Get request */
+                    urlConnection.setRequestMethod("GET");
+
+                    int statusCode = urlConnection.getResponseCode();
+
+                /* 200 represents HTTP OK */
+                    if (statusCode ==  200) {
+
+                        BufferedReader r = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                        StringBuilder response = new StringBuilder();
+                        String line;
+                        while ((line = r.readLine()) != null) {
+                            response.append(line);
+                        }
+                        Log.e("response.toString()", response.toString());
+//                        parseResult(response.toString());
+                        result = response.toString(); // Successful
+                    }else{
+                        result = null; //"Failed to fetch data!";
+                    }
+
+                } catch (Exception e) {
+                    Log.d("catch", e.getLocalizedMessage());
+                }
+
+                return result; //"Failed to fetch data!";
+
+            }
+
+            @Override
+            protected void onPostExecute(String result){
+                String s = result.trim();
+//                Log.e("s",s);
+//                loadingDialog.dismiss();
+                try {
+                    JSONObject jsonObject = new JSONObject(s);
+//                    JSONObject jsonObject=response.getJSONObject(0);
+
+                    if (jsonObject != null) {
+                        JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                        int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+                        String message = jobstatus.optString(TagName.TAG_MSG);
+
+                        if (status==1) {
+
+                            JSONArray jarr=jsonObject.optJSONArray("itemremovewishlist");
+                            JSONObject job=jarr.optJSONObject(0);
+                            JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+                            int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                            String message1 = jobstat.optString(TagName.TAG_MSG);
+                            if(status1==1) {
+//                                Toast.makeText(context, "Wishlist Product deleted", Toast.LENGTH_SHORT).show();
+                            }else{
+//                                Toast.makeText(context, "Wishlist Product Not deleted", Toast.LENGTH_SHORT).show();
+                            }
+                        }else {
+                            Toast.makeText(context, "Net work Error", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        Async la = new Async();
+        la.execute(userId, prdtId);
+
+
+        /*try {
             RequestQueue requestQueue = Volley.newRequestQueue(context);
             String URL = "http://...";
 //            JSONObject jsonBody = new JSONObject();
@@ -457,7 +676,7 @@ public class ProductGridAdapter extends BaseAdapter {
                     return "application/json; charset=utf-8";
                 }
 
-             /*   @Override
+             *//*   @Override
                 public byte[] getBody() throws AuthFailureError {
                     try {
                         return mRequestBody == null ? null : mRequestBody.getBytes("utf-8");
@@ -465,9 +684,9 @@ public class ProductGridAdapter extends BaseAdapter {
                         VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", mRequestBody, "utf-8");
                         return null;
                     }
-                }*/
+                }*//*
 
-                /*@Override
+                *//*@Override
                 protected Response<String> parseNetworkResponse(NetworkResponse response) {
                     String responseString = "";
                     if (response != null) {
@@ -477,13 +696,13 @@ public class ProductGridAdapter extends BaseAdapter {
                         // can get more details such as response.headers
                     }
                     return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
-                }*/
+                }*//*
             };
 
             requestQueue.add(stringRequest);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 }
 

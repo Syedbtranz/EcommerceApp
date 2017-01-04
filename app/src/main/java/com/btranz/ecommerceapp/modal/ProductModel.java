@@ -20,6 +20,7 @@ public class ProductModel extends ClassLoader implements Parcelable, Comparable<
     private String expCost;
     private String subTitle;
     private String subTitle1;
+    private String totalReview;
     public ProductModel() {
         super();
     }
@@ -42,6 +43,7 @@ public class ProductModel extends ClassLoader implements Parcelable, Comparable<
         this.expCost = in.readString();
         this.subTitle = in.readString();
         this.subTitle1 = in.readString();
+        this.totalReview = in.readString();
     }
 
     public int getId() {
@@ -163,12 +165,21 @@ public class ProductModel extends ClassLoader implements Parcelable, Comparable<
     public void setSubTitle(String subTitle) {
         this.subTitle = subTitle;
     }
+
     public String getSubTitle1() {
         return subTitle1;
     }
 
     public void setSubTitle1(String subTitle1) {
         this.subTitle1 = subTitle1;
+    }
+
+    public String getTotalReview() {
+        return totalReview;
+    }
+
+    public void setTotalReview(String totalReview) {
+        this.totalReview = totalReview;
     }
 
     @Override
@@ -194,6 +205,7 @@ public class ProductModel extends ClassLoader implements Parcelable, Comparable<
         parcel.writeString(getExpCost());
         parcel.writeString(getSubTitle());
         parcel.writeString(getSubTitle1());
+        parcel.writeString(getTotalReview());
     }
     public static final Creator<ProductModel> CREATOR = new Creator<ProductModel>() {
         public ProductModel createFromParcel(Parcel in) {
@@ -230,7 +242,7 @@ public class ProductModel extends ClassLoader implements Parcelable, Comparable<
     @Override
     public String toString() {
         return "Product [id=" + id + ", name=" + title +  ", description=" + description +", cost=" + cost +", finalPrice=" + finalPrice +", count=" + count +", wishlist=" + wishlist + ", imageUrl="
-                + thumbnail +  ", share=" + share + ", Tag=" + tag +", Discount=" + discount + ", rating=" + rating + ", standCost=" + standCost + ", expCost=" + expCost +", subTitle=" + subTitle +", subTitle1=" + subTitle1 +"]";
+                + thumbnail +  ", share=" + share + ", Tag=" + tag +", Discount=" + discount + ", rating=" + rating + ", standCost=" + standCost + ", expCost=" + expCost +", subTitle=" + subTitle +", subTitle1=" + subTitle1 +", totalReview=" + totalReview +"]";
     }
 
 

@@ -22,17 +22,14 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"/>-->
     <LinearLayout
-        layout="@+id/search_bar"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        android:layout_alignParentTop="true"
         android:gravity="center"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:id="@+id/search_bar_ll">
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"

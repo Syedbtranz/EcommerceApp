@@ -201,7 +201,7 @@ public class OrdersFragment extends Fragment {
 //            task = new RequestImgTask(activity);
 //            task.execute(url);
             task = new AsyncHttpTask();
-            task.execute(Utils.ordersUrl+userId);
+            task.execute(Utils.instantOrdersUrl+userId);
 //            task.execute(prdtsUrl);
             Log.e("sendrequest","sendrequest");
         } else {
@@ -308,22 +308,22 @@ public class OrdersFragment extends Fragment {
     }
     private void parseResult(String result) {
         try {
-            JSONArray response = new JSONArray(result);
-            JSONObject jsonObject=response.getJSONObject(0);
+            JSONObject jsonObject = new JSONObject(result);
+//            JSONObject jsonObject=response.getJSONObject(0);
 
             if (jsonObject != null) {
                 JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
                 int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
                 String message = jobstatus.optString(TagName.TAG_MSG);
 
-//                if (status==1) {
-//            boolean status = response.getBoolean(TagName.TAG_STATUS);
-
-                    if (message.equalsIgnoreCase("Success")) {
-//                JSONObject jsonData = jsonObject
-//                        .getJSONObject(TagName.TAG_PRODUCT);
-//                    }
-                    JSONArray posts = jsonObject.optJSONArray(TagName.TAG_ORDER);
+                if (status==1) {
+                    JSONArray jarr=jsonObject.optJSONArray("orderhistory");
+                    JSONObject job=jarr.optJSONObject(0);
+                    JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+                    int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                    String message1 = jobstat.optString(TagName.TAG_MSG);
+                    if(status1==1) {
+                    JSONArray posts = job.optJSONArray(TagName.TAG_ORDER);
 
             /*Initialize array if null*/
                     if (null == services) {
@@ -369,7 +369,11 @@ public class OrdersFragment extends Fragment {
                         services.add(item);
 
                     }
+                    }else{
+                        Toast.makeText(activity, "No Orders", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
+                    Toast.makeText(activity, "Net Work Error", Toast.LENGTH_SHORT).show();
                     message = jsonObject.getString(TagName.TAG_PRODUCT);
                 }
             }

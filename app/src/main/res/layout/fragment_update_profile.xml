@@ -71,7 +71,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:drawableRight="@drawable/cards_icon"
+            android:drawableRight="@drawable/calender"
             android:hint="Date"
             android:textStyle="bold"
             android:padding="10dp"

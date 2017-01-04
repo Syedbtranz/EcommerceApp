@@ -312,39 +312,35 @@ public class ProfileFragment extends Fragment {
                 Log.e("s",response);
                 loadingDialog.dismiss();
                 try {
-                    JSONArray jsonArray=new JSONArray(response);
-                    JSONObject jsonObject=jsonArray.getJSONObject(0);
+                    JSONObject jsonObject=new JSONObject(response);
+//                    JSONArray jsonArray=new JSONArray(response);
+//                    JSONObject jsonObject=jsonArray.getJSONObject(0);
                     if(jsonObject!=null) {
-                        JSONObject jsonObj=jsonObject.getJSONObject(TagName.TAG_STATUS);
-                        String status=jsonObj.optString(TagName.TAG_MSG);
-                        if(status.equalsIgnoreCase("success")){
-//                                String status=jsonObject.optString(TagName.KEY_MSG);
-                            JSONObject job=jsonObject.optJSONObject("accountinfo");
+                        JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                        int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+                        String message = jobstatus.optString(TagName.TAG_MSG);
+
+                        if (status==1) {
+                            JSONArray jarr=jsonObject.optJSONArray("getaccountinfo");
+                            JSONObject job1=jarr.optJSONObject(0);
+                            JSONObject jobstat=job1.getJSONObject(TagName.TAG_STATUS);
+                            int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                            String message1 = jobstat.optString(TagName.TAG_MSG);
+                            if(status1==1) {
+                            JSONObject job=job1.optJSONObject("accountinfo");
                             firstName=job.optString("firstname");
                             lastName=job.optString("lastname");
                             dob=job.optString("dob");
                             mobile=job.optString("telephone");
                             email=job.optString("email");
-//                                walletAmt=job.optString("wallet_amount");
-                          /*  firstNameTxt.setText(firstName);
-                            lastNameTxt.setText(lastName);
-                            emailTxt.setText(email);
-                            dobTxt.setText(dob);*/
-//                                mobileNoTxt.setText(mobileNo);
-//                                emailTxt.setText(email);
-//                                walletAmtTxt.setText(walletAmt);
-//                                Toast.makeText(activity,jsonObject.optString(TagName.KEY_MSG),Toast.LENGTH_SHORT).show();
-//                                activity.finish();
-                        }
-//                            JSONObject job=jsonObject.optJSONObject(TagName.TAG_DATA);
-//                            editor = sharedpreferences.edit();
-//                            editor.putString("userId", job.optString("user_id"));
-//                            editor.putString("userName", job.optString("user_name"));
-////                            editor.putString("password", jsonObject.optString("password"));
-////                            editor.putString("userName",jobcust.optString("name"));
-//                            editor.putString("logged", "logged");
-//                            editor.commit();
 
+                        }
+
+                        }else{
+                            Toast.makeText(activity, "No Profile Found", Toast.LENGTH_SHORT).show();
+                        }
+                    }else {
+                        Toast.makeText(activity, "Network Error.  Please try Again.", Toast.LENGTH_SHORT).show();
                     }
 
                 } catch (JSONException e) {
@@ -354,7 +350,7 @@ public class ProfileFragment extends Fragment {
         }
 
         ProfileInfoAsync la = new ProfileInfoAsync();
-        la.execute(Utils.getProfileUrl+userId);
+        la.execute(Utils.instantgetProfileUrl+userId);
 
     }
     public void getAddress(){
@@ -424,24 +420,31 @@ public class ProfileFragment extends Fragment {
                 Log.e("s",response);
                 loadingDialog.dismiss();
                 try {
-                    JSONArray jsonArray=new JSONArray(response);
-                    JSONObject jsonObject=jsonArray.getJSONObject(0);
+                    JSONObject jsonObject=new JSONObject(response);
+//                    JSONObject jsonObject=jsonArray.getJSONObject(0);
                     if(jsonObject!=null) {
-                        JSONObject jsonObj=jsonObject.getJSONObject(TagName.TAG_STATUS);
-                        String status=jsonObj.optString(TagName.TAG_MSG);
-                        if(status.equalsIgnoreCase("success")){
-//                                String status=jsonObject.optString(TagName.KEY_MSG);
-                            JSONArray jarry=jsonObject.getJSONArray("billingaddress");
-                            JSONObject job=jarry.optJSONObject(0);
+                        JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                        int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+                        String message = jobstatus.optString(TagName.TAG_MSG);
+
+                        if (status==1) {
+                            JSONArray jarr = jsonObject.optJSONArray("getaddress");
+                            JSONObject job1 = jarr.optJSONObject(0);
+                            JSONObject jobstat = job1.getJSONObject(TagName.TAG_STATUS);
+                            int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                            String message1 = jobstat.optString(TagName.TAG_MSG);
+                            if (status1 == 1) {
+                                JSONArray jarry = job1.getJSONArray("billingaddress");
+                                JSONObject job = jarry.optJSONObject(0);
 //                            String firstName=job.optString("firstname");
 //                            String lastName=job.optString("lastname");
-                            street=job.optString("street");
-                            city=job.optString("city");
-                            countrycode=job.optString("country_id");
-                            country=job.optString("country_label");
-                            postcode=job.optString("postcode");
+                                street = job.optString("street");
+                                city = job.optString("city");
+                                countrycode = job.optString("country_id");
+                                country = job.optString("country_label");
+                                postcode = job.optString("postcode");
 //                            String telephone=job.optString("telephone");
-                            setData();
+                                setData();
 //                            addressTxt.setText(street+" "+city+" "+countrycode+" "+postcode+".");
 //                                lastNameTxt.setText(lastName);
 //                                emailTxt.setText(email);
@@ -451,6 +454,12 @@ public class ProfileFragment extends Fragment {
 //                                walletAmtTxt.setText(walletAmt);
 //                                Toast.makeText(activity,jsonObject.optString(TagName.KEY_MSG),Toast.LENGTH_SHORT).show();
 //                                activity.finish();
+                            }else{
+                                Toast.makeText(activity, "No Address Found, Please try Again.", Toast.LENGTH_SHORT).show();
+                            }
+
+                        }else {
+                            Toast.makeText(activity, "No Address Found.. Please try Again.", Toast.LENGTH_SHORT).show();
                         }
 //                            JSONObject job=jsonObject.optJSONObject(TagName.TAG_DATA);
 //                            editor = sharedpreferences.edit();
@@ -470,7 +479,7 @@ public class ProfileFragment extends Fragment {
         }
 
         AddressAsync la = new AddressAsync();
-        la.execute(Utils.getaddressUrl+userId);
+        la.execute(Utils.instantGetAddressUrl+userId);
     }
     public void setData(){
         firstNameTxt.setText(firstName);

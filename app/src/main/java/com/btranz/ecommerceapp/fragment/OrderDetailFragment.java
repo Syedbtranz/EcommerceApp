@@ -252,7 +252,7 @@ public class OrderDetailFragment extends Fragment {
 //            task = new RequestImgTask(activity);
 //            task.execute(url);
 			task = new AsyncHttpTask();
-			task.execute(Utils.ordersDetailsUrl+orderitemlistId);
+			task.execute(Utils.instantOrdersDetailsUrl+orderitemlistId);
 //            task.execute(prdtsUrl);
 			Log.e("sendrequest","sendrequest");
 		} else {
@@ -359,48 +359,51 @@ public class OrderDetailFragment extends Fragment {
 	}
 	private void parseResult(String result) {
 		try {
-			JSONArray response = new JSONArray(result);
-			JSONObject jsonObject=response.getJSONObject(0);
+			JSONObject jsonObject = new JSONObject(result);
+//			JSONObject jsonObject=response.getJSONObject(0);
 
 			if (jsonObject != null) {
 				JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
 				int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
 				String message = jobstatus.optString(TagName.TAG_MSG);
 
-//                if (status==1) {
-//            boolean status = response.getBoolean(TagName.TAG_STATUS);
-
-				if (message.equalsIgnoreCase("Success")) {
-//                JSONObject jsonData = jsonObject
-//                        .getJSONObject(TagName.TAG_PRODUCT);
-//                    }
-					JSONArray jarray = jsonObject.optJSONArray("order_item_list");
+				if (status==1) {
+					JSONArray jarr=jsonObject.optJSONArray("orderitemlist");
+					JSONObject job1=jarr.optJSONObject(0);
+					JSONObject jobstat=job1.getJSONObject(TagName.TAG_STATUS);
+					int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+					String message1 = jobstat.optString(TagName.TAG_MSG);
+					if(status1==1) {
+						JSONArray jarray = job1.optJSONArray("order_item_list");
 
             /*Initialize array if null*/
-					if (null == orderList) {
-						orderList = new ArrayList<ProductModel>();
-					}
+						if (null == orderList) {
+							orderList = new ArrayList<ProductModel>();
+						}
 
-					for (int j = 0; j < jarray.length(); j++) {
-                            JSONObject job = jarray.optJSONObject(j);
-                            ProductModel item1 = new ProductModel();
-                            item1.setId(job.optInt("product_id"));
-                            item1.setTitle(job.optString(TagName.KEY_NAME));
+						for (int j = 0; j < jarray.length(); j++) {
+							JSONObject job = jarray.optJSONObject(j);
+							ProductModel item1 = new ProductModel();
+							item1.setId(job.optInt("product_id"));
+							item1.setTitle(job.optString(TagName.KEY_NAME));
 //                        item.setDescription(post.optString(TagName.KEY_DES));
-                            item1.setCost(job.optDouble(TagName.KEY_PRICE));
+							item1.setCost(job.optDouble(TagName.KEY_PRICE));
 //                        item.setFinalPrice(post.optDouble(TagName.KEY_FINAL_PRICE));
 //                            item.setPayment(post.optString("sku"));
-                            item1.setCount(job.optInt(TagName.KEY_COUNT));
+							item1.setCount(job.optInt(TagName.KEY_COUNT));
 ////                    Log.e("name", "name");
-                            item1.setThumbnail(job.optString(TagName.KEY_THUMB));
-						orderList.add(item1);
-                        }
+							item1.setThumbnail(job.optString(TagName.KEY_THUMB));
+							orderList.add(item1);
+						}
 
 
-
+					}else{
+							Toast.makeText(activity, "No Orders", Toast.LENGTH_SHORT).show();
+						}
 
 				} else {
-					message = jsonObject.getString(TagName.TAG_PRODUCT);
+					Toast.makeText(activity, "Net Work Error", Toast.LENGTH_SHORT).show();
+//					message = jsonObject.getString(TagName.TAG_PRODUCT);
 				}
 			}
 		} catch (JSONException e) {
@@ -474,14 +477,28 @@ public class OrderDetailFragment extends Fragment {
 				Log.e("s",response);
 				loadingDialog.dismiss();
 				try {
-					JSONArray jsonArray=new JSONArray(response);
-					JSONObject jsonObject=jsonArray.getJSONObject(0);
+					JSONObject jsonObject=new JSONObject(response);
+//					JSONObject jsonObject=jsonArray.getJSONObject(0);
 					if(jsonObject!=null) {
-						JSONObject jsonObj=jsonObject.getJSONObject(TagName.TAG_STATUS);
-						String status=jsonObj.optString(TagName.TAG_MSG);
-						if(status.equalsIgnoreCase("success")){
-							Toast.makeText(activity,status,Toast.LENGTH_SHORT).show();
-							activity.finish();
+						JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+						int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+						String message = jobstatus.optString(TagName.TAG_MSG);
+
+						if (status==1) {
+							JSONArray jarr=jsonObject.optJSONArray("cancelorderbuyer");
+							JSONObject job=jarr.optJSONObject(0);
+							JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+							int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+							String message1 = jobstat.optString(TagName.TAG_MSG);
+							if(status1==1) {
+								Toast.makeText(activity, "Order Cancelled", Toast.LENGTH_SHORT).show();
+								activity.finish();
+							}else{
+								Toast.makeText(activity, "Order Not Cancelled", Toast.LENGTH_SHORT).show();
+							}
+						} else {
+							Toast.makeText(activity, "Net Work Error", Toast.LENGTH_SHORT).show();
+//							message = jsonObject.getString(TagName.TAG_PRODUCT);
 						}
 
 
@@ -494,8 +511,8 @@ public class OrderDetailFragment extends Fragment {
 		}
 
 		CancelOrderAsync la = new CancelOrderAsync();
-		Log.e("Utils",Utils.cancelOrderUrl+orderitemlistId+"/"+userId);
-		la.execute(Utils.cancelOrderUrl+orderitemlistId+"/"+userId);
+		Log.e("Utils",Utils.instantcancelOrderUrl+orderitemlistId+"&userid="+userId);
+		la.execute(Utils.instantcancelOrderUrl+orderitemlistId+"&userid="+userId);
 
 	}
 }

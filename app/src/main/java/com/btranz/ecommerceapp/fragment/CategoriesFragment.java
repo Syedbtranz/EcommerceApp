@@ -112,7 +112,7 @@ public class CategoriesFragment extends Fragment {
 //                Log.d("position adapter", "" + position);
 //                Product product = (Product) products.get(position);
 //                arguments.putParcelable("singleProduct", product);
-                arguments.putString("prdtsUrl", Utils.catgProductListUrl+id1+"/"+Utils.sellerId+"/"+user);
+                arguments.putString("prdtsUrl", Utils.instantCatgProductListUrl+id1+"&sellerid="+Utils.sellerId+"&userid="+user);
                 arguments.putString("prdtsTitle", services.get(position).getTitle());
                 // Start a new fragment
                 fragment = new ProductsFragment();
@@ -149,7 +149,7 @@ public class CategoriesFragment extends Fragment {
 //                Log.d("position adapter", "" + position);
 //                Product product = (Product) products.get(position);
 //                arguments.putParcelable("singleProduct", product);
-                arguments.putString("prdtsUrl", Utils.catgProductListUrl+gadId+"/"+Utils.sellerId+"/"+user);
+                arguments.putString("prdtsUrl", Utils.instantCatgProductListUrl+gadId+"&sellerid="+Utils.sellerId+"&userid="+user);
                 arguments.putString("prdtsTitle", gadServices.get(position).getTitle());
 
                 // Start a new fragment
@@ -187,7 +187,7 @@ public class CategoriesFragment extends Fragment {
 //                Log.d("position adapter", "" + position);
 //                Product product = (Product) products.get(position);
 //                arguments.putParcelable("singleProduct", product);
-                arguments.putString("prdtsUrl", Utils.catgProductListUrl+hlId+"/"+Utils.sellerId+"/"+user);
+                arguments.putString("prdtsUrl", Utils.instantCatgProductListUrl+hlId+"&sellerid="+Utils.sellerId+"&userid="+user);
                 arguments.putString("prdtsTitle", hlServices.get(position).getTitle());
                 // Start a new fragment
                 fragment = new ProductsFragment();
@@ -253,7 +253,7 @@ public class CategoriesFragment extends Fragment {
 //            task = new RequestImgTask(activity);
 //            task.execute(url);
             task = new AsyncHttpTask();
-            task.execute(Utils.catgUrl);
+            task.execute(Utils.instantCategoryUrl);
             Log.e("sendrequest","sendrequest");
         } else {
             message = getResources().getString(R.string.no_internet_connection);
@@ -352,26 +352,21 @@ public class CategoriesFragment extends Fragment {
     }
     private void parseResult(String result) {
         try {
-            JSONArray response = new JSONArray(result);
-            JSONObject jsonObject=response.getJSONObject(0);
+            JSONObject jsonObject = new JSONObject(result);
+//            JSONObject jsonObject=response.getJSONObject(0);
 
             if (jsonObject != null) {
                 JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
                 int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
 
                 if (status==1) {
-//            boolean status = response.getBoolean(TagName.TAG_STATUS);
-
-//                    if (status) {
-//                JSONObject jsonData = jsonObject
-//                        .getJSONObject(TagName.TAG_PRODUCT);
-//                    }
-                    JSONArray posts = jsonObject.optJSONArray(TagName.TAG_PRODUCT_CATG);
-
-//            /*Initialize array if null*/
-//                    if (null == services) {
-//                        services = new ArrayList<ProductModel>();
-//                    }
+                    JSONArray jarr=jsonObject.optJSONArray("categories");
+                    JSONObject jobCat=jarr.optJSONObject(0);
+                    JSONObject jobstat=jobCat.getJSONObject(TagName.TAG_STATUS);
+                    int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                    String message1 = jobstat.optString(TagName.TAG_MSG);
+                    if(status1==1) {
+                    JSONArray posts = jobCat.optJSONArray(TagName.TAG_PRODUCT_CATG);
 
 
                     for (int i = 0; i < posts.length(); i++) {
@@ -449,6 +444,9 @@ public class CategoriesFragment extends Fragment {
                         }catch (Exception e){
 
                         }
+                    }
+                    }else{
+                        Toast.makeText(activity, "No Products", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     message = jsonObject.getString(TagName.TAG_PRODUCT);

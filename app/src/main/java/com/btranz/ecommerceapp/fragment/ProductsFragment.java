@@ -32,12 +32,16 @@ import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,13 +53,13 @@ import com.btranz.ecommerceapp.modal.ProductModel;
 import com.btranz.ecommerceapp.utils.CheckNetworkConnection;
 import com.btranz.ecommerceapp.utils.NewArrivalSorter;
 import com.btranz.ecommerceapp.utils.PriceSorter;
+import com.btranz.ecommerceapp.utils.RangeSeekBar;
 import com.btranz.ecommerceapp.utils.TagName;
 import com.btranz.ecommerceapp.utils.TypefaceSpan;
 import com.btranz.ecommerceapp.utils.Utils;
-import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
-import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
-import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
+
+
+
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -95,13 +99,17 @@ import okhttp3.Response;
 public class ProductsFragment extends Fragment implements NavigationView.OnNavigationItemSelectedListener{
     View div;
     View dialogView;
-    ImageView dis_image, arr_image, htol_image, ltoh_image, pop_image;
+    RangeSeekBar<Integer> rangeSeekBar;
     TextView disTxt, arrTxt, htolTxt, ltohTxt, popTxt;
     LinearLayout filterBrand, filterPrice, filterRating, filterDiscount;
     ListView filterList;
+    ImageView filterClose;
+    Button filterApply,filterReset;
+    NavigationView navigationView;
     TextView sortSubTxt;
     GridView ProductsGrid;
     ArrayList<ProductModel> services;
+    ArrayList<ProductModel> priceFilteredArray=new ArrayList<ProductModel>();
     FragmentActivity activity;
     ProductGridAdapter adapter;
     AsyncHttpTask task;
@@ -115,12 +123,16 @@ public class ProductsFragment extends Fragment implements NavigationView.OnNavig
     ImageView viewBtn;
     String prdtsUrl, prdtsTitle;
     int color, sort_flag;
-    int rating_flag1,rating_flag2, rating_flag3, rating_flag4, rating_flag5;
-    int disc_flag1,disc_flag2, disc_flag3, disc_flag4, disc_flag5, disc_flag6, disc_flag7, disc_flag8, disc_flag9, disc_flag10;
+
+    RadioGroup WhoRU;
+    RadioButton  discRadio, arrRadio, htolRadio, ltohRadio, popRadio;
+    int radioBtnId;
     public static final String PRDTS_FRAG = "pdts_fragment";
     // The data to show
     List<ProductModel> brandList = new ArrayList<ProductModel>();
     FilterBrandAdapter aAdpt;
+    CheckBox rating1, rating2, rating3, rating4, rating5;
+    CheckBox disc1, disc2, disc3, disc4, disc5, disc6, disc7, disc8, disc9, disc10;
     public ProductsFragment() {
         // Required empty public constructor
     }
@@ -301,7 +313,8 @@ public class ProductsFragment extends Fragment implements NavigationView.OnNavig
 //            Log.e("onResume","test");
 ////            adapter = new ServicesRecyclerAdapter(activity, services);
 //            Log.e("onResume", "onResume");
-        } else {
+        }
+        else {
             Log.e("onResume else", "onResume else");
             ProductsGrid.setAdapter(new ProductGridAdapter(activity, services));
 //            progressLL.setVisibility(View.GONE);
@@ -407,11 +420,11 @@ public void showFilterDialog() {
 //    b.getWindow().getAttributes().windowAnimations = R.style.CustomAnimations_slide;
     b.show();
 
-    ImageView close = (ImageView) dialogView.findViewById(R.id.filter_close);
-    Button reset = (Button) dialogView.findViewById(R.id.reset_btn);
-    Button filterApply = (Button) dialogView.findViewById(R.id.filter_apply);
-    NavigationView navigationView = (NavigationView)dialogView.findViewById(R.id.filter_nav_view);
-
+    filterClose = (ImageView) dialogView.findViewById(R.id.filter_close);
+     filterReset = (Button) dialogView.findViewById(R.id.reset_btn);
+     filterApply = (Button) dialogView.findViewById(R.id.filter_apply);
+    navigationView = (NavigationView)dialogView.findViewById(R.id.filter_nav_view);
+//    priceFilteredArray=services;
      filterList = (ListView) dialogView.findViewById(R.id.filter_listView);
     // This is a simple adapter that accepts as parameter
     // Context
@@ -473,16 +486,58 @@ public void showFilterDialog() {
      filterPrice= (LinearLayout) dialogView.findViewById(R.id.filter_price_list);
      filterRating = (LinearLayout) dialogView.findViewById(R.id.filter_rating_list);
     filterDiscount = (LinearLayout) dialogView.findViewById(R.id.filter_discount_list);
+
+    rating1=(CheckBox)dialogView.findViewById(R.id.filter_rating1_count);
+    rating2=(CheckBox)dialogView.findViewById(R.id.filter_rating2_count);
+    rating3=(CheckBox)dialogView.findViewById(R.id.filter_rating3_count);
+    rating4=(CheckBox)dialogView.findViewById(R.id.filter_rating4_count);
+    rating5=(CheckBox)dialogView.findViewById(R.id.filter_rating5_count);
+
+    disc1=(CheckBox)dialogView.findViewById(R.id.filter_disc_count_1_10);
+    disc2=(CheckBox)dialogView.findViewById(R.id.filter_disc_count_10_20);
+    disc3=(CheckBox)dialogView.findViewById(R.id.filter_disc_count_20_30);
+    disc4=(CheckBox)dialogView.findViewById(R.id.filter_disc_count_30_40);
+    disc5=(CheckBox)dialogView.findViewById(R.id.filter_disc_count_40_50);
+    disc6=(CheckBox)dialogView.findViewById(R.id.filter_disc_count_50_60);
+    disc7=(CheckBox)dialogView.findViewById(R.id.filter_disc_count_60_70);
+    disc8=(CheckBox)dialogView.findViewById(R.id.filter_disc_count_70_80);
+    disc9=(CheckBox)dialogView.findViewById(R.id.filter_disc_count_80_90);
+    disc10=(CheckBox)dialogView.findViewById(R.id.filter_disc_count_90_100);
+
     navigationView.setNavigationItemSelectedListener(ProductsFragment.this);
+// Setup the new range seek bar
+    rangeSeekBar = new RangeSeekBar<Integer>(activity);
+    // Set the range
+    rangeSeekBar.setRangeValues(0, 2000);
+//        rangeSeekBar.setSelectedMinValue(20);
+//        rangeSeekBar.setSelectedMaxValue(88);
 
 
-    close.setOnClickListener(new View.OnClickListener() {
+    // Add to layout
+    LinearLayout layout = (LinearLayout)dialogView.findViewById(R.id.seekbar_placeholder);
+    layout.addView(rangeSeekBar);
+    // get min and max text view
+    final TextView tvMin = (TextView) dialogView.findViewById(R.id.textMin1);
+    final TextView tvMax = (TextView) dialogView.findViewById(R.id.textMax1);
+    tvMin.setText("" + 0);
+    tvMax.setText("" + 2000);
+    // Sets the display values of the indices
+
+    rangeSeekBar.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
+        @Override
+        public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
+                        tvMin.setText("" + minValue);
+                        tvMax.setText("" + maxValue);
+        }
+    });
+
+    filterClose.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             b.dismiss();
         }
     });
-    reset.setOnClickListener(new View.OnClickListener() {
+    filterReset.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             b.dismiss();
@@ -491,88 +546,207 @@ public void showFilterDialog() {
     filterApply.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            priceFilteredArray.clear();
+            Log.e("services.size()",""+services.size());
+            for(int i=0;i<services.size();i++) {
+                ProductModel pm = services.get(i);
+                if (rangeSeekBar.getSelectedMinValue() <= pm.getFinalPrice() && pm.getFinalPrice() <= rangeSeekBar.getSelectedMaxValue()) {
+                    if(disc1.isChecked()){
+                        if(0 <= pm.getDiscount()&&pm.getDiscount() <= 10){
+                            addFilteredPrdts(pm);
+                        }
+                    }
+                    if(disc2.isChecked()){
+                        if(10 < pm.getDiscount() && pm.getDiscount() <= 20){
+                            addFilteredPrdts(pm);
+                        }
+                    }
+                    if(disc3.isChecked()){
+                        if(20 < pm.getDiscount() && pm.getDiscount() <= 30){
+                            addFilteredPrdts(pm);
+                        }
+                    }
+                    if(disc4.isChecked()){
+                        if(30 < pm.getDiscount() && pm.getDiscount() <= 40){
+                            addFilteredPrdts(pm);
+                        }
+                    }
+                    if(disc5.isChecked()){
+                        if(40 < pm.getDiscount() && pm.getDiscount() <= 50){
+                            addFilteredPrdts(pm);
+                        }
+                    }
+                    if(disc6.isChecked()){
+                        if(50 < pm.getDiscount() && pm.getDiscount() <= 60){
+                            addFilteredPrdts(pm);
+                        }
+                    }
+                    if(disc7.isChecked()){
+                        if(60 < pm.getDiscount() && pm.getDiscount() <= 70){
+                            addFilteredPrdts(pm);
+                        }
+                    }
+                    if(disc8.isChecked()){
+                        if(70 < pm.getDiscount() && pm.getDiscount() <= 80){
+                            addFilteredPrdts(pm);
+                        }
+                    }
+                    if(disc9.isChecked()){
+                        if(80 < pm.getDiscount() && pm.getDiscount() <= 90){
+                            addFilteredPrdts(pm);
+                        }
+                    }
+                    if(disc10.isChecked()){
+                        if(90 < pm.getDiscount() && pm.getDiscount() <= 100){
+                            addFilteredPrdts(pm);
+                        }
+                    }
+                    //Rating
+                    if(rating1.isChecked()){
+                        if(80 < pm.getRating() && pm.getRating() <= 100){
+                            addFilteredPrdts(pm);
+                        }
+                    }
+                    if(rating2.isChecked()){
+                        if(60 < pm.getRating() && pm.getRating() <= 80){
+                            addFilteredPrdts(pm);
+                        }
+                    }
+                    if(rating3.isChecked()){
+                        if(40 < pm.getRating() && pm.getRating() <= 60){
+                            addFilteredPrdts(pm);
+                        }
+                    }
+                    if(rating4.isChecked()){
+                        if(20 < pm.getRating() && pm.getRating() <= 40){
+                            addFilteredPrdts(pm);
+                        }
+                    }
+                    if(rating5.isChecked()){
+
+                        if(0 <= pm.getRating() && pm.getRating() <= 20){
+                            addFilteredPrdts(pm);
+                        }
+                    }
+                }
+
+            }
+
+            if(priceFilteredArray.size()==0){
+                adapter = new ProductGridAdapter(activity, services);
+                ProductsGrid.setAdapter(adapter);
+                Log.e("services.size()",""+services.size());
+            }else{
+                adapter = new ProductGridAdapter(activity, priceFilteredArray);
+                ProductsGrid.setAdapter(adapter);
+            }
+            adapter.notifyDataSetChanged();
             b.dismiss();
         }
     });
 }
+    public void addFilteredPrdts(ProductModel pm){
+        if(priceFilteredArray.size()!=0) {
+            int flag=0;
+            for (int i = 0; i < priceFilteredArray.size(); i++) {
+                ProductModel pf = priceFilteredArray.get(i);
+                if (pm.getId() == pf.getId()) {
+                    flag=1;
+                }
+            }
+            if(flag==1){
+                flag=0;
+            }else{
+                priceFilteredArray.add(pm);
+            }
+        }else{
+            priceFilteredArray.add(pm);
+        }
+    }
     //Rating Count
     public void getRatingCount(View dialog){
-        TextView rating1=(TextView)dialog.findViewById(R.id.filter_rating1_count);
-        TextView rating2=(TextView)dialog.findViewById(R.id.filter_rating2_count);
-        TextView rating3=(TextView)dialog.findViewById(R.id.filter_rating3_count);
-        TextView rating4=(TextView)dialog.findViewById(R.id.filter_rating4_count);
-        TextView rating5=(TextView)dialog.findViewById(R.id.filter_rating5_count);
+        int rating_flag1=0,rating_flag2=0, rating_flag3=0, rating_flag4=0, rating_flag5=0;
+
+//        rating1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                ProductModel pd=new ProductModel();
+//                if(isChecked){
+//                   pd.setRating(1);
+//                }else{
+//
+//                }
+//            }
+//        });
 
         for(int i=0;i<services.size();i++){
             ProductModel pm=services.get(i);
-            if(0>=pm.getRating() || pm.getRating()<=20){
-                Log.e("pm.getDiscount()",""+pm.getDiscount());
-                rating_flag1+=1;
-                rating1.setText(""+rating_flag1);
+            if (rangeSeekBar.getSelectedMinValue() <= pm.getFinalPrice() && pm.getFinalPrice() <= rangeSeekBar.getSelectedMaxValue()) {
+                if (0 <= pm.getRating() && pm.getRating() <= 20) {
+                    Log.e("pm.getRating()", "" + pm.getRating());
+                    rating_flag1 += 1;
+                } else if (20 < pm.getRating() && pm.getRating() <= 40) {
+                    rating_flag2 += 1;
+                } else if (40 < pm.getRating() && pm.getRating() <= 60) {
+                    rating_flag3 += 1;
+                } else if (60 < pm.getRating() && pm.getRating() <= 80) {
+                    rating_flag4 += 1;
+                } else if (80 < pm.getRating() && pm.getRating() <= 100) {
+                    rating_flag5 += 1;
+                }
 
-            }else if(20>pm.getRating() || pm.getRating()<=40){
-                rating_flag2+=1;
-                rating2.setText(""+rating_flag2);
-            }else if(40>pm.getRating()||pm.getRating()<=60){
-                rating_flag3+=1;
-                rating3.setText(""+rating_flag3);
-            }else if(60>pm.getRating()||pm.getRating()<=80){
-                rating_flag4+=1;
-                rating4.setText(""+rating_flag4);
-            }else if(80>pm.getRating()||pm.getRating()<=100){
-                rating_flag5+=1;
-                rating5.setText(""+rating_flag5);
             }
-
+            rating1.setText("( " + rating_flag5+" ) ");
+            rating2.setText("( " + rating_flag4+" ) ");
+            rating3.setText("( " + rating_flag3+" ) ");
+            rating4.setText("( " + rating_flag2+" ) ");
+            rating5.setText("( " + rating_flag1+" ) ");
         }
     }
     //Discount Count
     public void getDiscountCount(View dialog){
-        TextView disc1=(TextView)dialog.findViewById(R.id.filter_disc_count_1_10);
-        TextView disc2=(TextView)dialog.findViewById(R.id.filter_disc_count_10_20);
-        TextView disc3=(TextView)dialog.findViewById(R.id.filter_disc_count_20_30);
-        TextView disc4=(TextView)dialog.findViewById(R.id.filter_disc_count_30_40);
-        TextView disc5=(TextView)dialog.findViewById(R.id.filter_disc_count_40_50);
-        TextView disc6=(TextView)dialog.findViewById(R.id.filter_disc_count_50_60);
-        TextView disc7=(TextView)dialog.findViewById(R.id.filter_disc_count_60_70);
-        TextView disc8=(TextView)dialog.findViewById(R.id.filter_disc_count_70_80);
-        TextView disc9=(TextView)dialog.findViewById(R.id.filter_disc_count_80_90);
-        TextView disc10=(TextView)dialog.findViewById(R.id.filter_disc_count_90_100);
-        for(int i=0;i<services.size();i++){
-            ProductModel pm=services.get(i);
-            if(0>=pm.getDiscount() || pm.getDiscount()<=10){
-                Log.e("pm.getDiscount()",""+pm.getDiscount());
-                disc_flag1+=1;
-                disc1.setText(""+disc_flag1);
+        int disc_flag1=0,disc_flag2=0, disc_flag3=0, disc_flag4=0, disc_flag5=0, disc_flag6=0, disc_flag7=0, disc_flag8=0, disc_flag9=0, disc_flag10=0;
 
-            }else if(10>pm.getDiscount() || pm.getDiscount()<=20){
-                disc_flag2+=1;
-                disc2.setText(""+disc_flag2);
-            }else if(20>pm.getDiscount()||pm.getDiscount()<=30){
-                disc_flag3+=1;
-                disc3.setText(""+disc_flag3);
-            }else if(30>pm.getDiscount()||pm.getDiscount()<=40){
-                disc_flag4+=1;
-                disc4.setText(""+disc_flag4);
-            }else if(40>pm.getDiscount()||pm.getDiscount()<=50){
-                disc_flag5+=1;
-                disc5.setText(""+disc_flag5);
-            }else if(50>pm.getDiscount()||pm.getDiscount()<=60){
-                disc_flag6+=1;
-                disc6.setText(""+disc_flag6);
-            }else if(60>pm.getDiscount()||pm.getDiscount()<=70){
-                disc_flag7+=1;
-                disc7.setText(""+disc_flag7);
-            }else if(70>pm.getDiscount()||pm.getDiscount()<=80){
-                disc_flag8+=1;
-                disc8.setText(""+disc_flag8);
-            }else if(80>pm.getDiscount()||pm.getDiscount()<=90){
-                disc_flag9+=1;
-                disc9.setText(""+disc_flag9);
-            }else if(90>pm.getDiscount()||pm.getDiscount()<=100){
-                disc_flag10+=1;
-                disc10.setText(""+disc_flag10);
+        for(int i=0;i<services.size();i++) {
+            ProductModel pm = services.get(i);
+            Log.e("getSelectedMinValue()", "" + rangeSeekBar.getSelectedMinValue());
+            Log.e("getSelectedMaxValue()", "" + rangeSeekBar.getSelectedMaxValue());
+            if (rangeSeekBar.getSelectedMinValue() <= pm.getFinalPrice() && pm.getFinalPrice() <= rangeSeekBar.getSelectedMaxValue()) {
+                if (0 <= pm.getDiscount() && pm.getDiscount() <= 10) {
+                    Log.e("pm.getDiscount()", "" + pm.getDiscount());
+                    disc_flag1 += 1;
+
+                } else if (10 < pm.getDiscount() && pm.getDiscount() <= 20) {
+                    disc_flag2 += 1;
+                } else if (20 < pm.getDiscount() && pm.getDiscount() <= 30) {
+                    disc_flag3 += 1;
+                } else if (30 < pm.getDiscount() && pm.getDiscount() <= 40) {
+                    disc_flag4 += 1;
+                } else if (40 < pm.getDiscount() && pm.getDiscount() <= 50) {
+                    disc_flag5 += 1;
+                } else if (50 < pm.getDiscount() && pm.getDiscount() <= 60) {
+                    disc_flag6 += 1;
+                } else if (60 < pm.getDiscount() && pm.getDiscount() <= 70) {
+                    disc_flag7 += 1;
+                } else if (70 < pm.getDiscount() && pm.getDiscount() <= 80) {
+                    disc_flag8 += 1;
+                } else if (80 < pm.getDiscount() && pm.getDiscount() <= 90) {
+                    disc_flag9 += 1;
+                } else if (90 < pm.getDiscount() && pm.getDiscount() <= 100) {
+                    disc_flag10 += 1;
+                }
+
             }
+            disc1.setText("0 - 10 ( " + disc_flag1+" )");
+            disc2.setText("10 - 20 ( " + disc_flag2+" )");
+            disc3.setText("20 - 30 ( " + disc_flag3+" )");
+            disc4.setText("30 - 40 ( " + disc_flag4+" )");
+            disc5.setText("40 - 50 ( " + disc_flag5+" )");
+            disc6.setText("50 - 60 ( " + disc_flag6+" )");
+            disc7.setText("60 - 70 ( " + disc_flag7+" )");
+            disc8.setText("70 - 80 ( " + disc_flag8+" )");
+            disc9.setText("80 - 90 ( " + disc_flag9+" )");
+            disc10.setText("90 - 100 ( " + disc_flag10+" )");
         }
     }
 public void showSortDialog() {
@@ -580,19 +754,34 @@ public void showSortDialog() {
     LayoutInflater inflater = getActivity().getLayoutInflater();
     final View dialogView = inflater.inflate(R.layout.sort_dialog, null);
     dialogBuilder.setView(dialogView);
-    dis_image = (ImageView) dialogView.findViewById(R.id.sort_dis_img);
-    arr_image = (ImageView) dialogView.findViewById(R.id.sort_arrive_img);
-    htol_image = (ImageView) dialogView.findViewById(R.id.sort_htol_img);
-    ltoh_image = (ImageView) dialogView.findViewById(R.id.sort_ltoh_img);
-    pop_image = (ImageView) dialogView.findViewById(R.id.sort_pop_img);
-    disTxt = (TextView) dialogView.findViewById(R.id.sort_dis_txt);
-    arrTxt = (TextView) dialogView.findViewById(R.id.sort_arrive_txt);
-    htolTxt = (TextView) dialogView.findViewById(R.id.sort_htol_txt);
-    ltohTxt = (TextView) dialogView.findViewById(R.id.sort_ltoh_txt);
-    popTxt = (TextView) dialogView.findViewById(R.id.sort_pop_txt);
+
     Button applyBtn = (Button) dialogView.findViewById(R.id.sort_apply_btn);
 
     final AlertDialog b = dialogBuilder.create();
+    WhoRU=(RadioGroup)dialogView.findViewById(R.id.whoru);
+    discRadio = (RadioButton)dialogView.findViewById(R.id.disc_radio);
+    arrRadio = (RadioButton)dialogView.findViewById(R.id.arr_radio);
+    htolRadio = (RadioButton)dialogView.findViewById(R.id.htol_radio);
+    ltohRadio = (RadioButton)dialogView.findViewById(R.id.ltoh_radio);
+    popRadio = (RadioButton)dialogView.findViewById(R.id.pop_radio);
+    // Session Manager
+    //  sessionManager = new SessionManager(getApplicationContext());
+
+//        Toast.makeText(getApplicationContext(), "User Login Status: " + sessionManager.isLoggedIn(), Toast.LENGTH_LONG).show();
+    sortRadio(radioBtnId);
+    WhoRU.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+    {
+        @Override
+        public void onCheckedChanged(RadioGroup group, int checkedId) {
+//            selectedId = WhoRU.getCheckedRadioButtonId();
+            radioBtnId=checkedId;
+//           Toast.makeText(activity,"selectesd iD  :" + checkedId,Toast.LENGTH_SHORT).show();
+            sortRadio(checkedId);
+//            type=Student.getText().toString();
+
+
+        }
+    });
 
     b.setOnShowListener(new DialogInterface.OnShowListener() {
         @Override
@@ -604,44 +793,7 @@ public void showSortDialog() {
 
         }
     });
-    sortRadio();
-    dis_image.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            sort_flag=1;
-            sortRadio();
-//           v.setBackground();
-        }
-    });
-    arr_image.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            sort_flag=2;
-            sortRadio();
-        }
-    });
-    htol_image.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            sort_flag=3;
-            sortRadio();
 
-        }
-    });
-    ltoh_image.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            sort_flag=4;
-            sortRadio();
-        }
-    });
-    pop_image.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            sort_flag=5;
-            sortRadio();
-        }
-    });
     applyBtn.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -660,12 +812,12 @@ public void showSortDialog() {
                         return a.getDiscount() > b.getDiscount() ? -1 : a.getDiscount() < b.getDiscount() ? 1 : 0;
                     }
                 });
-                sortSubTxt.setText(disTxt.getText());
+                sortSubTxt.setText(discRadio.getText());
             }else if( sort_flag==2){
                 Collections.sort(services, new NewArrivalSorter("new"));
-                sortSubTxt.setText(arrTxt.getText());
+                sortSubTxt.setText(arrRadio.getText());
             }else if( sort_flag==3){
-                sortSubTxt.setText(htolTxt.getText());
+                sortSubTxt.setText(htolRadio.getText());
                 Collections.sort(services, new Comparator<ProductModel>() {
                     public int compare(ProductModel a, ProductModel b) {
                         if (a.getFinalPrice() == b.getFinalPrice())
@@ -674,7 +826,7 @@ public void showSortDialog() {
                     }
                 });
             }else if( sort_flag==4){
-                sortSubTxt.setText(ltohTxt.getText());
+                sortSubTxt.setText(ltohRadio.getText());
                 Collections.sort(services, new Comparator<ProductModel>() {
                     public int compare(ProductModel a, ProductModel b) {
                         if (a.getFinalPrice() == b.getFinalPrice())
@@ -683,7 +835,14 @@ public void showSortDialog() {
                     }
                 });
             }else if( sort_flag==5){
-                sortSubTxt.setText(popTxt.getText());
+                sortSubTxt.setText(popRadio.getText());
+                Collections.sort(services, new Comparator<ProductModel>() {
+                    public int compare(ProductModel a, ProductModel b) {
+                        if (a.getRating() == b.getRating())
+                            return a.getTitle().compareTo(b.getTitle());
+                        return a.getRating() > b.getRating() ? -1 : a.getRating() < b.getRating() ? 1 : 0;
+                    }
+                });
             }
             ProductsGrid.setAdapter(new ProductGridAdapter(activity, services));
             b.dismiss();
@@ -725,73 +884,55 @@ public void showSortDialog() {
             anim.start();
         }
     }
-    public void sortRadio(){
-        if( sort_flag==1){
-            dis_image.setImageResource(R.drawable.checked);
-//            dis_image.setColorFilter(color);
-            arr_image.setImageResource(R.drawable.empty);
-            htol_image.setImageResource(R.drawable.empty);
-            ltoh_image.setImageResource(R.drawable.empty);
-            pop_image.setImageResource(R.drawable.empty);
-
-            disTxt.setTextColor(color);
-            arrTxt.setTextColor(getResources().getColor(R.color.view_divider_color));
-            htolTxt.setTextColor(getResources().getColor(R.color.view_divider_color));
-            ltohTxt.setTextColor(getResources().getColor(R.color.view_divider_color));
-            popTxt.setTextColor(getResources().getColor(R.color.view_divider_color));
-        }else if( sort_flag==2){
-            dis_image.setImageResource(R.drawable.empty);
-            arr_image.setImageResource(R.drawable.checked);
-//            arr_image.setColorFilter(color);
-            htol_image.setImageResource(R.drawable.empty);
-            ltoh_image.setImageResource(R.drawable.empty);
-            pop_image.setImageResource(R.drawable.empty);
-
-            disTxt.setTextColor(getResources().getColor(R.color.view_divider_color));
-            arrTxt.setTextColor(color);
-            htolTxt.setTextColor(getResources().getColor(R.color.view_divider_color));
-            ltohTxt.setTextColor(getResources().getColor(R.color.view_divider_color));
-            popTxt.setTextColor(getResources().getColor(R.color.view_divider_color));
-        }else if( sort_flag==3){
-            dis_image.setImageResource(R.drawable.empty);
-            arr_image.setImageResource(R.drawable.empty);
-            htol_image.setImageResource(R.drawable.checked);
-//            htol_image.setColorFilter(color);
-            ltoh_image.setImageResource(R.drawable.empty);
-            pop_image.setImageResource(R.drawable.empty);
-
-            disTxt.setTextColor(getResources().getColor(R.color.view_divider_color));
-            arrTxt.setTextColor(getResources().getColor(R.color.view_divider_color));
-            htolTxt.setTextColor(color);
-            ltohTxt.setTextColor(getResources().getColor(R.color.view_divider_color));
-            popTxt.setTextColor(getResources().getColor(R.color.view_divider_color));
-        }else if( sort_flag==4){
-            dis_image.setImageResource(R.drawable.empty);
-            arr_image.setImageResource(R.drawable.empty);
-            htol_image.setImageResource(R.drawable.empty);
-            ltoh_image.setImageResource(R.drawable.checked);
-//            ltoh_image.setColorFilter(color);
-            pop_image.setImageResource(R.drawable.empty);
-
-            disTxt.setTextColor(getResources().getColor(R.color.view_divider_color));
-            arrTxt.setTextColor(getResources().getColor(R.color.view_divider_color));
-            htolTxt.setTextColor(getResources().getColor(R.color.view_divider_color));
-            ltohTxt.setTextColor(color);
-            popTxt.setTextColor(getResources().getColor(R.color.view_divider_color));
-        }else if( sort_flag==5){
-            dis_image.setImageResource(R.drawable.empty);
-            arr_image.setImageResource(R.drawable.empty);
-            htol_image.setImageResource(R.drawable.empty);
-            ltoh_image.setImageResource(R.drawable.empty);
-            pop_image.setImageResource(R.drawable.checked);
-//            pop_image.setColorFilter(color);
-
-            disTxt.setTextColor(getResources().getColor(R.color.view_divider_color));
-            arrTxt.setTextColor(getResources().getColor(R.color.view_divider_color));
-            htolTxt.setTextColor(getResources().getColor(R.color.view_divider_color));
-            ltohTxt.setTextColor(getResources().getColor(R.color.view_divider_color));
-            popTxt.setTextColor(color);
+    public void sortRadio(int checkedId){
+        switch (checkedId){
+            case R.id.disc_radio:
+                sort_flag=1;
+                discRadio.setTextColor(color);
+                discRadio.setChecked(true);
+                arrRadio.setTextColor(getResources().getColor(R.color.view_divider_color));
+                htolRadio.setTextColor(getResources().getColor(R.color.view_divider_color));
+                ltohRadio.setTextColor(getResources().getColor(R.color.view_divider_color));
+                popRadio.setTextColor(getResources().getColor(R.color.view_divider_color));
+                break;
+            case R.id.arr_radio:
+                sort_flag=2;
+                discRadio.setTextColor(getResources().getColor(R.color.view_divider_color));
+                arrRadio.setTextColor(color);
+                arrRadio.setChecked(true);
+                htolRadio.setTextColor(getResources().getColor(R.color.view_divider_color));
+                ltohRadio.setTextColor(getResources().getColor(R.color.view_divider_color));
+                popRadio.setTextColor(getResources().getColor(R.color.view_divider_color));
+                break;
+            case R.id.htol_radio:
+                sort_flag=3;
+                discRadio.setTextColor(getResources().getColor(R.color.view_divider_color));
+                arrRadio.setTextColor(getResources().getColor(R.color.view_divider_color));
+                htolRadio.setTextColor(color);
+                htolRadio.setChecked(true);
+                ltohRadio.setTextColor(getResources().getColor(R.color.view_divider_color));
+                popRadio.setTextColor(getResources().getColor(R.color.view_divider_color));
+                break;
+            case R.id.ltoh_radio:
+                sort_flag=4;
+                discRadio.setTextColor(getResources().getColor(R.color.view_divider_color));
+                arrRadio.setTextColor(getResources().getColor(R.color.view_divider_color));
+                htolRadio.setTextColor(getResources().getColor(R.color.view_divider_color));
+                ltohRadio.setTextColor(color);
+                ltohRadio.setChecked(true);
+                popRadio.setTextColor(getResources().getColor(R.color.view_divider_color));
+                break;
+            case R.id.pop_radio:
+                sort_flag=5;
+                discRadio.setTextColor(getResources().getColor(R.color.view_divider_color));
+                arrRadio.setTextColor(getResources().getColor(R.color.view_divider_color));
+                htolRadio.setTextColor(getResources().getColor(R.color.view_divider_color));
+                ltohRadio.setTextColor(getResources().getColor(R.color.view_divider_color));
+                popRadio.setTextColor(color);
+                popRadio.setChecked(true);
+                break;
         }
+
     }
     private void sendRequest() {
         if (CheckNetworkConnection.isConnectionAvailable(activity)) {
@@ -836,7 +977,7 @@ public void showSortDialog() {
                 break;
             case R.id.filter_price:
                 // get seekbar from view
-                final CrystalRangeSeekbar rangeSeekbar = (CrystalRangeSeekbar) dialogView.findViewById(R.id.rangeSeekbar1);
+               /* final CrystalRangeSeekbar rangeSeekbar = (CrystalRangeSeekbar) dialogView.findViewById(R.id.rangeSeekbar1);
 
 // get min and max text view
                 final TextView tvMin = (TextView) dialogView.findViewById(R.id.textMin1);
@@ -853,10 +994,51 @@ public void showSortDialog() {
 //            Double value3 = Double.parseDouble(mEditText3.getText().toString());
                         //do the calculation
 //            Double calculatedValue = (value2/value1)*value3;
+//                        priceFilteredArray.clear();
                         tvMin.setText(String.valueOf(value1));
                         tvMax.setText(String.valueOf(value2));
+//                        adapter.filter(value1,value2);
+//                        for(int i=0;i<services.size();i++) {
+//                            ProductModel pm = services.get(i);
+//                            if (value1 >= pm.getFinalPrice() || pm.getFinalPrice() <= value2) {
+//
+//                                priceFilteredArray.add(pm);
+//
+//                            }
+//                        }
                     }
                 });
+//                // set final value listener
+//                rangeSeekbar.setOnRangeSeekbarFinalValueListener(new OnRangeSeekbarFinalValueListener() {
+//                    @Override
+//                    public void finalValue(Number minValue, Number maxValue) {
+//                        Log.d("CRS=>", String.valueOf(minValue) + " : " + String.valueOf(maxValue));
+//                    }
+//                });*/
+
+
+
+              /*  // Gets the RangeBar
+                RangeBar  rangebar = (RangeBar)dialogView.findViewById(R.id.rangebar1);
+
+                // Setting Index Values -------------------------------
+
+                // Gets the index value TextViews
+                // get min and max text view
+                final TextView tvMin = (TextView) dialogView.findViewById(R.id.textMin1);
+                final TextView tvMax = (TextView) dialogView.findViewById(R.id.textMax1);
+
+                // Sets the display values of the indices
+                rangebar.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
+                    @Override
+                    public void onIndexChangeListener(RangeBar rangeBar, int leftThumbIndex, int rightThumbIndex) {
+
+//                        tvMin.setText("" + leftThumbIndex);
+//                        tvMax.setText("" + rightThumbIndex);
+                    }
+                });*/
+
+
                 filterBrand.setVisibility(View.GONE);
                 filterPrice.setVisibility(View.VISIBLE);
                 filterRating.setVisibility(View.GONE);
@@ -982,7 +1164,7 @@ public void showSortDialog() {
             }
         }
     }
-   /* private void parseResult(String result) {
+    private void parseResult(String result) {
         try {
 //            JSONArray response = new JSONArray(result);
             JSONObject jsonObject=new JSONObject(result);
@@ -995,13 +1177,16 @@ public void showSortDialog() {
 //               if (message.equals("success")) {
 //            boolean status = response.getBoolean(TagName.TAG_STATUS);
 
-                if (status!=0) {
-//                JSONObject jsonData = jsonObject
-//                        .getJSONObject(TagName.TAG_PRODUCT);
-//                    }
-                    JSONArray posts = jsonObject.optJSONArray(TagName.TAG_PRODUCT);
+                if (status==1) {
+                    JSONArray jarr=jsonObject.optJSONArray("getproducts");
+                    JSONObject job=jarr.optJSONObject(0);
+                    JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+                    int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                    String message1 = jobstat.optString(TagName.TAG_MSG);
+                    if(status1==1) {
+                    JSONArray posts = job.optJSONArray(TagName.TAG_PRODUCT);
 
-            *//*Initialize array if null*//*
+//            Initialize array if null
                     if (null == services) {
                         services = new ArrayList<ProductModel>();
                     }
@@ -1018,6 +1203,7 @@ public void showSortDialog() {
 //                    item.setCount(post.optInt("finalPrice"));
 //                    Log.e("name", "name"+ post.optDouble("finalPrice"));
                         item.setThumbnail(post.optString(TagName.KEY_THUMB));
+                        item.setWishlist(post.optInt(TagName.KEY_WISHLIST));
                         JSONObject post1 = post.optJSONObject(TagName.TAG_OFFER_ALL);
                         item.setShare(post1.optString(TagName.KEY_SHARE));
                         item.setTag(post1.optString(TagName.KEY_TAG));
@@ -1025,15 +1211,19 @@ public void showSortDialog() {
                         item.setRating(post1.optInt(TagName.KEY_RATING));
                         services.add(item);
                     }
+                    }else{
+                        Toast.makeText(activity, "No Products", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    message = jsonObject.optString(TagName.TAG_MSG);
+                    Toast.makeText(activity, "Network Error", Toast.LENGTH_SHORT).show();
+//                    message = jsonObject.optString(TagName.TAG_MSG);
                 }
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }*/
-    private void parseResult(String result) {
+    }
+   /* private void parseResult(String result) {
         try {
             JSONArray response = new JSONArray(result);
             JSONObject jsonObject=response.getJSONObject(0);
@@ -1083,7 +1273,7 @@ public void showSortDialog() {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
 
 

@@ -209,6 +209,10 @@ public class CartFragment extends Fragment {
             item.setFinalPrice(Double.valueOf(cartListArr[3]));
             item.setThumbnail(cartListArr[4]);
             item.setCount(Integer.valueOf(cartListArr[5]));
+            item.setShare(cartListArr[6]);
+            item.setTag(cartListArr[7]);
+            item.setDiscount(Integer.valueOf(cartListArr[8]));
+            item.setRating(Integer.valueOf(cartListArr[9]));
 //            Log.e("name","name");
 
             services.add(item);
@@ -253,7 +257,7 @@ public class CartFragment extends Fragment {
 //            task = new RequestImgTask(activity);
 //            task.execute(url);
             task = new AsyncHttpTask();
-            task.execute(Utils.getcartUrl+userId);
+            task.execute(Utils.instantGetCartUrl+userId);
             Log.e("sendrequest","sendrequest");
         } else {
             message = getResources().getString(R.string.no_internet_connection);
@@ -395,8 +399,10 @@ public class CartFragment extends Fragment {
         int count1=tempCount-count;
         double amt1=tempAmt-(amt * count);
         coutTxt.setText(String.valueOf(count1));
-        ((SecondActivity) getActivity()).writeBadge(services.size());
-        editor.putString("cartBadge", String.valueOf(services.size()));
+//        ((SecondActivity) getActivity()).writeBadge(services.size());
+//        editor.putString("cartBadge", String.valueOf(services.size()));
+        ((SecondActivity) getActivity()).writeBadge(count1);
+        editor.putString("cartBadge", String.valueOf(count1));
         editor.commit();
         amtTxt.setText(String.valueOf(amt1));
         tempCount = count1;
@@ -413,6 +419,9 @@ public class CartFragment extends Fragment {
         double amt1=tempAmt+amt;
         //cart badge
 //        ((SecondActivity) getActivity()).cartCountTv.setText(String.valueOf(count1));
+        ((SecondActivity) getActivity()).writeBadge(count1);
+        editor.putString("cartBadge", String.valueOf(count1));
+        editor.commit();
         coutTxt.setText(String.valueOf(count1));
         amtTxt.setText(String.valueOf(amt1));
         tempCount=count1;
@@ -426,6 +435,9 @@ public class CartFragment extends Fragment {
             double amt1 = tempAmt - amt;
             //cart badge
 //            ((SecondActivity) getActivity()).cartCountTv.setText(String.valueOf(count1));
+            ((SecondActivity) getActivity()).writeBadge(count1);
+            editor.putString("cartBadge", String.valueOf(count1));
+            editor.commit();
             coutTxt.setText(String.valueOf(count1));
             amtTxt.setText(String.valueOf(amt1));
             tempCount=count1;
@@ -504,8 +516,10 @@ public class CartFragment extends Fragment {
                         double amt1 = tempAmt + (item.getFinalPrice() * item.getCount());
                         Log.e("onPostExecute", " " + item.getFinalPrice());
                         //cart badge
-                        ((SecondActivity) getActivity()).writeBadge(services.size());
-                        editor.putString("cartBadge", String.valueOf(services.size()));
+//                        ((SecondActivity) getActivity()).writeBadge(services.size());
+//                        editor.putString("cartBadge", String.valueOf(services.size()));
+                        ((SecondActivity) getActivity()).writeBadge(count1);
+                        editor.putString("cartBadge", String.valueOf(count1));
                         editor.commit();
                         coutTxt.setText(String.valueOf(count1));
                         amtTxt.setText(String.valueOf(amt1));
@@ -531,52 +545,58 @@ public class CartFragment extends Fragment {
     }
     private void parseResult(String result) {
         try {
-            JSONArray response = new JSONArray(result);
-            JSONObject jsonObject=response.getJSONObject(0);
+            JSONObject jsonObject = new JSONObject(result);
+//            JSONArray response = new JSONArray(result);
+//            JSONObject jsonObject=response.getJSONObject(0);
 
             if (jsonObject != null) {
                 JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
                 int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
 
                 if (status==1) {
-//            boolean status = response.getBoolean(TagName.TAG_STATUS);
+                    JSONArray jarr=jsonObject.optJSONArray("getcartproduct");
+                    JSONObject job=jarr.optJSONObject(0);
+                    JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+                    int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                    String message1 = jobstat.optString(TagName.TAG_MSG);
+                    if(status1==1) {
 
-//                    if (status) {
-//                JSONObject jsonData = jsonObject
-//                        .getJSONObject(TagName.TAG_PRODUCT);
-//                    }
-                    JSONArray posts = jsonObject.optJSONArray(TagName.TAG_PRODUCT);
-                    String quoteId=jsonObject.optString("quoteid");
-                    Log.e("quoteId", quoteId);
-                    editor.putString("quoteId",quoteId);
-                    editor.commit();
+                        JSONArray posts = job.optJSONArray(TagName.TAG_PRODUCT);
+                        String quoteId = jsonObject.optString("quoteid");
+                        Log.e("quoteId", quoteId);
+                        editor.putString("quoteId", quoteId);
+                        editor.commit();
 
             /*Initialize array if null*/
-            if (null == services) {
-                services = new ArrayList<ProductModel>();
-            }
+                        if (null == services) {
+                            services = new ArrayList<ProductModel>();
+                        }
 
-            for (int i = 0; i < posts.length(); i++) {
-                JSONObject post = posts.optJSONObject(i);
+                        for (int i = 0; i < posts.length(); i++) {
+                            JSONObject post = posts.optJSONObject(i);
 
-                ProductModel item = new ProductModel();
-                item.setId(post.optInt(TagName.KEY_ID));
-                item.setTitle(post.optString(TagName.KEY_NAME));
-                item.setDescription(post.optString(TagName.KEY_DES));
-                item.setCost(post.optDouble(TagName.KEY_PRICE));
-                item.setFinalPrice(post.optDouble(TagName.KEY_FINAL_PRICE));
-                    item.setCount(post.optInt(TagName.KEY_COUNT));
+                            ProductModel item = new ProductModel();
+                            item.setId(post.optInt(TagName.KEY_ID));
+                            item.setTitle(post.optString(TagName.KEY_NAME));
+                            item.setDescription(post.optString(TagName.KEY_DES));
+                            item.setCost(post.optDouble(TagName.KEY_PRICE));
+                            item.setFinalPrice(post.optDouble(TagName.KEY_FINAL_PRICE));
+                            item.setCount(post.optInt(TagName.KEY_COUNT));
 //                    Log.e("name", "name");
-                item.setThumbnail(post.optString(TagName.KEY_THUMB));
-                JSONObject post1 = post.optJSONObject(TagName.TAG_OFFER_ALL);
-                item.setShare(post1.optString(TagName.KEY_SHARE));
-                item.setTag(post1.optString(TagName.KEY_TAG));
-                item.setDiscount(post1.optInt(TagName.KEY_DISC));
-                item.setRating(post1.optInt(TagName.KEY_RATING));
-                services.add(item);
-            }
+                            item.setThumbnail(post.optString(TagName.KEY_THUMB));
+                            JSONObject post1 = post.optJSONObject(TagName.TAG_OFFER_ALL);
+                            item.setShare(post1.optString(TagName.KEY_SHARE));
+                            item.setTag(post1.optString(TagName.KEY_TAG));
+                            item.setDiscount(post1.optInt(TagName.KEY_DISC));
+                            item.setRating(post1.optInt(TagName.KEY_RATING));
+                            services.add(item);
+                        }
+                    }else{
+                        Toast.makeText(activity, "No Products", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    message = jsonObject.getString(TagName.TAG_PRODUCT);
+                    Toast.makeText(activity, "Net Work Error", Toast.LENGTH_SHORT).show();
+//                    message = jsonObject.getString(TagName.TAG_PRODUCT);
                 }
             }
         } catch (JSONException e) {
@@ -611,7 +631,8 @@ public class CartFragment extends Fragment {
 
                 try{
                     HttpClient httpClient = new DefaultHttpClient();
-                    HttpGet httpPost = new HttpGet(Utils.deletecartUrl+pid+"/"+userid);
+                    HttpGet httpPost = new HttpGet(Utils.instantdeleteCartItemUrl+pid+"&userid="+userid);
+//                    HttpGet httpPost = new HttpGet(Utils.deletecartUrl+pid+"/"+userid);
 //                    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
                     HttpResponse response = httpClient.execute(httpPost);
@@ -645,8 +666,8 @@ public class CartFragment extends Fragment {
                 Log.e("s",s);
                 loadingDialog.dismiss();
                 try {
-                    JSONArray response = new JSONArray(s);
-                    JSONObject jsonObject=response.getJSONObject(0);
+//                    JSONArray response = new JSONArray(s);
+                    JSONObject jsonObject=new JSONObject(s);
 
                     if (jsonObject != null) {
                         JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
@@ -654,10 +675,19 @@ public class CartFragment extends Fragment {
                         String message = jobstatus.optString(TagName.TAG_MSG);
 
                         if (status==1) {
-                            Toast.makeText(activity, "Product deleted", Toast.LENGTH_LONG).show();
+                            JSONArray jarr=jsonObject.optJSONArray(TagName.TAG_PRODUCT);
+                            JSONObject job=jarr.optJSONObject(0);
+                            JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+                            int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                            String message1 = jobstat.optString(TagName.TAG_MSG);
+                            if(status1==1) {
+                                Toast.makeText(activity, "Product deleted", Toast.LENGTH_SHORT).show();
+                            }else{
+                                Toast.makeText(activity, "Product Not deleted", Toast.LENGTH_SHORT).show();
+                            }
 
                         }else {
-                            Toast.makeText(activity, "Network Error", Toast.LENGTH_LONG).show();
+                            Toast.makeText(activity, "Network Error.  Please try Again.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 } catch (JSONException e) {
@@ -697,7 +727,8 @@ public class CartFragment extends Fragment {
 
                 try{
                     HttpClient httpClient = new DefaultHttpClient();
-                    HttpGet httpPost = new HttpGet(Utils.updatecartUrl+pid+"/"+quant+"/"+userid);
+                    HttpGet httpPost = new HttpGet(Utils.instantUpdateCartItemUrl+quant+"&productid="+pid+"&userid="+userid);
+//                    HttpGet httpPost = new HttpGet(Utils.updatecartUrl+pid+"/"+quant+"/"+userid);
 //                    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
                     HttpResponse response = httpClient.execute(httpPost);
@@ -731,8 +762,9 @@ public class CartFragment extends Fragment {
                 Log.e("s",s);
 //                loadingDialog.dismiss();
                 try {
-                    JSONArray response = new JSONArray(s);
-                    JSONObject jsonObject=response.getJSONObject(0);
+                    JSONObject jsonObject = new JSONObject(s);
+//                    JSONArray response = new JSONArray(s);
+//                    JSONObject jsonObject=response.getJSONObject(0);
 
                     if (jsonObject != null) {
                         JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
@@ -740,25 +772,18 @@ public class CartFragment extends Fragment {
                         String message = jobstatus.optString(TagName.TAG_MSG);
 
                         if (status==1) {
-//                            Toast.makeText(activity, "Product deleted", Toast.LENGTH_LONG).show();
-//            boolean status = response.getBoolean(TagName.TAG_STATUS);
-//                if(message.equalsIgnoreCase("success")){
-//                            JSONObject jobcust=jsonObject.getJSONObject(TagName.TAG_CUSTMER);
-//                            editor = sharedpreferences.edit();
-//                            editor.putString("customerID", jobcust.optString("id"));
-//                            editor.putString("customerEmail", jobcust.optString("username"));
-//                            editor.putString("password", jobcust.optString("password"));
-////                          editor.putString("customerName",jobcust.optString("name"));
-//                            editor.putString("logged", "logged");
-//                            editor.commit();
-//                            activity.finish();
-//                            Intent in=new Intent(getActivity(), BookNowActivity.class);
-//                            in.putExtra("buynowKey", TagName.BUYNOW_USER_DETAILS);
-//                            activity.startActivity(in);
-//                            activity.overridePendingTransition(android.R.anim.fade_in,
-//                                    android.R.anim.fade_out);
+                            JSONArray jarr=jsonObject.optJSONArray("updatecartproduct");
+                            JSONObject job=jarr.optJSONObject(0);
+                            JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+                            int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                            String message1 = jobstat.optString(TagName.TAG_MSG);
+                            if(status1==1) {
+//                                Toast.makeText(activity, "Product deleted", Toast.LENGTH_SHORT).show();
+                            }else{
+//                                Toast.makeText(activity, "Product Not deleted", Toast.LENGTH_SHORT).show();
+                            }
                         }else {
-                            Toast.makeText(activity, "Network Error", Toast.LENGTH_LONG).show();
+//                            Toast.makeText(activity, "Network Error", Toast.LENGTH_LONG).show();
                         }
                     }
                 } catch (JSONException e) {

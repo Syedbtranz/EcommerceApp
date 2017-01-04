@@ -10,62 +10,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:layout_margin="5dp">
-        <LinearLayout
-            android:orientation="horizontal"
+        android:layout_margin="10dp">
+
+        <CheckBox
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:button="@null"
+            android:text="0 - 10 ( 0 )"
             android:layout_weight="1"
-            android:gravity="center_vertical">
-            <TextView
-                android:text="0 - 10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/filter_brand_name"
-                />
-
-        <TextView
-            android:text="("
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-
-        <TextView
-            android:text="0"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:drawableRight="?checkbox_custom"
+            android:layout_gravity="right"
             android:id="@+id/filter_disc_count_1_10"
-             />
-        <TextView
-            android:text=")"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             />
-            </LinearLayout>
-        <com.btranz.ecommerceapp.utils.CircleCheckBox
-            android:id="@+id/chbx"
-            android:layout_width="30dp"
-            android:layout_height="25dp"
-            android:paddingLeft="5dp"
-            app:borderThickness="2dp"
-            app:circleBorderColor="?attr/colorPrimary"
-            app:innerCircleColor="?attr/colorPrimary"
-            app:innerCircleRadius="8dp"
-            app:outerCircleColor="#64f85040"
-            app:outerCircleRadius="3dp"
-            app:showOuterCircle="true"
-            app:textColor="#000000"
-            app:tickColor="#ffffff"
-            app:tickThickness="1dp"
-            android:layout_gravity="right" />
-       <!-- <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_gravity="right"
-            android:id="@+id/checkBox"
-            />-->
     </LinearLayout>
+
     <View
         android:layout_width="wrap_content"
         android:layout_height="1dp"
@@ -75,60 +33,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:layout_margin="5dp">
-        <LinearLayout
-            android:orientation="horizontal"
+        android:layout_margin="10dp">
+
+        <CheckBox
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:button="@null"
+            android:text="10 - 20 ( 0 )"
             android:layout_weight="1"
-            android:gravity="center_vertical">
-            <TextView
-                android:text="10 - 20"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                />
-
-        <TextView
-            android:text="("
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-
-        <TextView
-            android:text="0"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:drawableRight="?checkbox_custom"
+            android:layout_gravity="right"
             android:id="@+id/filter_disc_count_10_20"
-             />
-        <TextView
-            android:text=")"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             />
-            </LinearLayout>
-        <com.btranz.ecommerceapp.utils.CircleCheckBox
-            android:id="@+id/chbxer"
-            android:layout_width="30dp"
-            android:layout_height="25dp"
-            android:paddingLeft="5dp"
-            app:borderThickness="2dp"
-            app:circleBorderColor="?attr/colorPrimary"
-            app:innerCircleColor="?attr/colorPrimary"
-            app:innerCircleRadius="8dp"
-            app:outerCircleColor="#64f85040"
-            app:outerCircleRadius="3dp"
-            app:showOuterCircle="true"
-            app:textColor="#000000"
-            app:tickColor="#ffffff"
-            app:tickThickness="1dp"
-            android:layout_gravity="right" />
-       <!-- <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_gravity="right"
-            android:id="@+id/checkBox"
-            />-->
     </LinearLayout>
     <View
         android:layout_width="wrap_content"
@@ -139,60 +55,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:layout_margin="5dp">
-        <LinearLayout
-            android:orientation="horizontal"
+        android:layout_margin="10dp">
+
+        <CheckBox
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:button="@null"
+            android:text="20 - 30 ( 0 )"
             android:layout_weight="1"
-            android:gravity="center_vertical">
-            <TextView
-                android:text="20 - 30"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                />
-
-        <TextView
-            android:text="("
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-
-        <TextView
-            android:text="0"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:drawableRight="?checkbox_custom"
+            android:layout_gravity="right"
             android:id="@+id/filter_disc_count_20_30"
-             />
-        <TextView
-            android:text=")"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             />
-            </LinearLayout>
-        <com.btranz.ecommerceapp.utils.CircleCheckBox
-            android:id="@+id/chbxjk"
-            android:layout_width="30dp"
-            android:layout_height="25dp"
-            android:paddingLeft="5dp"
-            app:borderThickness="2dp"
-            app:circleBorderColor="?attr/colorPrimary"
-            app:innerCircleColor="?attr/colorPrimary"
-            app:innerCircleRadius="8dp"
-            app:outerCircleColor="#64f85040"
-            app:outerCircleRadius="3dp"
-            app:showOuterCircle="true"
-            app:textColor="#000000"
-            app:tickColor="#ffffff"
-            app:tickThickness="1dp"
-            android:layout_gravity="right" />
-        <!--<CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_gravity="right"
-            android:id="@+id/checkBox"
-            />-->
     </LinearLayout>
     <View
         android:layout_width="wrap_content"
@@ -203,60 +77,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:layout_margin="5dp">
-        <LinearLayout
-            android:orientation="horizontal"
+        android:layout_margin="10dp">
+
+        <CheckBox
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:button="@null"
+            android:text="30 - 40 ( 0 )"
             android:layout_weight="1"
-            android:gravity="center_vertical">
-            <TextView
-                android:text="30 - 40"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                />
-
-        <TextView
-            android:text="("
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-
-        <TextView
-            android:text="0"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:drawableRight="?checkbox_custom"
+            android:layout_gravity="right"
             android:id="@+id/filter_disc_count_30_40"
-             />
-        <TextView
-            android:text=")"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             />
-            </LinearLayout>
-        <com.btranz.ecommerceapp.utils.CircleCheckBox
-            android:id="@+id/chbxhhgg"
-            android:layout_width="30dp"
-            android:layout_height="25dp"
-            android:paddingLeft="5dp"
-            app:borderThickness="2dp"
-            app:circleBorderColor="?attr/colorPrimary"
-            app:innerCircleColor="?attr/colorPrimary"
-            app:innerCircleRadius="8dp"
-            app:outerCircleColor="@color/color_primary_light"
-            app:outerCircleRadius="3dp"
-            app:showOuterCircle="true"
-            app:textColor="#000000"
-            app:tickColor="#ffffff"
-            app:tickThickness="1dp"
-            android:layout_gravity="right" />
-        <!--<CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_gravity="right"
-            android:id="@+id/checkBox"
-            />-->
     </LinearLayout>
     <View
         android:layout_width="wrap_content"
@@ -267,60 +99,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:layout_margin="5dp">
-        <LinearLayout
-            android:orientation="horizontal"
+        android:layout_margin="10dp">
+
+        <CheckBox
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:button="@null"
+            android:text="40 - 50 ( 0 )"
             android:layout_weight="1"
-            android:gravity="center_vertical">
-            <TextView
-                android:text="40 - 50"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                />
-
-        <TextView
-            android:text="("
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-
-        <TextView
-            android:text="0"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:drawableRight="?checkbox_custom"
+            android:layout_gravity="right"
             android:id="@+id/filter_disc_count_40_50"
-             />
-        <TextView
-            android:text=")"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             />
-            </LinearLayout>
-        <com.btranz.ecommerceapp.utils.CircleCheckBox
-            android:id="@+id/chbxjj"
-            android:layout_width="30dp"
-            android:layout_height="25dp"
-            android:paddingLeft="5dp"
-            app:borderThickness="2dp"
-            app:circleBorderColor="?attr/colorPrimary"
-            app:innerCircleColor="?attr/colorPrimary"
-            app:innerCircleRadius="8dp"
-            app:outerCircleColor="@color/color_primary_light"
-            app:outerCircleRadius="3dp"
-            app:showOuterCircle="true"
-            app:textColor="#000000"
-            app:tickColor="#ffffff"
-            app:tickThickness="1dp"
-            android:layout_gravity="right" />
-        <!--<CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_gravity="right"
-            android:id="@+id/checkBox"
-            />-->
     </LinearLayout>
     <View
         android:layout_width="wrap_content"
@@ -332,60 +122,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:layout_margin="5dp">
-        <LinearLayout
-            android:orientation="horizontal"
+        android:layout_margin="10dp">
+
+        <CheckBox
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:button="@null"
+            android:text="50 - 60 ( 0 )"
             android:layout_weight="1"
-            android:gravity="center_vertical">
-            <TextView
-                android:text="50 - 60"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                />
-
-        <TextView
-            android:text="("
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-
-        <TextView
-            android:text="0"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:drawableRight="?checkbox_custom"
+            android:layout_gravity="right"
             android:id="@+id/filter_disc_count_50_60"
-             />
-        <TextView
-            android:text=")"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             />
-            </LinearLayout>
-        <com.btranz.ecommerceapp.utils.CircleCheckBox
-            android:id="@+id/chbxhh"
-            android:layout_width="30dp"
-            android:layout_height="25dp"
-            android:paddingLeft="5dp"
-            app:borderThickness="2dp"
-            app:circleBorderColor="?attr/colorPrimary"
-            app:innerCircleColor="?attr/colorPrimary"
-            app:innerCircleRadius="8dp"
-            app:outerCircleColor="@color/color_primary_light"
-            app:outerCircleRadius="3dp"
-            app:showOuterCircle="true"
-            app:textColor="#000000"
-            app:tickColor="#ffffff"
-            app:tickThickness="1dp"
-            android:layout_gravity="right" />
-      <!--  <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_gravity="right"
-            android:id="@+id/checkBox"
-            />-->
     </LinearLayout>
 
     <View
@@ -397,61 +145,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:layout_margin="5dp">
-        <LinearLayout
-            android:orientation="horizontal"
+        android:layout_margin="10dp">
+        <CheckBox
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:button="@null"
+            android:text="60 - 70 ( 0 )"
             android:layout_weight="1"
-            android:gravity="center_vertical"
-            >
-            <TextView
-                android:text="60 - 70"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                />
-
-        <TextView
-            android:text="("
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-
-        <TextView
-            android:text="0"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:drawableRight="?checkbox_custom"
+            android:layout_gravity="right"
             android:id="@+id/filter_disc_count_60_70"
-             />
-        <TextView
-            android:text=")"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             />
-            </LinearLayout>
-        <com.btranz.ecommerceapp.utils.CircleCheckBox
-            android:id="@+id/chbxf"
-            android:layout_width="30dp"
-            android:layout_height="25dp"
-            android:paddingLeft="5dp"
-            app:borderThickness="2dp"
-            app:circleBorderColor="?attr/colorPrimary"
-            app:innerCircleColor="?attr/colorPrimary"
-            app:innerCircleRadius="8dp"
-            app:outerCircleColor="@color/color_primary_light"
-            app:outerCircleRadius="3dp"
-            app:showOuterCircle="true"
-            app:textColor="#000000"
-            app:tickColor="#ffffff"
-            app:tickThickness="1dp"
-            android:layout_gravity="right" />
-        <!--<CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_gravity="right"
-            android:id="@+id/checkBox"
-            />-->
     </LinearLayout>
     <View
         android:layout_width="wrap_content"
@@ -462,60 +166,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:layout_margin="5dp">
-        <LinearLayout
-            android:orientation="horizontal"
+        android:layout_margin="10dp">
+        <CheckBox
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:button="@null"
+            android:text="70 - 80 ( 0 )"
             android:layout_weight="1"
-            android:gravity="center_vertical">
-            <TextView
-                android:text="70 - 80"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                />
-
-        <TextView
-            android:text="("
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-
-        <TextView
-            android:text="0"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:drawableRight="?checkbox_custom"
+            android:layout_gravity="right"
             android:id="@+id/filter_disc_count_70_80"
-             />
-        <TextView
-            android:text=")"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             />
-            </LinearLayout>
-        <com.btranz.ecommerceapp.utils.CircleCheckBox
-            android:id="@+id/chbxfds"
-            android:layout_width="30dp"
-            android:layout_height="25dp"
-            android:paddingLeft="5dp"
-            app:borderThickness="2dp"
-            app:circleBorderColor="?attr/colorPrimary"
-            app:innerCircleColor="?attr/colorPrimary"
-            app:innerCircleRadius="8dp"
-            app:outerCircleColor="@color/color_primary_light"
-            app:outerCircleRadius="3dp"
-            app:showOuterCircle="true"
-            app:textColor="#000000"
-            app:tickColor="#ffffff"
-            app:tickThickness="1dp"
-            android:layout_gravity="right" />
-        <!--<CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_gravity="right"
-            android:id="@+id/checkBox"
-            />-->
     </LinearLayout>
     <View
         android:layout_width="wrap_content"
@@ -526,60 +187,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:layout_margin="5dp">
-        <LinearLayout
-            android:orientation="horizontal"
+        android:layout_margin="10dp">
+        <CheckBox
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:button="@null"
+            android:text="80 - 90 ( 0 )"
             android:layout_weight="1"
-            android:gravity="center_vertical">
-            <TextView
-                android:text="80 - 90"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                />
-
-        <TextView
-            android:text="("
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-
-        <TextView
-            android:text="0"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:drawableRight="?checkbox_custom"
+            android:layout_gravity="right"
             android:id="@+id/filter_disc_count_80_90"
-             />
-        <TextView
-            android:text=")"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             />
-            </LinearLayout>
-        <com.btranz.ecommerceapp.utils.CircleCheckBox
-            android:id="@+id/chbxdf"
-            android:layout_width="30dp"
-            android:layout_height="25dp"
-            android:paddingLeft="5dp"
-            app:borderThickness="2dp"
-            app:circleBorderColor="?attr/colorPrimary"
-            app:innerCircleColor="?attr/colorPrimary"
-            app:innerCircleRadius="8dp"
-            app:outerCircleColor="@color/color_primary_light"
-            app:outerCircleRadius="3dp"
-            app:showOuterCircle="true"
-            app:textColor="#000000"
-            app:tickColor="#ffffff"
-            app:tickThickness="1dp"
-            android:layout_gravity="right" />
-        <!--<CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_gravity="right"
-            android:id="@+id/checkBox"
-            />-->
     </LinearLayout>
     <View
         android:layout_width="wrap_content"
@@ -590,60 +208,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:layout_margin="5dp">
-        <LinearLayout
-            android:orientation="horizontal"
+        android:layout_margin="10dp">
+        <CheckBox
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:button="@null"
+            android:text="90 - 100 ( 0 )"
             android:layout_weight="1"
-            android:gravity="center_vertical">
-            <TextView
-                android:text="90 - 100"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                />
-
-        <TextView
-            android:text="("
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-
-        <TextView
-            android:text="0"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/filter_disc_count_90_100"
-             />
-        <TextView
-            android:text=")"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-            </LinearLayout>
-        <com.btranz.ecommerceapp.utils.CircleCheckBox
-            android:id="@+id/chbxfd"
-            android:layout_width="30dp"
-            android:layout_height="25dp"
-            android:paddingLeft="5dp"
-            app:borderThickness="2dp"
-            app:circleBorderColor="?attr/colorPrimary"
-            app:innerCircleColor="?attr/colorPrimary"
-            app:innerCircleRadius="8dp"
-            app:outerCircleColor="@color/color_primary_light"
-            app:outerCircleRadius="3dp"
-            app:showOuterCircle="true"
-            app:textColor="#000000"
-            app:tickColor="#ffffff"
-            app:tickThickness="1dp"
-            android:layout_gravity="right" />
-        <!--<CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
+            android:drawableRight="?checkbox_custom"
             android:layout_gravity="right"
-            android:id="@+id/checkBox"
-            />-->
+            android:id="@+id/filter_disc_count_90_100"
+            />
     </LinearLayout>
 
 </LinearLayout>

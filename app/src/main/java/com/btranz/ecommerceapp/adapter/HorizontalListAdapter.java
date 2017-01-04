@@ -1,4 +1,6 @@
 package com.btranz.ecommerceapp.adapter;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -6,6 +8,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -42,9 +45,15 @@ import com.nostra13.universalimageloader.core.display.SimpleBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -55,7 +64,6 @@ public class HorizontalListAdapter extends RecyclerView.Adapter<HorizontalListAd
     ImageLoader imageLoader = ImageLoader.getInstance();
     private FragmentActivity activity;
     ArrayList<ProductModel> modelList;
-    ArrayList<ProductModel> wishlistServices;
     private DisplayImageOptions options;
     private ImageLoadingListener imageListener;
     int layout;
@@ -65,11 +73,11 @@ public class HorizontalListAdapter extends RecyclerView.Adapter<HorizontalListAd
     // shared preference
     SharedPreferences sharedpreferences;
     String PREFS_NAME = "MyPrefs";
-    public HorizontalListAdapter(FragmentActivity activity, ArrayList<ProductModel> objects,int layout,ArrayList<ProductModel> wishlistServices) {
+    public HorizontalListAdapter(FragmentActivity activity, ArrayList<ProductModel> objects,int layout) {
         this.activity = activity;
         this.modelList = objects;
         this.layout=layout;
-        this.wishlistServices=wishlistServices;
+
         ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(activity));
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.preloader_product)
@@ -104,16 +112,6 @@ public class HorizontalListAdapter extends RecyclerView.Adapter<HorizontalListAd
 
         final ProductModel modelItem = modelList.get(position);
         final  int i1=position;
-//        if(wishlistServices!=null&&wishlistServices.size()!=0){
-//            for(int i=0;i<wishlistServices.size();i++){
-//                ProductModel model = wishlistServices.get(i);
-//                if(model.getId()==modelItem.getId()){
-//                    holder.like.setImageResource(R.drawable.like_icon_filled);
-//                }else{
-//                    holder.like.setImageResource(R.drawable.like_icon);
-//                }
-//            }
-//        }
 
         holder.text.setText(modelItem.getTitle());
         holder.price.setText(""+modelItem.getCost());
@@ -121,13 +119,13 @@ public class HorizontalListAdapter extends RecyclerView.Adapter<HorizontalListAd
         holder.finalPrice.setText(""+modelItem.getFinalPrice());
         //OFFER TAG COLOR CHANGES
         holder.offerTag.setText(modelItem.getTag());
-        if(modelItem.getTag().equalsIgnoreCase("best offer")){
-            holder.offerTag.setBackgroundColor(ContextCompat.getColor(activity, R.color.color_blue));
-        }else  if(modelItem.getTag().equalsIgnoreCase("new")){
-            holder.offerTag.setBackgroundColor(ContextCompat.getColor(activity, R.color.color_green));
-        }else  if(modelItem.getDiscount()!=0){
+        if(modelItem.getDiscount()!=0){
             holder.offerTag.setText("Sale "+modelItem.getDiscount()+"% Off");
             holder.offerTag.setBackgroundColor(ContextCompat.getColor(activity, R.color.color_red));
+        }else  if(modelItem.getTag().equalsIgnoreCase("new")){
+            holder.offerTag.setBackgroundColor(ContextCompat.getColor(activity, R.color.color_green));
+        }else  if(modelItem.getTag().equalsIgnoreCase("best offer")){
+            holder.offerTag.setBackgroundColor(ContextCompat.getColor(activity, R.color.color_blue));
         }else {
             holder.offerTag.setVisibility(View.INVISIBLE);
         }
@@ -215,7 +213,7 @@ public class HorizontalListAdapter extends RecyclerView.Adapter<HorizontalListAd
                         wishList=dbHandler.checkWishlistProduct(String.valueOf(modelItem.getId()));
                         if(wishList.size()<1){
                             Toast.makeText(activity, "Added to Wishlist!", Toast.LENGTH_SHORT).show();
-                            dbHandler.insertWishlist(String.valueOf(modelItem.getId()),modelItem.getTitle(),String.valueOf(modelItem.getCost()),String.valueOf(modelItem.getFinalPrice()),modelItem.getThumbnail());
+                            dbHandler.insertWishlist(String.valueOf(modelItem.getId()),modelItem.getTitle(),String.valueOf(modelItem.getCost()),String.valueOf(modelItem.getFinalPrice()),modelItem.getThumbnail(),modelItem.getTag(),String.valueOf(modelItem.getDiscount()),String.valueOf(modelItem.getRating()));
                             modelItem.setWishlist(1);
                             modelList.remove(i1);
                             modelList.add(i1, modelItem);
@@ -313,34 +311,102 @@ public class HorizontalListAdapter extends RecyclerView.Adapter<HorizontalListAd
             view.setTag(view);
         }
     }
-   /* public void addtoWishlist(int singlePrdtId){
-        if(userId.equals("")){
-            wishList=dbHandler.checkWishlistProduct(String.valueOf(singlePrdtId));
-            if(wishList.size()<1){
-                Toast.makeText(activity, "Added to Wishlist!", Toast.LENGTH_SHORT).show();
-                dbHandler.insertWishlist(String.valueOf(singlePrdtId),m.getTitle(),String.valueOf(item1.getCost()),String.valueOf(item1.getFinalPrice()),item1.getThumbnail());
 
-//                if(cartBadge.equals("")){
-//                    ((SecondActivity) getActivity()).writeBadge(1);
-//                    editor.putString("cartBadge", String.valueOf(1));
-//                    editor.commit();
-////                            writeBadge(0);
-//                }else{
-//                    ((SecondActivity) getActivity()).writeBadge(Integer.parseInt(cartBadge)+1);
-//                    editor.putString("cartBadge", String.valueOf(Integer.parseInt(cartBadge)+1));
-//                    editor.commit();
-//                }
-            }else{
-                Toast.makeText(getActivity(), "This Product is already Added please check in CART!", Toast.LENGTH_SHORT).show();
+    public void addWishlistItem(String prdtId,String userId){
+        class Async extends AsyncTask<String, Void, String> {
+
+//            private Dialog loadingDialog;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+//                loadingDialog = ProgressDialog.show(activity, "", "Pease Wait...");
             }
 
-        }else{
-            addWishlistItem(String.valueOf(singlePrdtId),userId);
+            @Override
+            protected String doInBackground(String... params) {
+                String userid = params[0];
+                String pid = params[1];
+//                String price = params[2];
+                InputStream inputStream = null;
+                String result= null;;
+                HttpURLConnection urlConnection = null;
 
+                try {
+                /* forming th java.net.URL object */
+                    URL url = new URL(Utils.instantAddtoWishlistUrl+userid+"&productid="+pid);
+                    Log.e("URL", Utils.instantAddtoWishlistUrl+userid+"&productid="+pid);
+
+                    urlConnection = (HttpURLConnection) url.openConnection();
+
+                /* for Get request */
+                    urlConnection.setRequestMethod("GET");
+
+                    int statusCode = urlConnection.getResponseCode();
+
+                /* 200 represents HTTP OK */
+                    if (statusCode ==  200) {
+
+                        BufferedReader r = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                        StringBuilder response = new StringBuilder();
+                        String line;
+                        while ((line = r.readLine()) != null) {
+                            response.append(line);
+                        }
+                        Log.e("response.toString()", response.toString());
+//                        parseResult(response.toString());
+                        result = response.toString(); // Successful
+                    }else{
+                        result = null; //"Failed to fetch data!";
+                    }
+
+                } catch (Exception e) {
+                    Log.d("catch", e.getLocalizedMessage());
+                }
+
+                return result; //"Failed to fetch data!";
+
+            }
+
+            @Override
+            protected void onPostExecute(String result){
+                String s = result.trim();
+//                Log.e("s",s);
+//                loadingDialog.dismiss();
+                try {
+                    JSONObject jsonObject = new JSONObject(s);
+//                    JSONObject jsonObject=response.getJSONObject(0);
+
+                    if (jsonObject != null) {
+                        JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                        int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+                        String message = jobstatus.optString(TagName.TAG_MSG);
+
+                        if (status==1) {
+
+                            JSONArray jarr=jsonObject.optJSONArray("addwishlist");
+                            JSONObject job=jarr.optJSONObject(0);
+                            JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+                            int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                            String message1 = jobstat.optString(TagName.TAG_MSG);
+                            if(status1==1) {
+//                                Toast.makeText(activity, "Wishlist Product Added", Toast.LENGTH_SHORT).show();
+                            }else{
+//                                Toast.makeText(activity, "Wishlist Product Not Added", Toast.LENGTH_SHORT).show();
+                            }
+                        }else {
+                            Toast.makeText(activity, "Net work Error", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
         }
-    }*/
-    public void addWishlistItem(String prdtId,String userId){
-        try {
+
+        Async la = new Async();
+        la.execute(userId, prdtId);
+        /*try {
             RequestQueue requestQueue = Volley.newRequestQueue(activity);
             String URL = "http://...";
 //            JSONObject jsonBody = new JSONObject();
@@ -392,7 +458,7 @@ public class HorizontalListAdapter extends RecyclerView.Adapter<HorizontalListAd
                     return "application/json; charset=utf-8";
                 }
 
-             /*   @Override
+             *//*   @Override
                 public byte[] getBody() throws AuthFailureError {
                     try {
                         return mRequestBody == null ? null : mRequestBody.getBytes("utf-8");
@@ -400,9 +466,9 @@ public class HorizontalListAdapter extends RecyclerView.Adapter<HorizontalListAd
                         VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", mRequestBody, "utf-8");
                         return null;
                     }
-                }*/
+                }*//*
 
-                /*@Override
+                *//*@Override
                 protected Response<String> parseNetworkResponse(NetworkResponse response) {
                     String responseString = "";
                     if (response != null) {
@@ -412,13 +478,13 @@ public class HorizontalListAdapter extends RecyclerView.Adapter<HorizontalListAd
                         // can get more details such as response.headers
                     }
                     return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
-                }*/
+                }*//*
             };
 
             requestQueue.add(stringRequest);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
     public void reomvewishlistItem(int prdtId){
         if(userId.equals("")) {
@@ -430,7 +496,101 @@ public class HorizontalListAdapter extends RecyclerView.Adapter<HorizontalListAd
 
     }
     public void deleteWishlistItem(String prdtId,String userId){
-        try {
+        class Async extends AsyncTask<String, Void, String> {
+
+//            private Dialog loadingDialog;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+//                loadingDialog = ProgressDialog.show(activity, "", "Pease Wait...");
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+                String userid = params[0];
+                String pid = params[1];
+//                String price = params[2];
+                InputStream inputStream = null;
+                String result= null;;
+                HttpURLConnection urlConnection = null;
+
+                try {
+                /* forming th java.net.URL object */
+                    URL url = new URL(Utils.instantDeleteWishlistItemUrl+userid+"&productid="+pid);
+                    Log.e("URL", Utils.instantDeleteWishlistItemUrl+userid+"&productid="+pid);
+
+                    urlConnection = (HttpURLConnection) url.openConnection();
+
+                /* for Get request */
+                    urlConnection.setRequestMethod("GET");
+
+                    int statusCode = urlConnection.getResponseCode();
+
+                /* 200 represents HTTP OK */
+                    if (statusCode ==  200) {
+
+                        BufferedReader r = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                        StringBuilder response = new StringBuilder();
+                        String line;
+                        while ((line = r.readLine()) != null) {
+                            response.append(line);
+                        }
+                        Log.e("response.toString()", response.toString());
+//                        parseResult(response.toString());
+                        result = response.toString(); // Successful
+                    }else{
+                        result = null; //"Failed to fetch data!";
+                    }
+
+                } catch (Exception e) {
+                    Log.d("catch", e.getLocalizedMessage());
+                }
+
+                return result; //"Failed to fetch data!";
+
+            }
+
+            @Override
+            protected void onPostExecute(String result){
+                String s = result.trim();
+//                Log.e("s",s);
+//                loadingDialog.dismiss();
+                try {
+                    JSONObject jsonObject = new JSONObject(s);
+//                    JSONObject jsonObject=response.getJSONObject(0);
+
+                    if (jsonObject != null) {
+                        JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                        int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+                        String message = jobstatus.optString(TagName.TAG_MSG);
+
+                        if (status==1) {
+
+                            JSONArray jarr=jsonObject.optJSONArray("itemremovewishlist");
+                            JSONObject job=jarr.optJSONObject(0);
+                            JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+                            int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                            String message1 = jobstat.optString(TagName.TAG_MSG);
+                            if(status1==1) {
+//                                Toast.makeText(activity, "Wishlist Product deleted", Toast.LENGTH_SHORT).show();
+                            }else{
+//                                Toast.makeText(activity, "Wishlist Product Not deleted", Toast.LENGTH_SHORT).show();
+                            }
+                        }else {
+                            Toast.makeText(activity, "Net work Error", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        Async la = new Async();
+        la.execute(userId, prdtId);
+
+       /* try {
             RequestQueue requestQueue = Volley.newRequestQueue(activity);
             String URL = "http://...";
 //            JSONObject jsonBody = new JSONObject();
@@ -482,7 +642,7 @@ public class HorizontalListAdapter extends RecyclerView.Adapter<HorizontalListAd
                     return "application/json; charset=utf-8";
                 }
 
-             /*   @Override
+             *//*   @Override
                 public byte[] getBody() throws AuthFailureError {
                     try {
                         return mRequestBody == null ? null : mRequestBody.getBytes("utf-8");
@@ -490,9 +650,9 @@ public class HorizontalListAdapter extends RecyclerView.Adapter<HorizontalListAd
                         VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", mRequestBody, "utf-8");
                         return null;
                     }
-                }*/
+                }*//*
 
-                /*@Override
+                *//*@Override
                 protected Response<String> parseNetworkResponse(NetworkResponse response) {
                     String responseString = "";
                     if (response != null) {
@@ -502,12 +662,12 @@ public class HorizontalListAdapter extends RecyclerView.Adapter<HorizontalListAd
                         // can get more details such as response.headers
                     }
                     return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
-                }*/
+                }*//*
             };
 
             requestQueue.add(stringRequest);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 }

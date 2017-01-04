@@ -87,7 +87,11 @@ public class BillingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 promo=promoET.getText().toString();
-                getPromoApply(userId,quoteId,promo);
+                if(promo.equals("")){
+                    Toast.makeText(activity,"Please Enter the Promo Code",Toast.LENGTH_SHORT).show();
+                }else {
+                    getPromoApply(userId, quoteId, promo);
+                }
 
             }
         });
@@ -198,8 +202,8 @@ public class BillingFragment extends Fragment {
 
                 try {
                 /* forming th java.net.URL object */
-                    URL url = new URL(Utils.promoApplyUrl+userid+"/"+quoteid+"/"+promo);
-                    Log.e("URL", Utils.promoApplyUrl+userid+"/"+quoteid+"/"+promo);
+                    URL url = new URL(Utils.instantPromoApplyUrl+userid+"&quoteId="+quoteid+"&coupon="+promo);
+                    Log.e("URL", Utils.instantPromoApplyUrl+userid+"&quoteId="+quoteid+"&coupon="+promo);
 
                     urlConnection = (HttpURLConnection) url.openConnection();
 
@@ -277,39 +281,28 @@ public class BillingFragment extends Fragment {
                 Log.e("s",s);
                 loadingDialog.dismiss();
                 try {
-                    JSONArray response = new JSONArray(s);
-                    JSONObject jsonObject=response.getJSONObject(0);
+                    JSONObject jsonObject = new JSONObject(s);
+//                    JSONObject jsonObject=response.getJSONObject(0);
 
                     if (jsonObject != null) {
                         JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
                         int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
                         String message = jobstatus.optString(TagName.TAG_MSG);
 
-//                        if (status==1) {
+                        if (status==1) {
+                            JSONArray jarr=jsonObject.optJSONArray("applycoupon");
+                            JSONObject job=jarr.optJSONObject(0);
+                            JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+                            int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                            String message1 = jobstat.optString(TagName.TAG_MSG);
+                            if(status1==1) {
+                            Toast.makeText(activity, "promo applied successfully", Toast.LENGTH_LONG).show();
 
-//                            String quoteId=jsonObject.optString("quoteid");
-//                            Toast.makeText(activity, "Added "+quoteId, Toast.LENGTH_LONG).show();
-////            boolean status = response.getBoolean(TagName.TAG_STATUS);
-                if(message.equalsIgnoreCase("success")){
-//                            editor.putString("quoteid",quoteId);
-//                            editor.commit();
-                    Toast.makeText(activity, "promo applied successfully", Toast.LENGTH_LONG).show();
-//                            JSONObject jobcust=jsonObject.getJSONObject(TagName.TAG_CUSTMER);
-//                            editor = sharedpreferences.edit();
-//                            editor.putString("customerID", jobcust.optString("id"));
-//                            editor.putString("customerEmail", jobcust.optString("username"));
-//                            editor.putString("password", jobcust.optString("password"));
-////                          editor.putString("customerName",jobcust.optString("name"));
-//                            editor.putString("logged", "logged");
-//                            editor.commit();
-//                            activity.finish();
-//                            Intent in=new Intent(getActivity(), BookNowActivity.class);
-//                            in.putExtra("buynowKey", TagName.BUYNOW_USER_DETAILS);
-//                            activity.startActivity(in);
-//                            activity.overridePendingTransition(android.R.anim.fade_in,
-//                                    android.R.anim.fade_out);
+                            }else {
+                            Toast.makeText(activity, "Invalid Promo code", Toast.LENGTH_SHORT).show();
+                            }
                         }else {
-                            Toast.makeText(activity, "Invalid Promo code", Toast.LENGTH_LONG).show();
+                            Toast.makeText(activity, "Network Error. Please try Again.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 } catch (JSONException e) {

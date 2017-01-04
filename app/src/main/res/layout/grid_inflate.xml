@@ -31,7 +31,7 @@
             android:padding="10dp"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:button="@drawable/wishlist_checkbox"
+            android:button="?checkbox_wishlist"
             android:id="@+id/prdt_like_btn"/>
        <!-- <ImageView
             android:id="@+id/prdt_like"

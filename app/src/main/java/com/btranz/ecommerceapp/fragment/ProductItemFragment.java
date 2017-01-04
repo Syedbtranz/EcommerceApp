@@ -1,5 +1,6 @@
 package com.btranz.ecommerceapp.fragment;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -12,7 +13,9 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -50,6 +53,7 @@ import com.btranz.ecommerceapp.activity.CredientialActivity;
 import com.btranz.ecommerceapp.activity.SecondActivity;
 import com.btranz.ecommerceapp.adapter.HorizontalListAdapter;
 import com.btranz.ecommerceapp.adapter.ProductGlanceAdapter;
+import com.btranz.ecommerceapp.adapter.ReviewRatingRecyclerAdapter;
 import com.btranz.ecommerceapp.modal.ProductModel;
 import com.btranz.ecommerceapp.utils.CheckNetworkConnection;
 import com.btranz.ecommerceapp.utils.DatabaseHandler;
@@ -94,9 +98,9 @@ import java.util.List;
 public class ProductItemFragment extends Fragment {
     RatingBar ratingBar, ratingBarBtm;
     EditText pincodeTxt;
-    Button simiPrdtBtn, discBtn, tagBtn, pincodeBtn;
+    Button simiPrdtBtn, discBtn, tagBtn, pincodeBtn, reviewsBtn;
     CardView cardView;
-    TextView pdtIdTxt, pdtNameTxt,desTxt,priceTxt, finalPriceTxt, ratingTxtBtm, standTxt,expTxt, standSubTitle, expSubTitle;
+    TextView pdtIdTxt, pdtNameTxt,desTxt,priceTxt, finalPriceTxt, ratingTxtBtm,reviewTxt, standTxt,expTxt, standSubTitle, expSubTitle, writeReviewBtn;
     ImageView pdtImg, share, like;
     CheckBox likeBtn;
     FragmentActivity activity;
@@ -108,14 +112,16 @@ public class ProductItemFragment extends Fragment {
     AlertDialog alertDialog;
     AsyncHttpTask taskAsynk;
     ProductDetailsAsyncTask task;
-    ArrayList<ProductModel> services, checkOutProductsArray;
-
+    ReviewAsyncTask taskReview;
+    ArrayList<ProductModel> services, checkOutProductsArray, reviewArray;
+    Handler handler;
     List<String> checkList= new ArrayList<String>();
     List<String> wishList= new ArrayList<String>();
     ProductGlanceAdapter adapter;
     String message;
-    private RecyclerView horizontalList;
+    private RecyclerView horizontalList, reviewList;
     private HorizontalListAdapter horizontalAdapter;
+    private ReviewRatingRecyclerAdapter reviewRateAdapter;
     public static final String ARG_ITEM_ID = "pdt_item_fragment";
     DatabaseHandler dbHandler;
     int singlePrdtId;
@@ -133,6 +139,7 @@ public class ProductItemFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
+        handler = new Handler();
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.loading)
                 .showImageForEmptyUri(R.drawable.ic_empty)
@@ -153,7 +160,6 @@ public class ProductItemFragment extends Fragment {
         userId = sharedpreferences.getString("userID", "");
         userEmail = sharedpreferences.getString("userEmail", "");
         cartBadge = sharedpreferences.getString("cartBadge", "");
-
     }
 
     @Override
@@ -190,6 +196,7 @@ public class ProductItemFragment extends Fragment {
         setHasOptionsMenu(true);
         // update the actionbar to show the up carat/affordance
 
+
 //		getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
         final Toolbar mToolbar= ((SecondActivity) getActivity()).mToolbar;
         SpannableString s = new SpannableString(getString(R.string.title_product_details));
@@ -213,6 +220,27 @@ public class ProductItemFragment extends Fragment {
 
             }
         });
+
+//        userId = sharedpreferences.getString("userID", "");
+//        if(userId.equals("")){
+//
+//        }else {
+////            cartBadge = sharedpreferences.getString("cartBadge", "");
+//            Log.e("cartBadge",cartBadge);
+//            try {
+//                handler.postDelayed(new Runnable() {
+//                    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
+//                    @Override
+//                    public void run() {
+//
+//                        ((SecondActivity) activity).writeBadge(Integer.parseInt(cartBadge));
+//                    }
+//                }, 1000);
+//            }catch (Exception e){
+//
+//            }
+//
+//        }
         if (services == null) {
             sendRequest();
 //            Log.e("onResume","test");
@@ -220,9 +248,13 @@ public class ProductItemFragment extends Fragment {
 //            Log.e("onResume", "onResume");
         } else {
             Log.e("onResume else", "onResume else");
-            horizontalList.setAdapter(new HorizontalListAdapter(activity, services,R.layout.gallary_inflate,services));
+            horizontalList.setAdapter(new HorizontalListAdapter(activity, services,R.layout.gallary_inflate));
             cardView.setVisibility(View.GONE);
             setProductItem(item1);
+            reviewRateAdapter = new ReviewRatingRecyclerAdapter(activity, reviewArray,R.layout.review_rating_inflate);
+            reviewList.setAdapter(reviewRateAdapter);
+//                grid1.setAdapter(adapter);
+            reviewRateAdapter.notifyDataSetChanged();
 //            progressLL.setVisibility(View.GONE);
 //            pb.setVisibility(View.GONE);
 //            recyclerView.scrollToPosition(0);
@@ -233,11 +265,15 @@ public class ProductItemFragment extends Fragment {
     private void findViewById(View view) {
 
         cardView=(CardView)view.findViewById(R.id.progress_ll) ;
+
         horizontalList = (RecyclerView)view.findViewById(R.id.sim_horizontal_recycler);
         horizontalList.setNestedScrollingEnabled(false);
         horizontalList.setHasFixedSize(true);
         LinearLayoutManager horizontalManager = new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false);
         horizontalList.setLayoutManager(horizontalManager);
+
+        reviewList = (RecyclerView)view.findViewById(R.id.review_rate_recycler);
+        reviewList.setLayoutManager(new LinearLayoutManager(activity));
 
         pdtNameTxt = (TextView) view.findViewById(R.id.item_title);
         pdtIdTxt = (TextView) view.findViewById(R.id.product_id_text);
@@ -245,11 +281,12 @@ public class ProductItemFragment extends Fragment {
         finalPriceTxt = (TextView) view.findViewById(R.id.product_final_price);
         desTxt = (TextView) view.findViewById(R.id.product_description);
         ratingTxtBtm = (TextView) view.findViewById(R.id.rating_txt_btm);
-        ratingTxtBtm = (TextView) view.findViewById(R.id.rating_txt_btm);
+        reviewTxt = (TextView) view.findViewById(R.id.total_reviews_rating_txt);
         standTxt = (TextView) view.findViewById(R.id.standard_cost);
         expTxt = (TextView) view.findViewById(R.id.express_cost);
         standSubTitle = (TextView) view.findViewById(R.id.standard_sub_title);
         expSubTitle = (TextView) view.findViewById(R.id.express_sub_title);
+        writeReviewBtn = (TextView) view.findViewById(R.id.write_review_btn);
 
         pincodeTxt = (EditText) view.findViewById(R.id.pincode_et);
 
@@ -265,6 +302,7 @@ public class ProductItemFragment extends Fragment {
         discBtn=(Button) view.findViewById(R.id.disc_tag);
         tagBtn=(Button) view.findViewById(R.id.offer_tag);
         pincodeBtn=(Button) view.findViewById(R.id.pincode_check_btn);
+        reviewsBtn=(Button) view.findViewById(R.id.view_reviews_btn);
 
         addToCartBtn=(LinearLayout)view.findViewById(R.id.item_addtocart_btn);
         buyNowBtn=(LinearLayout)view.findViewById(R.id.item_buynow_btn);
@@ -332,7 +370,7 @@ public class ProductItemFragment extends Fragment {
 //                Log.d("position adapter", "" + position);
 //                ProductModel product = (ProductModel) services.get(position);
 //                arguments.putParcelable("singleProduct", product);
-                arguments.putString("prdtsUrl", Utils.similarPrdtsUrl+singlePrdtId);
+                arguments.putString("prdtsUrl", Utils.instantSimilarPrdtsUrl+singlePrdtId+"&userid="+userId);
                 arguments.putString("prdtsTitle", "similar products for "+item1.getTitle());
                 // Start a new fragment
                 fragment = new ProductsFragment();
@@ -344,6 +382,58 @@ public class ProductItemFragment extends Fragment {
                         ProductsFragment.PRDTS_FRAG);
                 transaction.addToBackStack(ProductsFragment.PRDTS_FRAG);
                 transaction.commit();
+            }
+        });
+        //REVIEWS & RATING ACTION
+        reviewsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle arguments = new Bundle();
+                Fragment fragment = null;
+//                Log.d("position adapter", "" + position);
+//                ProductModel product = (ProductModel) services.get(position);
+                arguments.putParcelable("singleProduct", item1);
+                arguments.putParcelableArrayList("reviews", reviewArray);
+//                arguments.putString("prdtsTitle", "similar products for "+item1.getTitle());
+                // Start a new fragment
+                fragment = new ReviewsRatingFragment();
+                fragment.setArguments(arguments);
+
+                FragmentTransaction transaction = activity
+                        .getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.container_second, fragment,
+                        ReviewsRatingFragment.RR_FRAG);
+                transaction.addToBackStack( ReviewsRatingFragment.RR_FRAG);
+                transaction.commit();
+            }
+        });
+        //WRITE REVIEWS & RATING ACTION
+        writeReviewBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Bundle arguments = new Bundle();
+//                Fragment fragment = null;
+////                Log.d("position adapter", "" + position);
+////                ProductModel product = (ProductModel) services.get(position);
+////                arguments.putParcelable("singleProduct", product);
+////                arguments.putParcelableArrayList("reviews", reviewArray);
+////                arguments.putString("prdtsTitle", "similar products for "+item1.getTitle());
+//                // Start a new fragment
+//                fragment = new WriteReviewsRatingFragment();
+//                fragment.setArguments(arguments);
+//
+//                FragmentTransaction transaction = activity
+//                        .getSupportFragmentManager().beginTransaction();
+//                transaction.replace(R.id.container_second, fragment,
+//                        WriteReviewsRatingFragment.WRR_FRAG);
+//                transaction.addToBackStack( WriteReviewsRatingFragment.WRR_FRAG);
+//                transaction.commit();
+                Intent inRe = new Intent(activity, CredientialActivity.class);
+                inRe.putExtra("credKey",TagName.WRITE_REVIEW);
+                inRe.putExtra("reviewProduct",item1);
+                activity.startActivity(inRe);
+                activity.overridePendingTransition(android.R.anim.fade_in,
+                        android.R.anim.fade_out);
             }
         });
     }
@@ -361,7 +451,7 @@ public class ProductItemFragment extends Fragment {
             checkList=dbHandler.checkProduct(String.valueOf(singlePrdtId));
             if(checkList.size()<1){
                 Toast.makeText(getActivity(), "Added to Cart!", Toast.LENGTH_SHORT).show();
-                dbHandler.insertCart(String.valueOf(singlePrdtId),item1.getTitle(),String.valueOf(item1.getCost()),String.valueOf(item1.getFinalPrice()),item1.getThumbnail(),"1");
+                dbHandler.insertCart(String.valueOf(singlePrdtId),item1.getTitle(),String.valueOf(item1.getCost()),String.valueOf(item1.getFinalPrice()),item1.getThumbnail(),"1",item1.getShare(),item1.getTag(),String.valueOf(item1.getDiscount()),String.valueOf(item1.getRating()));
 
                 if(cartBadge.equals("")){
                     ((SecondActivity) getActivity()).writeBadge(1);
@@ -386,7 +476,7 @@ public class ProductItemFragment extends Fragment {
         if(userId.equals("")){
             wishList=dbHandler.checkWishlistProduct(String.valueOf(singlePrdtId));
             if(wishList.size()<1){
-                dbHandler.insertWishlist(String.valueOf(singlePrdtId),item1.getTitle(),String.valueOf(item1.getCost()),String.valueOf(item1.getFinalPrice()),item1.getThumbnail());
+                dbHandler.insertWishlist(String.valueOf(singlePrdtId),item1.getTitle(),String.valueOf(item1.getCost()),String.valueOf(item1.getFinalPrice()),item1.getThumbnail(),item1.getTag(),String.valueOf(item1.getDiscount()),String.valueOf(item1.getRating()));
                 Toast.makeText(getActivity(), "Added to Wishlist!", Toast.LENGTH_SHORT).show();
             }else{
                 Toast.makeText(getActivity(), "This Product is already Added please check in CART!", Toast.LENGTH_SHORT).show();
@@ -398,7 +488,100 @@ public class ProductItemFragment extends Fragment {
         }
     }
     public void addWishlistItem(String prdtId,String userId){
-        try {
+        class Async extends AsyncTask<String, Void, String> {
+
+            private Dialog loadingDialog;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                loadingDialog = ProgressDialog.show(activity, "", "Pease Wait...");
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+                String userid = params[0];
+                String pid = params[1];
+//                String price = params[2];
+                InputStream inputStream = null;
+                String result= null;;
+                HttpURLConnection urlConnection = null;
+
+                try {
+                /* forming th java.net.URL object */
+                    URL url = new URL(Utils.instantAddtoWishlistUrl+userid+"&productid="+pid);
+//                    Log.e("URL", Utils.instantAddWishlistUrl+userid+"&productid="+pid);
+
+                    urlConnection = (HttpURLConnection) url.openConnection();
+
+                /* for Get request */
+                    urlConnection.setRequestMethod("GET");
+
+                    int statusCode = urlConnection.getResponseCode();
+
+                /* 200 represents HTTP OK */
+                    if (statusCode ==  200) {
+
+                        BufferedReader r = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                        StringBuilder response = new StringBuilder();
+                        String line;
+                        while ((line = r.readLine()) != null) {
+                            response.append(line);
+                        }
+                        Log.e("response.toString()", response.toString());
+//                        parseResult(response.toString());
+                        result = response.toString(); // Successful
+                    }else{
+                        result = null; //"Failed to fetch data!";
+                    }
+
+                } catch (Exception e) {
+                    Log.d("catch", e.getLocalizedMessage());
+                }
+
+                return result; //"Failed to fetch data!";
+
+            }
+
+            @Override
+            protected void onPostExecute(String result){
+                String s = result.trim();
+//                Log.e("s",s);
+                loadingDialog.dismiss();
+                try {
+                    JSONObject jsonObject = new JSONObject(s);
+//                    JSONObject jsonObject=response.getJSONObject(0);
+
+                    if (jsonObject != null) {
+                        JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                        int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+                        String message = jobstatus.optString(TagName.TAG_MSG);
+
+                        if (status==1) {
+
+                            JSONArray jarr=jsonObject.optJSONArray("addwishlist");
+                            JSONObject job=jarr.optJSONObject(0);
+                            JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+                            int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                            String message1 = jobstat.optString(TagName.TAG_MSG);
+                            if(status1==1) {
+                                Toast.makeText(activity, "Wishlist Product Added", Toast.LENGTH_SHORT).show();
+                            }else{
+                                Toast.makeText(activity, "Wishlist Product Not Added", Toast.LENGTH_SHORT).show();
+                            }
+                        }else {
+                            Toast.makeText(activity, "Net work Error", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        Async la = new Async();
+        la.execute(userId, prdtId);
+       /* try {
             RequestQueue requestQueue = Volley.newRequestQueue(activity);
             String URL = "http://...";
 //            JSONObject jsonBody = new JSONObject();
@@ -450,7 +633,7 @@ public class ProductItemFragment extends Fragment {
                     return "application/json; charset=utf-8";
                 }
 
-             /*   @Override
+             *//*   @Override
                 public byte[] getBody() throws AuthFailureError {
                     try {
                         return mRequestBody == null ? null : mRequestBody.getBytes("utf-8");
@@ -458,9 +641,9 @@ public class ProductItemFragment extends Fragment {
                         VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", mRequestBody, "utf-8");
                         return null;
                     }
-                }*/
+                }*//*
 
-                /*@Override
+                *//*@Override
                 protected Response<String> parseNetworkResponse(NetworkResponse response) {
                     String responseString = "";
                     if (response != null) {
@@ -470,13 +653,13 @@ public class ProductItemFragment extends Fragment {
                         // can get more details such as response.headers
                     }
                     return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
-                }*/
+                }*//*
             };
 
             requestQueue.add(stringRequest);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
     public void reomvewishlistItem(int prdtId){
         if(userId.equals("")) {
@@ -488,7 +671,101 @@ public class ProductItemFragment extends Fragment {
 
     }
     public void deleteWishlistItem(String prdtId,String userId){
-        try {
+        class Async extends AsyncTask<String, Void, String> {
+
+            private Dialog loadingDialog;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                loadingDialog = ProgressDialog.show(activity, "", "Pease Wait...");
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+                String userid = params[0];
+                String pid = params[1];
+//                String price = params[2];
+                InputStream inputStream = null;
+                String result= null;;
+                HttpURLConnection urlConnection = null;
+
+                try {
+                /* forming th java.net.URL object */
+                    URL url = new URL(Utils.instantDeleteWishlistItemUrl+userid+"&productid="+pid);
+//                    Log.e("URL", Utils.quoteBuynowUrl+userid+"/"+pid);
+
+                    urlConnection = (HttpURLConnection) url.openConnection();
+
+                /* for Get request */
+                    urlConnection.setRequestMethod("GET");
+
+                    int statusCode = urlConnection.getResponseCode();
+
+                /* 200 represents HTTP OK */
+                    if (statusCode ==  200) {
+
+                        BufferedReader r = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                        StringBuilder response = new StringBuilder();
+                        String line;
+                        while ((line = r.readLine()) != null) {
+                            response.append(line);
+                        }
+                        Log.e("response.toString()", response.toString());
+//                        parseResult(response.toString());
+                        result = response.toString(); // Successful
+                    }else{
+                        result = null; //"Failed to fetch data!";
+                    }
+
+                } catch (Exception e) {
+                    Log.d("catch", e.getLocalizedMessage());
+                }
+
+                return result; //"Failed to fetch data!";
+
+            }
+
+            @Override
+            protected void onPostExecute(String result){
+                String s = result.trim();
+//                Log.e("s",s);
+                loadingDialog.dismiss();
+                try {
+                    JSONObject jsonObject = new JSONObject(s);
+//                    JSONObject jsonObject=response.getJSONObject(0);
+
+                    if (jsonObject != null) {
+                        JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                        int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+                        String message = jobstatus.optString(TagName.TAG_MSG);
+
+                        if (status==1) {
+
+                            JSONArray jarr=jsonObject.optJSONArray("itemremovewishlist");
+                            JSONObject job=jarr.optJSONObject(0);
+                            JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+                            int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                            String message1 = jobstat.optString(TagName.TAG_MSG);
+                            if(status1==1) {
+                                Toast.makeText(activity, "Wishlist Product deleted", Toast.LENGTH_SHORT).show();
+                            }else{
+                                Toast.makeText(activity, "Wishlist Product Not deleted", Toast.LENGTH_SHORT).show();
+                            }
+                        }else {
+                            Toast.makeText(activity, "Net work Error", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        Async la = new Async();
+        la.execute(userId, prdtId);
+
+       /* try {
             RequestQueue requestQueue = Volley.newRequestQueue(activity);
             String URL = "http://...";
 //            JSONObject jsonBody = new JSONObject();
@@ -540,7 +817,7 @@ public class ProductItemFragment extends Fragment {
                     return "application/json; charset=utf-8";
                 }
 
-             /*   @Override
+             *//*   @Override
                 public byte[] getBody() throws AuthFailureError {
                     try {
                         return mRequestBody == null ? null : mRequestBody.getBytes("utf-8");
@@ -548,9 +825,9 @@ public class ProductItemFragment extends Fragment {
                         VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", mRequestBody, "utf-8");
                         return null;
                     }
-                }*/
+                }*//*
 
-                /*@Override
+                *//*@Override
                 protected Response<String> parseNetworkResponse(NetworkResponse response) {
                     String responseString = "";
                     if (response != null) {
@@ -560,13 +837,13 @@ public class ProductItemFragment extends Fragment {
                         // can get more details such as response.headers
                     }
                     return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
-                }*/
+                }*//*
             };
 
             requestQueue.add(stringRequest);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     private static class ImageDisplayListener extends
@@ -592,6 +869,7 @@ public class ProductItemFragment extends Fragment {
 
     private void setProductItem(final ProductModel resultProduct) {
         pdtNameTxt.setText("" + resultProduct.getTitle());
+        reviewTxt.setText(resultProduct.getTotalReview()+" user reviews");
         desTxt.setText(Html.fromHtml( resultProduct.getDescription()));
 //        desTxt.setText(resultProduct.getDescription());
         priceTxt.setText(String.valueOf(resultProduct.getCost()));
@@ -691,10 +969,13 @@ public class ProductItemFragment extends Fragment {
             //Product Details
             task = new ProductDetailsAsyncTask();
 //            Log.e("singlePrdtId",""+singlePrdtId);
-            task.execute(Utils.prdtDetailsUrl+singlePrdtId+"/"+user);
+            task.execute(Utils.instantPrdtDetailsUrl+singlePrdtId+"&userid="+user);
             //Product on Glance
             taskAsynk = new AsyncHttpTask();
-            taskAsynk.execute(Utils.similarPrdtsUrl+singlePrdtId+"/"+user);
+            taskAsynk.execute(Utils.instantSimilarPrdtsUrl+singlePrdtId+"&userid="+user);
+            //Review & Rating
+            taskReview = new ReviewAsyncTask();
+            taskReview.execute(Utils.instantGetReviewUrl+singlePrdtId);
         } else {
             message = getResources().getString(R.string.no_internet_connection);
             showAlertDialog(message, true);
@@ -718,10 +999,10 @@ public class ProductItemFragment extends Fragment {
     //Product Details
     public class ProductDetailsAsyncTask extends AsyncTask<String, Void, Integer> {
 
-
+        private Dialog loadingDialog;
         @Override
         protected void onPreExecute() {
-
+            loadingDialog = ProgressDialog.show(activity, "", "Pease Wait...");
             cardView.setVisibility(View.VISIBLE);
 //            pb.setVisibility(View.VISIBLE);
 
@@ -776,7 +1057,7 @@ public class ProductItemFragment extends Fragment {
 //            activity.setProgressBarIndeterminateVisibility(false);
             cardView.setVisibility(View.GONE);
 //            layout.setVisibility(View.GONE);
-
+            loadingDialog.dismiss();
             /* Download complete. Lets update UI */
             if (result == 1) {
                 try {
@@ -801,21 +1082,21 @@ public class ProductItemFragment extends Fragment {
     private void productDetailsParseResult(String result) {
         try {
 //            Log.e("MrE", "1");
-            JSONArray response = new JSONArray(result);
-            JSONObject jsonObject=response.getJSONObject(0);
+            JSONObject jsonObject = new JSONObject(result);
+//            JSONObject jsonObject=response.getJSONObject(0);
 
             if (jsonObject != null) {
                 JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
                 int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
 //                Log.e("MrE", "2");
                 if (status==1) {
-//            boolean status = response.getBoolean(TagName.TAG_STATUS);
-//                    Log.e("MrE", "3");
-//                    if (status) {
-//                JSONObject jsonData = jsonObject
-//                        .getJSONObject(TagName.TAG_PRODUCT);
-//                    }
-                    JSONArray posts = jsonObject.optJSONArray(TagName.TAG_PRODUCT_DETAILS);
+                    JSONArray jarr=jsonObject.optJSONArray("getproductdetails");
+                    JSONObject job=jarr.optJSONObject(0);
+                    JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+                    int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                    String message1 = jobstat.optString(TagName.TAG_MSG);
+                    if(status1==1) {
+                    JSONArray posts = job.optJSONArray(TagName.TAG_PRODUCT_DETAILS);
 
  /*Initialize array if null*/
                     if (null == checkOutProductsArray) {
@@ -851,6 +1132,7 @@ public class ProductItemFragment extends Fragment {
                         item1.setTag(post1.optString(TagName.KEY_TAG));
                         item1.setDiscount(post1.optInt(TagName.KEY_DISC));
                         item1.setRating(post1.optInt(TagName.KEY_RATING));
+                        item1.setTotalReview(post1.optString("totalreview"));
 
                         JSONArray deliveryArry=post.getJSONArray(TagName.TAG_DELIVERY);
                         JSONObject deliveryObjStand=deliveryArry.getJSONObject(0);
@@ -863,8 +1145,12 @@ public class ProductItemFragment extends Fragment {
                         checkOutProductsArray.add(item1);
 
                     }
+                    }else{
+                        Toast.makeText(activity, "No Products", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    message = jsonObject.getString(TagName.TAG_PRODUCT);
+                    Toast.makeText(activity, "Net Work Error", Toast.LENGTH_SHORT).show();
+//                    message = jsonObject.getString(TagName.TAG_PRODUCT);
                 }
             }
         } catch (JSONException e) {
@@ -940,7 +1226,7 @@ public class ProductItemFragment extends Fragment {
 //                grid.setAdapter(adapter);
 ////                grid1.setAdapter(adapter);
 //                adapter.notifyDataSetChanged();
-                horizontalAdapter = new HorizontalListAdapter(activity, services,R.layout.gallary_inflate, services);
+                horizontalAdapter = new HorizontalListAdapter(activity, services,R.layout.gallary_inflate);
                 horizontalList.setAdapter(horizontalAdapter);
 //                grid1.setAdapter(adapter);
                 horizontalAdapter.notifyDataSetChanged();
@@ -952,21 +1238,21 @@ public class ProductItemFragment extends Fragment {
     }
     private void parseResult(String result) {
         try {
-            JSONArray response = new JSONArray(result);
-            JSONObject jsonObject=response.getJSONObject(0);
+            JSONObject jsonObject = new JSONObject(result);
+//            JSONObject jsonObject=response.getJSONObject(0);
 
             if (jsonObject != null) {
                 JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
                 int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
 
                 if (status==1) {
-//            boolean status = response.getBoolean(TagName.TAG_STATUS);
-
-//                    if (status) {
-//                JSONObject jsonData = jsonObject
-//                        .getJSONObject(TagName.TAG_PRODUCT);
-//                    }
-                    JSONArray posts = jsonObject.optJSONArray(TagName.TAG_PRODUCT);
+                    JSONArray jarr=jsonObject.optJSONArray("getproducts");
+                    JSONObject job=jarr.optJSONObject(0);
+                    JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+                    int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                    String message1 = jobstat.optString(TagName.TAG_MSG);
+                    if(status1==1) {
+                    JSONArray posts = job.optJSONArray(TagName.TAG_PRODUCT);
 
             /*Initialize array if null*/
                     if (null == services) {
@@ -993,15 +1279,145 @@ public class ProductItemFragment extends Fragment {
                         item.setRating(post1.optInt(TagName.KEY_RATING));
                         services.add(item);
                     }
+                    }else{
+                        Toast.makeText(activity, "No Products", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    message = jsonObject.getString(TagName.TAG_PRODUCT);
+                    Toast.makeText(activity, "Net Work Error", Toast.LENGTH_SHORT).show();
+//                    message = jsonObject.getString(TagName.TAG_PRODUCT);
                 }
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
+    //Customer Reviews
+    public class ReviewAsyncTask extends AsyncTask<String, Void, Integer> {
 
+
+        @Override
+        protected void onPreExecute() {
+
+//            progressLL.setVisibility(View.VISIBLE);
+//            pb.setVisibility(View.VISIBLE);
+
+//            progressBar.setVisibility(View.VISIBLE);
+//            layout.setVisibility(View.VISIBLE);
+
+        }
+
+        @Override
+        protected Integer doInBackground(String... params) {
+            InputStream inputStream = null;
+            Integer result = 0;
+            HttpURLConnection urlConnection = null;
+
+            try {
+                /* forming th java.net.URL object */
+                URL url = new URL(params[0]);
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+
+                /* for Get request */
+                urlConnection.setRequestMethod("GET");
+
+                int statusCode = urlConnection.getResponseCode();
+
+                /* 200 represents HTTP OK */
+                if (statusCode ==  200) {
+
+                    BufferedReader r = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = r.readLine()) != null) {
+                        response.append(line);
+                    }
+                    Log.e("response.toString()", response.toString());
+                    parseReviewResult(response.toString());
+                    result = 1; // Successful
+                }else{
+                    result = 0; //"Failed to fetch data!";
+                }
+
+            } catch (Exception e) {
+                Log.d("hello", e.getLocalizedMessage());
+            }
+
+            return result; //"Failed to fetch data!";
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+
+//            activity.setProgressBarIndeterminateVisibility(false);
+//            progressBar.setVisibility(View.GONE);
+//            layout.setVisibility(View.GONE);
+
+            /* Download complete. Lets update UI */
+            if (result == 1) {
+//                Log.e("onPostExecute", "onPostExecute");
+//                adapter = new ProductGlanceAdapter(activity, services);
+//                grid.setAdapter(adapter);
+////                grid1.setAdapter(adapter);
+//                adapter.notifyDataSetChanged();
+                reviewRateAdapter = new ReviewRatingRecyclerAdapter(activity, reviewArray,R.layout.review_rating_inflate);
+                reviewList.setAdapter(reviewRateAdapter);
+//                grid1.setAdapter(adapter);
+                reviewRateAdapter.notifyDataSetChanged();
+//                recyclerView.setAdapter(new ServicesRecyclerAdapter(activity, services));
+            } else {
+                Log.e("hello", "Failed to fetch data!");
+            }
+        }
+    }
+    private void parseReviewResult(String result) {
+        try {
+            JSONObject jsonObject = new JSONObject(result);
+//            JSONObject jsonObject=response.getJSONObject(0);
+
+            if (jsonObject != null) {
+                JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+
+                if (status==1) {
+                    JSONArray jarr=jsonObject.optJSONArray("getreview");
+                    JSONObject job=jarr.optJSONObject(0);
+                    JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+                    int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                    String message1 = jobstat.optString(TagName.TAG_MSG);
+                    if(status1==1) {
+                        JSONArray posts = job.optJSONArray("review");
+
+            /*Initialize array if null*/
+                        if (null == reviewArray) {
+                            reviewArray = new ArrayList<ProductModel>();
+                        }
+
+                        for (int i = 0; i < posts.length(); i++) {
+                            JSONObject post = posts.optJSONObject(i);
+                            ProductModel item = new ProductModel();
+                            item.setId(post.optInt("review_id"));
+                            item.setTitle(post.optString("title"));
+                            item.setDescription(post.optString("detail"));
+                            item.setSubTitle(post.optString("nickname"));
+                            item.setSubTitle1(post.optString("created_at"));
+
+                            item.setRating(post.optInt("rating_price"));
+                            item.setWishlist(post.optInt("rating_value"));
+                            item.setDiscount(post.optInt("rating_quality"));
+
+//
+                            reviewArray.add(item);
+                        }
+                    }
+                } else {
+//                    message = jsonObject.getString(TagName.TAG_PRODUCT);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
     private void addtocartData(String productid, String quantity,String userid) {
 
         class LoginAsync extends AsyncTask<String, Void, String> {
@@ -1025,8 +1441,9 @@ public class ProductItemFragment extends Fragment {
 
                 try {
                 /* forming th java.net.URL object */
-                    URL url = new URL(Utils.addtocartUrl+pid+"/"+quant+"/"+userid);
-                    Log.e("URL", Utils.addtocartUrl+pid+"/"+quant+"/"+userid);
+                    URL url = new URL(Utils.instantaddToCartUrl+quant+"&productid="+pid+"&userid="+userid);
+//                    URL url = new URL(Utils.instantaddToCartUrl+pid+"/"+quant+"/"+userid);
+//                    Log.e("URL", Utils.addtocartUrl+pid+"/"+quant+"/"+userid);
 
                     urlConnection = (HttpURLConnection) url.openConnection();
 
@@ -1057,45 +1474,6 @@ public class ProductItemFragment extends Fragment {
 
                 return result; //"Failed to fetch data!";
 
-//                String pid = params[0];
-//                String quant = params[1];
-//                String userid = params[2];
-////                Log.e("uname",uname);
-////                Log.e("pass",pass);
-//                InputStream is = null;
-//                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-////                nameValuePairs.add(new BasicNameValuePair("username", uname));
-////                nameValuePairs.add(new BasicNameValuePair("password", pass));
-//                String result = null;
-//
-//                try{
-//                    HttpClient httpClient = new DefaultHttpClient();
-//                    HttpGet httpPost = new HttpGet(Utils.addtocartUrl+pid+"/"+quant+"/"+userid);
-////                    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-//
-//                    HttpResponse response = httpClient.execute(httpPost);
-//
-//                    HttpEntity entity = response.getEntity();
-//
-//                    is = entity.getContent();
-//
-//                    BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"), 8);
-//                    StringBuilder sb = new StringBuilder();
-//
-//                    String line = null;
-//                    while ((line = reader.readLine()) != null)
-//                    {
-//                        sb.append(line + "\n");
-//                    }
-//                    result = sb.toString();
-//                } catch (ClientProtocolException e) {
-//                    e.printStackTrace();
-//                } catch (UnsupportedEncodingException e) {
-//                    e.printStackTrace();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                return result;
             }
 
             @Override
@@ -1104,46 +1482,40 @@ public class ProductItemFragment extends Fragment {
 //                Log.e("s",s);
                 loadingDialog.dismiss();
                 try {
-                    JSONArray response = new JSONArray(s);
-                    JSONObject jsonObject=response.getJSONObject(0);
+                    JSONObject jsonObject = new JSONObject(s);
+//                    JSONObject jsonObject=response.getJSONObject(0);
 
                     if (jsonObject != null) {
-//                        JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
-//                        int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
-//                        String message = jobstatus.optString(TagName.TAG_MSG);
+                        JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                        int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+                        String message = jobstatus.optString(TagName.TAG_MSG);
 
-//                        if (status==1) {
-                            if(cartBadge.equals("")){
-                                ((SecondActivity) getActivity()).writeBadge(1);
-                                editor.putString("cartBadge", String.valueOf(1));
-                                editor.commit();
+                        if (status==1) {
+                            JSONArray jarr=jsonObject.optJSONArray("addtocart");
+                            JSONObject job=jarr.optJSONObject(0);
+                            JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+                            int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                            String message1 = jobstat.optString(TagName.TAG_MSG);
+                            if(status1==1) {
+                                if(cartBadge.equals("")){
+                                    ((SecondActivity) getActivity()).writeBadge(1);
+                                    editor.putString("cartBadge", String.valueOf(1));
+                                    editor.commit();
 //                            writeBadge(0);
-                            }else{
+                                }else{
 
-                                ((SecondActivity) getActivity()).writeBadge(Integer.parseInt(cartBadge)+1);
-                                editor.putString("cartBadge", String.valueOf(Integer.parseInt(cartBadge)+1));
-                                editor.commit();
+                                    ((SecondActivity) getActivity()).writeBadge(Integer.parseInt(cartBadge)+1);
+                                    editor.putString("cartBadge", String.valueOf(Integer.parseInt(cartBadge)+1));
+                                    editor.commit();
+                                }
+                                Toast.makeText(activity, "Product Added to Cart!", Toast.LENGTH_SHORT).show();
+                            }else{
+                                Toast.makeText(activity, "Product Not Added to Cart", Toast.LENGTH_SHORT).show();
                             }
-                            Toast.makeText(activity, "Added to Cart!", Toast.LENGTH_LONG).show();
-//            boolean status = response.getBoolean(TagName.TAG_STATUS);
-//                if(message.equalsIgnoreCase("success")){
-//                            JSONObject jobcust=jsonObject.getJSONObject(TagName.TAG_CUSTMER);
-//                            editor = sharedpreferences.edit();
-//                            editor.putString("customerID", jobcust.optString("id"));
-//                            editor.putString("customerEmail", jobcust.optString("username"));
-//                            editor.putString("password", jobcust.optString("password"));
-////                          editor.putString("customerName",jobcust.optString("name"));
-//                            editor.putString("logged", "logged");
-//                            editor.commit();
-//                            activity.finish();
-//                            Intent in=new Intent(getActivity(), BookNowActivity.class);
-//                            in.putExtra("buynowKey", TagName.BUYNOW_USER_DETAILS);
-//                            activity.startActivity(in);
-//                            activity.overridePendingTransition(android.R.anim.fade_in,
-//                                    android.R.anim.fade_out);
-//                        }else {
-//                            Toast.makeText(activity, "Invalid User Name or Password", Toast.LENGTH_LONG).show();
-//                        }
+
+                        }else {
+                            Toast.makeText(activity, "Product Not Added! Please Try Again.", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -1179,8 +1551,8 @@ public class ProductItemFragment extends Fragment {
 
                 try {
                 /* forming th java.net.URL object */
-                    URL url = new URL(Utils.quoteBuynowUrl+userid+"/"+pid);
-                    Log.e("URL", Utils.quoteBuynowUrl+userid+"/"+pid);
+                    URL url = new URL(Utils.instantQuoteBuynowUrl+userid+"&productid="+pid);
+                    Log.e("URL", Utils.instantQuoteBuynowUrl+userid+"&productid="+pid);
 
                     urlConnection = (HttpURLConnection) url.openConnection();
 
@@ -1211,45 +1583,6 @@ public class ProductItemFragment extends Fragment {
 
                 return result; //"Failed to fetch data!";
 
-//                String pid = params[0];
-//                String quant = params[1];
-//                String userid = params[2];
-////                Log.e("uname",uname);
-////                Log.e("pass",pass);
-//                InputStream is = null;
-//                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-////                nameValuePairs.add(new BasicNameValuePair("username", uname));
-////                nameValuePairs.add(new BasicNameValuePair("password", pass));
-//                String result = null;
-//
-//                try{
-//                    HttpClient httpClient = new DefaultHttpClient();
-//                    HttpGet httpPost = new HttpGet(Utils.addtocartUrl+pid+"/"+quant+"/"+userid);
-////                    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-//
-//                    HttpResponse response = httpClient.execute(httpPost);
-//
-//                    HttpEntity entity = response.getEntity();
-//
-//                    is = entity.getContent();
-//
-//                    BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"), 8);
-//                    StringBuilder sb = new StringBuilder();
-//
-//                    String line = null;
-//                    while ((line = reader.readLine()) != null)
-//                    {
-//                        sb.append(line + "\n");
-//                    }
-//                    result = sb.toString();
-//                } catch (ClientProtocolException e) {
-//                    e.printStackTrace();
-//                } catch (UnsupportedEncodingException e) {
-//                    e.printStackTrace();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                return result;
             }
 
             @Override
@@ -1258,8 +1591,8 @@ public class ProductItemFragment extends Fragment {
 //                Log.e("s",s);
                 loadingDialog.dismiss();
                 try {
-                    JSONArray response = new JSONArray(s);
-                    JSONObject jsonObject=response.getJSONObject(0);
+                    JSONObject jsonObject = new JSONObject(s);
+//                    JSONObject jsonObject=response.getJSONObject(0);
 
                     if (jsonObject != null) {
                         JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
@@ -1267,8 +1600,9 @@ public class ProductItemFragment extends Fragment {
                         String message = jobstatus.optString(TagName.TAG_MSG);
 
                         if (status==1) {
-
-                           String quoteId=jsonObject.optString("quoteid");
+                            JSONArray jarr=jsonObject.optJSONArray("buynow");
+                            JSONObject job=jarr.optJSONObject(0);
+                           String quoteId=job.optString("quoteid");
                             if(cartBadge.equals("")){
                                 ((SecondActivity) getActivity()).writeBadge(1);
                                 editor.putString("cartBadge", String.valueOf(1));
@@ -1301,7 +1635,7 @@ public class ProductItemFragment extends Fragment {
 //                            activity.overridePendingTransition(android.R.anim.fade_in,
 //                                    android.R.anim.fade_out);
                         }else {
-                            Toast.makeText(activity, "Invalid User Name or Password", Toast.LENGTH_LONG).show();
+                            Toast.makeText(activity, "Network Error", Toast.LENGTH_LONG).show();
                         }
                     }
                 } catch (JSONException e) {

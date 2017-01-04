@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_margin="20dp">
+        android:padding="20dp">
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -427,7 +427,6 @@
                 android:drawableLeft="@drawable/back_checkout_btn"
                 android:padding="10dp"
                 android:textSize="12dp"
-                android:layout_marginTop="20dp"
                 android:id="@+id/back_btn"
                 android:layout_gravity="start" />
 

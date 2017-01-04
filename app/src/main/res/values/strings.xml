@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">ECOMMERCE STORE</string>
     <string name="seller_id">2</string>
-    <string name="theme">Default</string>
+    <string name="theme">Yellow</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -38,6 +38,8 @@
     <string name="title_offer">OFFER DETAILS</string>
     <string name="title_order_details">ORDER DETAILS</string>
     <string name="title_product_details">PRODUCTS DETAILS</string>
+    <string name="title_review_details">CUSTOMER REVIEWS &amp; RATING</string>
+    <string name="title_write_review">WRITE A REVIEW &amp; RATING</string>
     <string name="title_profile">PROFILE</string>
     <string name="title_profile_details">EDIT PROFILE</string>
 
@@ -66,6 +68,9 @@
     <string name="pay_protation_txt">Payment Protection</string>
     <string name="cust_review_txt">CUSTOMER REVIEW &amp; QA</string>
     <string name="qa_txt">Questions &amp; Answers</string>
+    <!--Seek bar-->
+    <string name="demo_min_label">Min</string>
+    <string name="demo_max_label">Max</string>
 
     <string name="total_cart_txt">TOTAL PAYABLE AMOUNT : \u20B9  </string>
     <string name="spinner_title">Select Type</string>

@@ -120,12 +120,12 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         }else if(feedItem.getStatus().equalsIgnoreCase("canceled")){
             feedListRowHolder.statusImg.setImageResource(R.drawable.cancelled_statusbar);
             feedListRowHolder.cancelBtn.setText("Canceled");
-            feedListRowHolder.cancelBtn.setEnabled(false);
+//            feedListRowHolder.cancelBtn.setEnabled(false);
 //            feedListRowHolder.cancelBtn.setVisibility(View.GONE);
         }else if(feedItem.getStatus().equalsIgnoreCase("processing")){
             feedListRowHolder.statusImg.setImageResource(R.drawable.success_statusbar);
             feedListRowHolder.cancelBtn.setText("Processing");
-            feedListRowHolder.cancelBtn.setEnabled(false);
+//            feedListRowHolder.cancelBtn.setEnabled(false);
 //            feedListRowHolder.cancelBtn.setVisibility(View.GONE);
         }else if(feedItem.getStatus().equalsIgnoreCase("complete")){
             feedListRowHolder.statusImg.setImageResource(R.drawable.delivered_statusbar);
@@ -137,26 +137,31 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         feedListRowHolder.cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(acti.getActivity());
-                builder.setTitle("Cancel?");
-                builder.setMessage("Do you want to Cancel the Order ?");
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
+                if(feedItem.getStatus().equalsIgnoreCase("pending")) {
+                    android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(acti.getActivity());
+                    builder.setTitle("Cancel?");
+                    builder.setMessage("Do you want to Cancel the Order ?");
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
 //                        Log.i(TAG, "Clicked some button");
-                    }
-                });
-                builder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        cancelOrderData(feedItem.getId());
-                        feedListRowHolder.cancelBtn.setEnabled(false);
-                        feedListRowHolder.cancelBtn.setText("Canceled");
-                    }
-                });
+                        }
+                    });
+                    builder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            feedItem.setStatus("Canceled");
+                            feedItemList.set(i1, feedItem);
+                            cancelOrderData(feedItem.getId());
+//                        notifyDataSetChanged();
+//                        feedListRowHolder.cancelBtn.setEnabled(false);
+//                        feedListRowHolder.cancelBtn.setText("Canceled");
+                        }
+                    });
 //				builder.setIcon(R.drawable.cross_black);
 
-                android.support.v7.app.AlertDialog alertDialog = builder.create();
-                alertDialog.getWindow().getAttributes().windowAnimations = R.style.CustomAnimations_right;
-                alertDialog.show();
+                    android.support.v7.app.AlertDialog alertDialog = builder.create();
+                    alertDialog.getWindow().getAttributes().windowAnimations = R.style.CustomAnimations_right;
+                    alertDialog.show();
+                }
 
             }
         });
@@ -190,36 +195,7 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         });
 
 
-//        feedListRowHolder.orderPayment.setText(feedItem.getPayment());
-//        feedListRowHolder.orderProgress.setScaleY(3f);
-//        feedListRowHolder.orderProgress.setProgress(feedItem.getProcess());
 
-//        feedListRowHolder.setClickListener(new ItemClickListener() {
-//            @Override
-//            public void onClick(View view, int position, boolean isLongClick) {
-//                int i = Integer.parseInt(feedListRowHolder.num.getText().toString());
-//                switch (view.getId()) {
-//                    case R.id.incre_image:
-////                        int i = Integer.parseInt(feedListRowHolder.num.getText().toString());
-////                        i++;
-//                        feedListRowHolder.num.setText(String.valueOf(i + 1));
-////                notifyItemChanged(position);
-//                        break;
-//                    case R.id.decre_image:
-////                        i = Integer.parseInt(feedListRowHolder.num.getText().toString());
-//                        if (i > 0) {
-////                            i--;
-//                            feedListRowHolder.num.setText(String.valueOf(i - 1));
-//                        }
-//
-////                notifyItemChanged(position);
-//                        break;
-//                }
-////                notifyItemChanged(position);
-////                notifyDataSetChanged();
-////                notifyItemInserted(position);
-//            }
-//        });
         imageLoader.displayImage(
                ((OrdersModel) feedItem).getThumbnail(), feedListRowHolder.thumbnail,
                options, imageListener);
@@ -402,14 +378,29 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
                 Log.e("s",response);
                 loadingDialog.dismiss();
                 try {
-                    JSONArray jsonArray=new JSONArray(response);
-                    JSONObject jsonObject=jsonArray.getJSONObject(0);
+                    JSONObject jsonObject=new JSONObject(response);
+//					JSONObject jsonObject=jsonArray.getJSONObject(0);
                     if(jsonObject!=null) {
-                        JSONObject jsonObj=jsonObject.getJSONObject(TagName.TAG_STATUS);
-                        String status=jsonObj.optString(TagName.TAG_MSG);
-                        if(status.equalsIgnoreCase("success")){
-                            Toast.makeText(acti.getActivity(),status,Toast.LENGTH_SHORT).show();
-//                            activity.finish();
+                        JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                        int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+                        String message = jobstatus.optString(TagName.TAG_MSG);
+
+                        if (status==1) {
+                            JSONArray jarr=jsonObject.optJSONArray("cancelorderbuyer");
+                            JSONObject job=jarr.optJSONObject(0);
+                            JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+                            int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                            String message1 = jobstat.optString(TagName.TAG_MSG);
+                            if(status1==1) {
+                                Toast.makeText(acti.getActivity(), "Order Cancelled", Toast.LENGTH_SHORT).show();
+                                notifyDataSetChanged();
+//                                activity.finish();
+                            }else{
+                                Toast.makeText(acti.getActivity(), "Order Not Cancelled", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(acti.getActivity(), "Net Work Error", Toast.LENGTH_SHORT).show();
+//							message = jsonObject.getString(TagName.TAG_PRODUCT);
                         }
 
 
@@ -422,8 +413,8 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         }
 
         CancelOrderAsync la = new CancelOrderAsync();
-        Log.e("Utils", Utils.cancelOrderUrl+orderitemlistId+"/"+userId);
-        la.execute(Utils.cancelOrderUrl+orderitemlistId+"/"+userId);
+        Log.e("Utils",Utils.instantcancelOrderUrl+orderitemlistId+"&userid="+userId);
+        la.execute(Utils.instantcancelOrderUrl+orderitemlistId+"&userid="+userId);
 
     }
 }

@@ -219,6 +219,9 @@ public class WishlistFragment extends Fragment {
             item.setCost(Double.valueOf(wishListArr[2]));
             item.setFinalPrice(Double.valueOf(wishListArr[3]));
             item.setThumbnail(wishListArr[4]);
+            item.setTag(wishListArr[5]);
+            item.setDiscount(Integer.valueOf(wishListArr[6]));
+            item.setRating(Integer.valueOf(wishListArr[7]));
 //            item.setCount(Integer.valueOf(wishListArr[5]));
 //            Log.e("name","name");
 
@@ -263,7 +266,7 @@ public class WishlistFragment extends Fragment {
 //            task = new RequestImgTask(activity);
 //            task.execute(url);
             task = new AsyncHttpTask();
-            task.execute(Utils.getwishlistUrl+userId);
+            task.execute(Utils.instantGetWishlistUrl+userId);
 //            task.execute(prdtsUrl);
             Log.e("sendrequest","sendrequest");
         } else {
@@ -369,46 +372,50 @@ public class WishlistFragment extends Fragment {
     }
     private void parseResult(String result) {
         try {
-            JSONArray response = new JSONArray(result);
-            JSONObject jsonObject=response.getJSONObject(0);
+            JSONObject jsonObject = new JSONObject(result);
+//            JSONArray response = new JSONArray(result);
+//            JSONObject jsonObject=response.getJSONObject(0);
 
             if (jsonObject != null) {
                 JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
                 int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
 
                 if (status==1) {
-//            boolean status = response.getBoolean(TagName.TAG_STATUS);
-
-//                    if (status) {
-//                JSONObject jsonData = jsonObject
-//                        .getJSONObject(TagName.TAG_PRODUCT);
-//                    }
-                    JSONArray posts = jsonObject.optJSONArray(TagName.TAG_PRODUCT);
+                    JSONArray jarr=jsonObject.optJSONArray("getwishlist");
+                    JSONObject job=jarr.optJSONObject(0);
+                    JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+                    int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                    String message1 = jobstat.optString(TagName.TAG_MSG);
+                    if(status1==1) {
+                        JSONArray posts = job.optJSONArray(TagName.TAG_PRODUCT);
 
             /*Initialize array if null*/
-                    if (null == services) {
-                        services = new ArrayList<ProductModel>();
-                    }
+                        if (null == services) {
+                            services = new ArrayList<ProductModel>();
+                        }
 
-                    for (int i = 0; i < posts.length(); i++) {
-                        JSONObject post = posts.optJSONObject(i);
+                        for (int i = 0; i < posts.length(); i++) {
+                            JSONObject post = posts.optJSONObject(i);
 
-                        ProductModel item = new ProductModel();
-                        item.setId(post.optInt(TagName.KEY_ID));
-                        item.setTitle(post.optString(TagName.KEY_NAME));
-                        item.setDescription(post.optString(TagName.KEY_DES));
-                        item.setCost(post.optDouble(TagName.KEY_PRICE));
-                        item.setFinalPrice(post.optDouble(TagName.KEY_FINAL_PRICE));
+                            ProductModel item = new ProductModel();
+                            item.setId(post.optInt(TagName.KEY_ID));
+                            item.setTitle(post.optString(TagName.KEY_NAME));
+//                        item.setDescription(post.optString(TagName.KEY_DES));
+                            item.setCost(post.optDouble(TagName.KEY_PRICE));
+                            item.setFinalPrice(post.optDouble(TagName.KEY_FINAL_PRICE));
 //                        item.setCount(post.optInt(TagName.KEY_COUNT));
 //                    Log.e("name", "name");
-                        item.setThumbnail(post.optString(TagName.KEY_THUMB));
-                        JSONObject post1 = post.optJSONObject(TagName.TAG_OFFER_ALL);
-                        item.setShare(post1.optString(TagName.KEY_SHARE));
-                        item.setTag(post1.optString(TagName.KEY_TAG));
-                        item.setDiscount(post1.optInt(TagName.KEY_DISC));
-                        item.setRating(post1.optInt(TagName.KEY_RATING));
-                        services.add(item);
-                    }
+                            item.setThumbnail(post.optString(TagName.KEY_THUMB));
+                            JSONObject post1 = post.optJSONObject(TagName.TAG_OFFER_ALL);
+//                        item.setShare(post1.optString(TagName.KEY_SHARE));
+                            item.setTag(post1.optString(TagName.KEY_TAG));
+                            item.setDiscount(post1.optInt(TagName.KEY_DISC));
+                            item.setRating(post1.optInt(TagName.KEY_RATING));
+                            services.add(item);
+                        }
+                    }else{
+                            Toast.makeText(activity, "Wishlist Empty", Toast.LENGTH_SHORT).show();
+                        }
                 } else {
                     message = jobstatus.getString(TagName.TAG_MSG);
                 }
@@ -429,7 +436,100 @@ public class WishlistFragment extends Fragment {
 
     }
     public void deleteWishlistItem(String prdtId,String userId){
-        try {
+        class Async extends AsyncTask<String, Void, String> {
+
+            private Dialog loadingDialog;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                loadingDialog = ProgressDialog.show(activity, "", "Pease Wait...");
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+                String userid = params[0];
+                String pid = params[1];
+//                String price = params[2];
+                InputStream inputStream = null;
+                String result= null;;
+                HttpURLConnection urlConnection = null;
+
+                try {
+                /* forming th java.net.URL object */
+                    URL url = new URL(Utils.instantDeleteWishlistItemUrl+userid+"&productid="+pid);
+//                    Log.e("URL", Utils.quoteBuynowUrl+userid+"/"+pid);
+
+                    urlConnection = (HttpURLConnection) url.openConnection();
+
+                /* for Get request */
+                    urlConnection.setRequestMethod("GET");
+
+                    int statusCode = urlConnection.getResponseCode();
+
+                /* 200 represents HTTP OK */
+                    if (statusCode ==  200) {
+
+                        BufferedReader r = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                        StringBuilder response = new StringBuilder();
+                        String line;
+                        while ((line = r.readLine()) != null) {
+                            response.append(line);
+                        }
+                        Log.e("response.toString()", response.toString());
+//                        parseResult(response.toString());
+                        result = response.toString(); // Successful
+                    }else{
+                        result = null; //"Failed to fetch data!";
+                    }
+
+                } catch (Exception e) {
+                    Log.d("catch", e.getLocalizedMessage());
+                }
+
+                return result; //"Failed to fetch data!";
+
+            }
+
+            @Override
+            protected void onPostExecute(String result){
+                String s = result.trim();
+//                Log.e("s",s);
+                loadingDialog.dismiss();
+                try {
+                    JSONObject jsonObject = new JSONObject(s);
+//                    JSONObject jsonObject=response.getJSONObject(0);
+
+                    if (jsonObject != null) {
+                        JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                        int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+                        String message = jobstatus.optString(TagName.TAG_MSG);
+
+                        if (status==1) {
+
+                            JSONArray jarr=jsonObject.optJSONArray("itemremovewishlist");
+                            JSONObject job=jarr.optJSONObject(0);
+                            JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+                            int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                            String message1 = jobstat.optString(TagName.TAG_MSG);
+                            if(status1==1) {
+                                Toast.makeText(activity, "Wishlist Product deleted", Toast.LENGTH_SHORT).show();
+                            }else{
+                                Toast.makeText(activity, "Wishlist Product Not deleted", Toast.LENGTH_SHORT).show();
+                            }
+                        }else {
+                            Toast.makeText(activity, "Net work Error", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        Async la = new Async();
+        la.execute(userId, prdtId);
+       /* try {
             RequestQueue requestQueue = Volley.newRequestQueue(activity);
             String URL = "http://...";
 //            JSONObject jsonBody = new JSONObject();
@@ -444,7 +544,7 @@ public class WishlistFragment extends Fragment {
                 public void onResponse(String response) {
                     Log.i("VOLLEY", response);
 
-                   /* try {
+                   *//* try {
                         JSONObject jsonObject=new JSONObject(response);
                         if(jsonObject!=null) {
                             String status=jsonObject.optString(TagName.TAG_STATUS);
@@ -466,7 +566,7 @@ public class WishlistFragment extends Fragment {
 
                     } catch (JSONException e) {
                         e.printStackTrace();
-                    }*/
+                    }*//*
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -481,7 +581,7 @@ public class WishlistFragment extends Fragment {
                     return "application/json; charset=utf-8";
                 }
 
-             /*   @Override
+             *//*   @Override
                 public byte[] getBody() throws AuthFailureError {
                     try {
                         return mRequestBody == null ? null : mRequestBody.getBytes("utf-8");
@@ -489,9 +589,9 @@ public class WishlistFragment extends Fragment {
                         VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", mRequestBody, "utf-8");
                         return null;
                     }
-                }*/
+                }*//*
 
-                /*@Override
+                *//*@Override
                 protected Response<String> parseNetworkResponse(NetworkResponse response) {
                     String responseString = "";
                     if (response != null) {
@@ -501,14 +601,15 @@ public class WishlistFragment extends Fragment {
                         // can get more details such as response.headers
                     }
                     return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
-                }*/
+                }*//*
             };
 
             requestQueue.add(stringRequest);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
+
 
     @Override
     public void onAttach(Activity activity) {

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <TextView
         android:layout_width="wrap_content"
@@ -11,7 +11,63 @@
         android:text="Price Range:"
         android:textStyle="bold"
         />
-    <LinearLayout
+    <LinearLayout android:id="@+id/seekbar_placeholder"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"/>
+  <!--  <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="From:"
+        android:textStyle="bold"
+        />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:padding="10dp"
+        android:layout_margin="5dp"
+        android:hint="ex:1234"
+        android:textColorHint="@color/view_divider_color"
+        android:background="@drawable/edittext_bg"
+        android:ems="10"
+        android:id="@+id/street_et" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="To:"
+        android:textStyle="bold"
+        android:id="@+id/textView6" />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:padding="10dp"
+        android:layout_margin="5dp"
+        android:hint="ex:1234"
+        android:textColorHint="@color/view_divider_color"
+        android:background="@drawable/edittext_bg"
+        android:id="@+id/city_et"
+        android:layout_gravity="center_horizontal" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OK"
+        android:textColor="@color/color_text"
+        android:background="?button_bg_primary"
+        android:padding="10dp"
+        android:textSize="12dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="5dp"
+        android:id="@+id/back_btn"
+        android:layout_gravity="right" />-->
+
+   <!-- <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,12 +83,12 @@
             app:steps="100"
             app:bar_color="@color/view_divider_color"
             app:bar_highlight_color="?attr/colorPrimary"
-            app:left_thumb_color="?attr/colorPrimary"
-            app:left_thumb_color_pressed="@color/color_primary_light"
-            app:right_thumb_color="?attr/colorPrimary"
-            app:right_thumb_color_pressed="@color/color_primary_light"
+            app:left_thumb_color="?attr/colorAccent"
+            app:left_thumb_color_pressed="?attr/colorAccent"
+            app:right_thumb_color="?attr/colorAccent"
+            app:right_thumb_color_pressed="?attr/colorAccent"
             app:data_type="_integer"/>
-       <!-- <com.crystal.crystalrangeseekbar.widgets.BubbleThumbRangeSeekbar
+       &lt;!&ndash; <com.crystal.crystalrangeseekbar.widgets.BubbleThumbRangeSeekbar
             android:id="@+id/rangeSeekbar5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -46,8 +102,17 @@
             app:right_thumb_image="@drawable/empty"
             app:left_thumb_image_pressed="@drawable/checked"
             app:right_thumb_image_pressed="@drawable/checked"
-            app:data_type="_integer"/>-->
-    </LinearLayout>
+            app:data_type="_integer"/>&ndash;&gt;
+    </LinearLayout>-->
+
+   <!-- <com.edmodo.rangebar.RangeBar
+        android:id="@+id/rangebar1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="50dp"
+        app:tickCount="10" />-->
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"

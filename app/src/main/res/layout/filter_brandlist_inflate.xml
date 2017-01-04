@@ -42,14 +42,14 @@
             android:layout_height="wrap_content"
             />
             </LinearLayout>
-       <!-- <CheckBox
+        <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
+            android:button="?checkbox_custom"
             android:layout_gravity="right"
             android:id="@+id/checkBox"
-            />-->
-        <com.btranz.ecommerceapp.utils.CircleCheckBox
+            />
+       <!-- <com.btranz.ecommerceapp.utils.CircleCheckBox
             android:id="@+id/chbx"
             android:layout_width="30dp"
             android:layout_height="25dp"
@@ -64,7 +64,7 @@
             app:textColor="#000000"
             app:tickColor="#ffffff"
             app:tickThickness="1dp"
-            android:layout_gravity="right" />
+            android:layout_gravity="right" />-->
 
     </LinearLayout>
 

@@ -42,7 +42,9 @@ import com.android.volley.toolbox.Volley;
 import com.btranz.ecommerceapp.R;
 import com.btranz.ecommerceapp.activity.BookNowActivity;
 import com.btranz.ecommerceapp.activity.SecondActivity;
+import com.btranz.ecommerceapp.adapter.CartServicesRecyclerAdapter;
 import com.btranz.ecommerceapp.modal.ProductModel;
+import com.btranz.ecommerceapp.utils.CheckNetworkConnection;
 import com.btranz.ecommerceapp.utils.DatabaseHandler;
 import com.btranz.ecommerceapp.utils.TagName;
 import com.btranz.ecommerceapp.utils.Utils;
@@ -91,6 +93,9 @@ public class LogRegFragment extends Fragment {
     FragmentActivity activity;
     List<String> cartList= new ArrayList<String>();
     DatabaseHandler db;
+    AsyncHttpTask task;
+    ArrayList<ProductModel>  services;
+    int tempCount;
     // shared prefernce
     SharedPreferences sharedpreferences;
     public static final String MyPREFERENCES = "MyPrefs";
@@ -209,7 +214,7 @@ public class LogRegFragment extends Fragment {
     private void forgotPassword(final String username) {
 
 
-        class LoginAsync extends AsyncTask<String, Void, String> {
+        class Async extends AsyncTask<String, Void, String> {
 
 
             @Override
@@ -222,12 +227,12 @@ public class LogRegFragment extends Fragment {
             protected String doInBackground(String... params) {
                 String uname = params[0];
 
-                Log.e("uname",uname);
+//                Log.e("uname",uname);
 
                 InputStream is = null;
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-                nameValuePairs.add(new BasicNameValuePair("tag", "forgotpassword"));
-                nameValuePairs.add(new BasicNameValuePair("email", uname));
+//                nameValuePairs.add(new BasicNameValuePair("tag", "forgotpassword"));
+//                nameValuePairs.add(new BasicNameValuePair("email", uname));
 
                 String result = null;
 
@@ -312,7 +317,7 @@ JSONArray jsonArray=jsonObject.getJSONArray(TagName.TAG_FORGOT_PWD);
             }
         }
 
-        LoginAsync la = new LoginAsync();
+        Async la = new Async();
         la.execute(username, password);
 
     }
@@ -442,6 +447,7 @@ public void showDialog(String message){
 //                        }
 //                        if(i==1){
                             JSONObject jobcust = jobLogin.getJSONObject("user_detail");
+                            sendRequest(jobcust.optString("id"));
                             addCart(jobcust.optString("id"));
                             editor = sharedpreferences.edit();
                             editor.putString("userID", jobcust.optString("id"));
@@ -450,9 +456,33 @@ public void showDialog(String message){
                             editor.putString("userName", jobcust.optString("name"));
                             editor.putString("logged", "logged");
                             editor.commit();
-                            activity.finish();
+
                         }else{
-                            Toast.makeText(activity, jobLogin.optString("message"), Toast.LENGTH_LONG).show();
+
+                            if(jobLogin.optString("message").equalsIgnoreCase("notactive")){
+//                                Toast.makeText(activity, "This account is "+jobLogin.optString("message"), Toast.LENGTH_LONG).show();
+                                android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(activity);
+                                builder.setTitle("Activation?");
+                                builder.setMessage("Your Account is Not Active.Please Activate It.");
+                                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+//                        Log.i(TAG, "Clicked some button");
+                                    }
+                                });
+                                builder.setPositiveButton("Activate", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                       activateAccountData(username);
+                                    }
+                                });
+//				builder.setIcon(R.drawable.cross_black);
+
+                                android.support.v7.app.AlertDialog alertDialog = builder.create();
+                                alertDialog.getWindow().getAttributes().windowAnimations = R.style.CustomAnimations_right;
+                                alertDialog.show();
+                            }else{
+                                Toast.makeText(activity, jobLogin.optString("message"), Toast.LENGTH_LONG).show();
+                            }
                         }
 //                        }
                     }
@@ -565,8 +595,9 @@ public void showDialog(String message){
 
                 try {
                 /* forming th java.net.URL object */
-                    URL url = new URL(Utils.addtocartUrl+pid+"/"+quant+"/"+userid);
-                    Log.e("URL", Utils.addtocartUrl+pid+"/"+quant+"/"+userid);
+                    URL url = new URL(Utils.instantaddToCartUrl+quant+"&productid="+pid+"&userid="+userid);
+//                    URL url = new URL(Utils.addtocartUrl+pid+"/"+quant+"/"+userid);
+//                    Log.e("URL", Utils.addtocartUrl+pid+"/"+quant+"/"+userid);
 
                     urlConnection = (HttpURLConnection) url.openConnection();
 
@@ -597,45 +628,6 @@ public void showDialog(String message){
 
                 return result; //"Failed to fetch data!";
 
-//                String pid = params[0];
-//                String quant = params[1];
-//                String userid = params[2];
-////                Log.e("uname",uname);
-////                Log.e("pass",pass);
-//                InputStream is = null;
-//                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-////                nameValuePairs.add(new BasicNameValuePair("username", uname));
-////                nameValuePairs.add(new BasicNameValuePair("password", pass));
-//                String result = null;
-//
-//                try{
-//                    HttpClient httpClient = new DefaultHttpClient();
-//                    HttpGet httpPost = new HttpGet(Utils.addtocartUrl+pid+"/"+quant+"/"+userid);
-////                    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-//
-//                    HttpResponse response = httpClient.execute(httpPost);
-//
-//                    HttpEntity entity = response.getEntity();
-//
-//                    is = entity.getContent();
-//
-//                    BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"), 8);
-//                    StringBuilder sb = new StringBuilder();
-//
-//                    String line = null;
-//                    while ((line = reader.readLine()) != null)
-//                    {
-//                        sb.append(line + "\n");
-//                    }
-//                    result = sb.toString();
-//                } catch (ClientProtocolException e) {
-//                    e.printStackTrace();
-//                } catch (UnsupportedEncodingException e) {
-//                    e.printStackTrace();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                return result;
             }
 
             @Override
@@ -643,47 +635,38 @@ public void showDialog(String message){
                 String s = result.trim();
                 Log.e("s",s);
                 try {
-                    JSONArray response = new JSONArray(s);
-                    JSONObject jsonObject=response.getJSONObject(0);
+                    JSONObject jsonObject = new JSONObject(s);
+//                    JSONObject jsonObject=response.getJSONObject(0);
 
                     if (jsonObject != null) {
                         JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
                         int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
                         String message = jobstatus.optString(TagName.TAG_MSG);
 
-//                        if (status==1) {
-//                            Toast.makeText(activity, "Added to Cart!", Toast.LENGTH_LONG).show();
-//            boolean status = response.getBoolean(TagName.TAG_STATUS);
-                if(message.equalsIgnoreCase("success")){
-                    if (i==cartList.size()){
-//                        loadingDialog.dismiss();
-//                        activity.finish();
-//                        handler.postDelayed(new Runnable() {
-//                            @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
-//                            @Override
-//                            public void run() {
-//
-//
+                        if (status==1) {
+//                            JSONArray jarr=jsonObject.optJSONArray(TagName.TAG_PRODUCT);
+//                            JSONObject job=jarr.optJSONObject(0);
+//                            JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+//                            int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+//                            String message1 = jobstat.optString(TagName.TAG_MSG);
+//                            if(status1==1) {
+//                                if(cartBadge.equals("")){
+////                                    ((SecondActivity) getActivity()).writeBadge(1);
+////                                    editor.putString("cartBadge", String.valueOf(1));
+////                                    editor.commit();
+//////                            writeBadge(0);
+////                                }else{
+////
+////                                    ((SecondActivity) getActivity()).writeBadge(Integer.parseInt(cartBadge)+1);
+////                                    editor.putString("cartBadge", String.valueOf(Integer.parseInt(cartBadge)+1));
+////                                    editor.commit();
+////                                }
+//                                Toast.makeText(activity, "Product Added to Cart!", Toast.LENGTH_SHORT).show();
+//                            }else{
+//                                Toast.makeText(activity, "Product Not Added to Cart", Toast.LENGTH_SHORT).show();
 //                            }
-//                        }, 1000);
-//                        activity.finish();
-                    }
-//                            JSONObject jobcust=jsonObject.getJSONObject(TagName.TAG_CUSTMER);
-//                            editor = sharedpreferences.edit();
-//                            editor.putString("customerID", jobcust.optString("id"));
-//                            editor.putString("customerEmail", jobcust.optString("username"));
-//                            editor.putString("password", jobcust.optString("password"));
-////                          editor.putString("customerName",jobcust.optString("name"));
-//                            editor.putString("logged", "logged");
-//                            editor.commit();
-//                            activity.finish();
-//                            Intent in=new Intent(getActivity(), BookNowActivity.class);
-//                            in.putExtra("buynowKey", TagName.BUYNOW_USER_DETAILS);
-//                            activity.startActivity(in);
-//                            activity.overridePendingTransition(android.R.anim.fade_in,
-//                                    android.R.anim.fade_out);
                         }else {
-                            Toast.makeText(activity, "Invalid User Name or Password", Toast.LENGTH_LONG).show();
+//                            Toast.makeText(activity, "Product Not Added! Please Try Again.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 } catch (JSONException e) {
@@ -695,6 +678,275 @@ public void showDialog(String message){
         LoginAsync la = new LoginAsync();
         la.execute(productid, quantity, userid);
 
+    }
+    public void activateAccountData(String username){
+        class ActivateAsync extends AsyncTask<String, Void, String> {
+            Dialog loadingDialog;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                loadingDialog = ProgressDialog.show(activity, "", "Please wait...");
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+//                String oldpsw = params[0];
+//                String newpsw = params[1];
+//                Log.e("uname",oldpsw);
+//                Log.e("pass",newpsw);
+                InputStream is = null;
+//                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+//                nameValuePairs.add(new BasicNameValuePair("username", uname));
+//                nameValuePairs.add(new BasicNameValuePair("password", pass));
+                String result = null;
+                HttpURLConnection urlConnection = null;
+                try{
+//                    HttpClient httpClient = new DefaultHttpClient();
+//                    HttpGet httpPost = new HttpGet( Utils.instantChangePswUrl+userId+"&oldpassword="+oldpsw+"&newpassword="+newpsw);
+////                    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+//
+//                    HttpResponse response = httpClient.execute(httpPost);
+//
+//                    HttpEntity entity = response.getEntity();
+//
+//                    is = entity.getContent();
+
+                    URL url = new URL(params[0]);
+
+                    urlConnection = (HttpURLConnection) url.openConnection();
+
+                /* for Get request */
+                    urlConnection.setRequestMethod("GET");
+
+                    int statusCode = urlConnection.getResponseCode();
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"), 8);
+                    StringBuilder sb = new StringBuilder();
+
+                    String line = null;
+                    while ((line = reader.readLine()) != null)
+                    {
+                        sb.append(line + "\n");
+                    }
+                    result = sb.toString();
+                } catch (ClientProtocolException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return result;
+            }
+
+            @Override
+            protected void onPostExecute(String result){
+                String response = result.trim();
+                Log.e("s",response);
+                loadingDialog.dismiss();
+                try {
+                    JSONObject jsonObject=new JSONObject(response);
+//                    JSONObject jsonObject=jsonArray.getJSONObject(0);
+                    if(jsonObject!=null) {
+                        JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                        int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+                        String message = jobstatus.optString(TagName.TAG_MSG);
+
+                        if (status==1) {
+                            JSONArray jarr = jsonObject.optJSONArray("acivateaccount");
+                            JSONObject job1 = jarr.optJSONObject(0);
+                            JSONObject jobstat = job1.getJSONObject(TagName.TAG_STATUS);
+                            int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                            String message1 = jobstat.optString(TagName.TAG_MSG);
+                            if (status1 == 1) {
+                                Toast.makeText(activity, "Your Account is Activated Please Login Now", Toast.LENGTH_SHORT).show();
+
+                            }else{
+                                Toast.makeText(activity, "Your Account is Not Activated, Please try Again.", Toast.LENGTH_SHORT).show();
+                            }
+
+                        }else {
+                            Toast.makeText(activity, "Your Account is Not Activated.. Please try Again.", Toast.LENGTH_SHORT).show();
+                        }
+
+
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        ActivateAsync la = new ActivateAsync();
+        la.execute(Utils.instantActivateAccountUrl+username);
+
+    }
+    private void sendRequest(String userId) {
+        if (CheckNetworkConnection.isConnectionAvailable(activity)) {
+//            task = new RequestImgTask(activity);
+//            task.execute(url);
+            task = new AsyncHttpTask();
+            task.execute(Utils.instantGetCartUrl+userId);
+            Log.e("sendrequest","sendrequest");
+        } else {
+//            message = getResources().getString(R.string.no_internet_connection);
+//            showAlertDialog(message, true);
+        }
+    }
+    public class AsyncHttpTask extends AsyncTask<String, Void, Integer> {
+//        Dialog loadingDialog;
+        @Override
+        protected void onPreExecute() {
+//            setProgressBarIndeterminateVisibility(true);
+            loadingDialog = ProgressDialog.show(activity, "", "Loading...");
+        }
+
+        @Override
+        protected Integer doInBackground(String... params) {
+            InputStream inputStream = null;
+            Integer result = 0;
+            HttpURLConnection urlConnection = null;
+
+            try {
+                /* forming th java.net.URL object */
+                URL url = new URL(params[0]);
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+
+                /* for Get request */
+                urlConnection.setRequestMethod("GET");
+
+                int statusCode = urlConnection.getResponseCode();
+
+                /* 200 represents HTTP OK */
+                if (statusCode ==  200) {
+
+                    BufferedReader r = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = r.readLine()) != null) {
+                        response.append(line);
+                    }
+                    Log.e("response.toString()", response.toString());
+                    parseResult(response.toString());
+                    result = 1; // Successful
+                }else{
+                    result = 0; //"Failed to fetch data!";
+                }
+
+            } catch (Exception e) {
+                Log.d("catch", e.getLocalizedMessage());
+            }
+
+            return result; //"Failed to fetch data!";
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+
+            loadingDialog.dismiss();
+            /* Download complete. Lets update UI */
+            SecondActivity sc=new SecondActivity();
+            if (result == 1) {
+                Log.e("onPostExecute", "onPostExecute");
+                if(services.size()!=0) {
+                    for (int i = 0; i < services.size(); i++) {
+                        ProductModel item = services.get(i);
+                        int count1 = tempCount + item.getCount();
+//                        double amt1 = tempAmt + (item.getFinalPrice() * item.getCount());
+                        Log.e("onPostExecute", " " + count1);
+                        //cart badge
+//                        ((SecondActivity) getActivity()).writeBadge(services.size());
+//                        editor.putString("cartBadge", String.valueOf(services.size()));
+
+//                        sc.writeBadge(count1);
+                        editor.putString("cartBadge", String.valueOf(count1));
+                        editor.commit();
+//                        coutTxt.setText(String.valueOf(count1));
+//                        amtTxt.setText(String.valueOf(amt1));
+                        tempCount = count1;
+//                        tempAmt = amt1;
+                    }
+                    activity.finish();
+//                    emptyCart.setVisibility(View.GONE);
+//                    adapter = new CartServicesRecyclerAdapter(CartFragment.this, services);
+//                    recyclerView.setAdapter(adapter);
+//                    adapter.notifyDataSetChanged();
+//                recyclerView.setAdapter(new ServicesRecyclerAdapter(activity, services));
+                }else{
+//                    emptyCart.setVisibility(View.VISIBLE);
+                }
+            } else {
+                Log.e("hello", "Failed to fetch data!");
+//                ((SecondActivity) getActivity()).writeBadge(0);
+                editor.putString("cartBadge", String.valueOf(0));
+                editor.commit();
+                activity.finish();
+//                emptyCart.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+    private void parseResult(String result) {
+        try {
+            JSONObject jsonObject = new JSONObject(result);
+//            JSONArray response = new JSONArray(result);
+//            JSONObject jsonObject=response.getJSONObject(0);
+
+            if (jsonObject != null) {
+                JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+
+                if (status==1) {
+                    JSONArray jarr=jsonObject.optJSONArray("getcartproduct");
+                    JSONObject job=jarr.optJSONObject(0);
+                    JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+                    int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                    String message1 = jobstat.optString(TagName.TAG_MSG);
+                    if(status1==1) {
+
+                        JSONArray posts = job.optJSONArray(TagName.TAG_PRODUCT);
+                        String quoteId = jsonObject.optString("quoteid");
+                        Log.e("quoteId", quoteId);
+                        editor.putString("quoteId", quoteId);
+                        editor.commit();
+
+            /*Initialize array if null*/
+                        if (null == services) {
+                            services = new ArrayList<ProductModel>();
+                        }
+
+                        for (int i = 0; i < posts.length(); i++) {
+                            JSONObject post = posts.optJSONObject(i);
+
+                            ProductModel item = new ProductModel();
+                            item.setId(post.optInt(TagName.KEY_ID));
+                            item.setTitle(post.optString(TagName.KEY_NAME));
+                            item.setDescription(post.optString(TagName.KEY_DES));
+                            item.setCost(post.optDouble(TagName.KEY_PRICE));
+                            item.setFinalPrice(post.optDouble(TagName.KEY_FINAL_PRICE));
+                            item.setCount(post.optInt(TagName.KEY_COUNT));
+//                    Log.e("name", "name");
+                            item.setThumbnail(post.optString(TagName.KEY_THUMB));
+                            JSONObject post1 = post.optJSONObject(TagName.TAG_OFFER_ALL);
+                            item.setShare(post1.optString(TagName.KEY_SHARE));
+                            item.setTag(post1.optString(TagName.KEY_TAG));
+                            item.setDiscount(post1.optInt(TagName.KEY_DISC));
+                            item.setRating(post1.optInt(TagName.KEY_RATING));
+                            services.add(item);
+                        }
+                    }else{
+                        Toast.makeText(activity, "No Products", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(activity, "Net Work Error", Toast.LENGTH_SHORT).show();
+//                    message = jsonObject.getString(TagName.TAG_PRODUCT);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
     @Override
     public void onAttach(Activity activity) {

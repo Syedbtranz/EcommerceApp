@@ -480,7 +480,7 @@ public class CheckOutFragment extends Fragment {
 //            task.execute(url);
             task = new AsyncHttpTask();
 //            task.execute(Utils.productsUrl);
-            task.execute(Utils.checkoutPaymentInfoUrl);
+            task.execute(Utils.instantCheckoutPaymentInfoUrl);
 //            task.execute(Utils.instantServerUrl);
             Log.e("sendrequest","sendrequest");
         } else {
@@ -536,7 +536,7 @@ public class AsyncHttpTask extends AsyncTask<String, Void, Integer> {
 //                    Log.e("NGVL", jsonString);
 
 //                 forming th java.net.URL object
-            URL url = new URL(params[0]+userId+"/"+quoteId);
+            URL url = new URL(params[0]+userId+"&quoteId="+quoteId);
 
             urlConnection = (HttpURLConnection) url.openConnection();
 
@@ -659,18 +659,21 @@ public class AsyncHttpTask extends AsyncTask<String, Void, Integer> {
     }*/
     private void parseResult(String result) {
         try {
-            JSONArray response = new JSONArray(result);
-            JSONObject jsonObject=response.getJSONObject(0);
+            JSONObject jsonObject = new JSONObject(result);
+//            JSONObject jsonObject=response.getJSONObject(0);
 
             if (jsonObject != null) {
                 JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
                 int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
                String message = jobstatus.optString(TagName.TAG_MSG);
-//                if (status==1) {
-//            boolean status = response.getBoolean(TagName.TAG_STATUS);
-                Log.e("message", ""+message);
-                    if (message.equalsIgnoreCase("success")) {
-                JSONObject jsonData = jsonObject
+                if (status==1) {
+                    JSONArray jarr=jsonObject.optJSONArray("customcheckoutcarttotal");
+                    JSONObject job=jarr.optJSONObject(0);
+                    JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+                    int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                    String message1 = jobstat.optString(TagName.TAG_MSG);
+                    if(status1==1) {
+                JSONObject jsonData = job
                         .getJSONObject(TagName.TAG_CART);
                         subtot=jsonData.optDouble("subtotal");
                         subwithdisc=jsonData.optDouble("subtotal_with_discount");
@@ -705,8 +708,12 @@ public class AsyncHttpTask extends AsyncTask<String, Void, Integer> {
 //                        item.setRating(post1.optInt(TagName.KEY_RATING));
 ////                        services.add(item);
 //                    }
-                } else {
-//                    message = jsonObject.getString(TagName.TAG_PRODUCT);
+                    }else{
+                        Toast.makeText(activity, "Pament info Not showed", Toast.LENGTH_SHORT).show();
+                    }
+
+                }else {
+                    Toast.makeText(activity, "Network Error.  Please try Again.", Toast.LENGTH_SHORT).show();
                 }
             }
         } catch (JSONException e) {
@@ -744,7 +751,8 @@ public class AsyncHttpTask extends AsyncTask<String, Void, Integer> {
 
                 try{
 //                    String restUrl = URLEncoder.encode(Utils.checkoutUrl+userId+"/"+customerEmail+"/"+customerName+"/"+customerStreet+"/"+customerCity+"/"+customerCountry+"/"+customerPincode+"/"+customerContact+"/"+shippingRate+"/"+paymentMode+"/"+quoteId, "UTF-8");
-                    String restUrl = Utils.checkoutUrl+userId+"/"+customerEmail+"/"+customerName+"/"+customerStreet+"/"+customerCity+"/"+customerCountryCode+"/"+customerPincode+"/"+customerContact+"/"+shippingRate+"/"+paymentMode+"/"+quoteId ;
+                    String restUrl = Utils.checkoutUrl+userId+"/"+customerEmail+"/"+customerName+"/"+customerStreet+"/"+customerCity+"/"+customerCountry+"/"+customerPincode+"/"+customerContact+"/"+shippingRate+"/"+paymentMode+"/"+quoteId;
+//                    String restUrl = Utils.instantCheckoutUrl+userId+"&email="+customerEmail+"&name="+customerName+"&street="+customerStreet+"&city="+customerCity+"&country_id="+customerCountryCode+"&postcode="+customerPincode+"&telephone="+customerContact+"&shipping="+shippingRate+"&payment="+paymentMode+"&quoteId="+quoteId ;
                     Log.e("restUrl",restUrl.replace(" ","%20"));
                     HttpClient httpClient = new DefaultHttpClient();
                     HttpGet httpPost = new HttpGet(restUrl.replace(" ","%20"));

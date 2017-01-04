@@ -29,6 +29,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	private static final String S_ID = "s_id";
 	private static final String W_ID = "w_id";
 	private static final String S_NAME = "s_name";
+	private static final String S_TAG = "s_tag";
 	List<String> searchList=new ArrayList<String>();
 
 	public DatabaseHandler(Context context) {
@@ -43,15 +44,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				+ ID + " INTEGER PRIMARY KEY," + TagName.KEY_ID +" TEXT," + TagName.KEY_NAME + " TEXT," + TagName.KEY_PRICE + " TEXT,"+
 				TagName.KEY_FINAL_PRICE + " TEXT,"+
 				TagName.KEY_THUMB + " TEXT," +
-				TagName.KEY_COUNT + " TEXT)";
+				TagName.KEY_COUNT + " TEXT,"+ TagName.KEY_SHARE + " TEXT,"+
+				TagName.KEY_TAG + " TEXT,"+
+				TagName.KEY_DISC + " TEXT," +
+				TagName.KEY_RATING + " TEXT)";
 
 		String CREATE_WISHLIST_TABLE = "CREATE TABLE " + TABLE_WISHLIST + "("
 				+ W_ID + " INTEGER PRIMARY KEY," + TagName.KEY_ID +" TEXT," + TagName.KEY_NAME + " TEXT," + TagName.KEY_PRICE + " TEXT,"+
 				TagName.KEY_FINAL_PRICE + " TEXT,"+
-				TagName.KEY_THUMB +  " TEXT)";
+				TagName.KEY_THUMB +  " TEXT,"+
+				TagName.KEY_TAG + " TEXT,"+
+				TagName.KEY_DISC + " TEXT," +
+				TagName.KEY_RATING + " TEXT)";
 
 		String CREATE_SEARCH_TABLE = "CREATE TABLE " + TABLE_SEARCH + "("
-				+ S_ID + " INTEGER PRIMARY KEY," + S_NAME + " TEXT)";
+				+ S_ID + " INTEGER PRIMARY KEY," + S_NAME + " TEXT," + S_TAG + " TEXT)";
 
 
 		db.execSQL(CREATE_CART_TABLE);
@@ -75,7 +82,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 	//********* INTETRTING VALUES IN TO CART TABLE******************************//
 
-	public void insertCart(String prdt_id,String prdt_name,String prdt_price,String prdt_final_price, String prdt_thumb,String prdt_count) {
+	public void insertCart(String prdt_id,String prdt_name,String prdt_price,String prdt_final_price, String prdt_thumb,String prdt_count,String share, String tag,String discount,String rating) {
 		SQLiteDatabase db = this.getWritableDatabase();
 
 		ContentValues values = new ContentValues();
@@ -85,6 +92,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		values.put(TagName.KEY_FINAL_PRICE, prdt_final_price);
 		values.put(TagName.KEY_THUMB , prdt_thumb);
 		values.put(TagName.KEY_COUNT , prdt_count);
+		values.put(TagName.KEY_SHARE , share);
+		values.put(TagName.KEY_TAG , tag);
+		values.put(TagName.KEY_DISC , discount);
+		values.put(TagName.KEY_RATING , rating);
 
 		// Inserting Row
 		db.insert(TABLE_CART, null, values);
@@ -102,8 +113,8 @@ public List<String>getCartList(){
 	if (cursor.moveToFirst()) {
 		do {
 
-			cartList.add(cursor.getString(1)+"***"+cursor.getString(2)+"***"+cursor.getString(3)+"***"+cursor.getString(4)+"***"+cursor.getString(5)+"***"+cursor.getString(6));
-//		System.out.println(cursor.getString(1)+"***"+cursor.getString(2)+"***"+cursor.getString(3)+"***"+cursor.getString(4)+"***"+cursor.getString(5)+"***"+cursor.getString(6));
+			cartList.add(cursor.getString(1)+"***"+cursor.getString(2)+"***"+cursor.getString(3)+"***"+cursor.getString(4)+"***"+cursor.getString(5)+"***"+cursor.getString(6)+"***"+cursor.getString(7)+"***"+cursor.getString(8)+"***"+cursor.getString(9)+"***"+cursor.getString(10));
+//		System.out.println(cursor.getString(1)+"***"+cursor.getString(2)+"***"+cursor.getString(3)+"***"+cursor.getString(4)+"***"+cursor.getString(5)+"***"+cursor.getString(6)+"***"+cursor.getString(7)+"***"+cursor.getString(8)+"***"+cursor.getString(9)+"***"+cursor.getString(10));
 		} while (cursor.moveToNext());
 	}
 	// closing connection
@@ -113,8 +124,8 @@ public List<String>getCartList(){
 	// returning lables
 	return cartList;
 
-
 }
+
 	public void removeCartItem(String id) {
 		// Select All Query
 		String deleteQuery = "DELETE  FROM " + TABLE_CART+ " Where "+TagName.KEY_ID+"="+id;
@@ -152,7 +163,7 @@ public List<String>getCartList(){
 		if (cursor.moveToFirst()) {
 			do {
 
-				cartData.add(cursor.getString(1)+"***"+cursor.getString(2)+"***"+cursor.getString(3)+"***"+cursor.getString(4)+"***"+cursor.getString(5)+"***"+cursor.getString(6));
+				cartData.add(cursor.getString(1)+"***"+cursor.getString(2)+"***"+cursor.getString(3)+"***"+cursor.getString(4)+"***"+cursor.getString(5)+"***"+cursor.getString(6)+"***"+cursor.getString(7)+"***"+cursor.getString(8)+"***"+cursor.getString(9)+"***"+cursor.getString(10));
 
 			} while (cursor.moveToNext());
 		}
@@ -168,7 +179,7 @@ public List<String>getCartList(){
 
 	//********* INTETRTING VALUES IN TO CART TABLE******************************//
 
-	public void insertWishlist(String prdt_id,String prdt_name,String prdt_price,String prdt_final_price, String prdt_thumb) {
+	public void insertWishlist(String prdt_id,String prdt_name,String prdt_price,String prdt_final_price, String prdt_thumb,String tag, String discount, String rating) {
 		SQLiteDatabase db = this.getWritableDatabase();
 
 		ContentValues values = new ContentValues();
@@ -177,7 +188,9 @@ public List<String>getCartList(){
 		values.put(TagName.KEY_PRICE, prdt_price);
 		values.put(TagName.KEY_FINAL_PRICE, prdt_final_price);
 		values.put(TagName.KEY_THUMB , prdt_thumb);
-//		values.put(TagName.KEY_COUNT , prdt_count);
+		values.put(TagName.KEY_TAG , tag);
+		values.put(TagName.KEY_DISC , discount);
+		values.put(TagName.KEY_RATING , rating);
 		System.out.println("prdt_id" +prdt_id);
 		// Inserting Row
 		db.insert(TABLE_WISHLIST, null, values);
@@ -195,8 +208,8 @@ public List<String>getCartList(){
 		if (cursor.moveToFirst()) {
 			do {
 
-				wishList.add(cursor.getString(1)+"***"+cursor.getString(2)+"***"+cursor.getString(3)+"***"+cursor.getString(4)+"***"+cursor.getString(5));
-		System.out.println(cursor.getString(1)+"***"+cursor.getString(2)+"***"+cursor.getString(3)+"***"+cursor.getString(4)+"***"+cursor.getString(5));
+				wishList.add(cursor.getString(1)+"***"+cursor.getString(2)+"***"+cursor.getString(3)+"***"+cursor.getString(4)+"***"+cursor.getString(5)+"***"+cursor.getString(6)+"***"+cursor.getString(7)+"***"+cursor.getString(8));
+		System.out.println(cursor.getString(1)+"***"+cursor.getString(2)+"***"+cursor.getString(3)+"***"+cursor.getString(4)+"***"+cursor.getString(5)+"***"+cursor.getString(6)+"***"+cursor.getString(7)+"***"+cursor.getString(8));
 			} while (cursor.moveToNext());
 		}
 		// closing connection
@@ -245,7 +258,7 @@ public List<String>getCartList(){
 		if (cursor.moveToFirst()) {
 			do {
 
-				wishListData.add(cursor.getString(1)+"***"+cursor.getString(2)+"***"+cursor.getString(3)+"***"+cursor.getString(4)+"***"+cursor.getString(5)+"***"+cursor.getString(6));
+				wishListData.add(cursor.getString(1)+"***"+cursor.getString(2)+"***"+cursor.getString(3)+"***"+cursor.getString(4)+"***"+cursor.getString(5)+"***"+"***"+cursor.getString(6)+"***"+cursor.getString(7)+"***"+cursor.getString(8));
 
 			} while (cursor.moveToNext());
 		}
@@ -261,12 +274,13 @@ public List<String>getCartList(){
 
 	//********* INTETRTING VALUES IN TO SEARCH TABLE******************************//
 
-	public void insertSearchItem(String prdt_name) {
+	public void insertSearchItem(String prdt_name,String tag) {
 		SQLiteDatabase db = this.getWritableDatabase();
 
 		ContentValues values = new ContentValues();
 //		values.put(TagName.KEY_ID, prdt_id);
 		values.put(S_NAME , prdt_name);
+		values.put(S_TAG , tag);
 //		values.put(TagName.KEY_PRICE, prdt_price);
 //		values.put(TagName.KEY_FINAL_PRICE, prdt_final_price);
 //		values.put(TagName.KEY_THUMB , prdt_thumb);
@@ -287,7 +301,7 @@ public List<String>getCartList(){
 		if (cursor.moveToFirst()) {
 			do {
 
-				searchList.add(cursor.getString(1));
+				searchList.add(cursor.getString(1)+"***"+cursor.getString(2));
 //		System.out.println(cursor.getString(1)+"***"+cursor.getString(2)+"***"+cursor.getString(3)+"***"+cursor.getString(4)+"***"+cursor.getString(5)+"***"+cursor.getString(6));
 			} while (cursor.moveToNext());
 		}

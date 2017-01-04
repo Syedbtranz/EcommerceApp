@@ -17,17 +17,19 @@
         android:id="@+id/title"
         android:padding="8dp"
         android:text="Title"
+        android:layout_weight="1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <TextView
         android:id="@+id/subtitle"
         android:padding="8dp"
         android:text="Sub Title"
+        android:textColor="?attr/colorAccent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center">
     <ImageView

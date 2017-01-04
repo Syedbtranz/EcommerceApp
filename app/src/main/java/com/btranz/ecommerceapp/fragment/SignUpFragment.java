@@ -331,37 +331,7 @@ public class SignUpFragment extends Fragment implements GoogleApiClient.OnConnec
     }
 
     private void register( String email, String password,String name) {
-//        class RegisterUser extends AsyncTask<String, Void, String> {
-//            ProgressDialog loading;
-//            RegisterUserClass ruc = new RegisterUserClass();
-//
-//
-//            @Override
-//            protected void onPreExecute() {
-//                super.onPreExecute();
-//                loading = ProgressDialog.show(activity, "please wait...",null, true, true);
-//            }
-//
-//            @Override
-//            protected void onPostExecute(String s) {
-//                super.onPostExecute(s);
-//                loading.dismiss();
-//                Toast.makeText(activity,s,Toast.LENGTH_LONG).show();
-//                Log.e("s",s);
-//            }
-//
-//            @Override
-//            protected String doInBackground(String... params) {
-//
-//                HashMap<String, String> data = new HashMap<String,String>();
-//                data.put("email",params[0]);
-//                data.put("password",params[1]);
-//                data.put("name",params[2]);
-//                String result = ruc.sendPostRequest(Utils.regUrl+params[0]+"/"+params[1]+"/"+params[2]);
-//
-//                return  result;
-//            }
-//        }
+
         class RegisterUser extends AsyncTask<String, Void, String> {
 
             private Dialog loadingDialog;

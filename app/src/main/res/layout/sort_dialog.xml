@@ -2,9 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="20dp"
-    >
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:baselineAligned="false">
+    <LinearLayout
         android:id="@+id/reveal_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -12,142 +11,81 @@
         android:orientation="vertical"
         android:paddingBottom="8dp"
         android:paddingLeft="16dp"
+
         android:paddingRight="16dp"
         android:paddingTop="8dp">
-    <LinearLayout
-        android:id="@+id/sort_dis_ll"
-        android:orientation="horizontal"
+    <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:gravity="center">
-        <TextView
-            android:id="@+id/sort_dis_txt"
+        android:background="@color/color_text"
+        android:id="@+id/whoru">
+
+        <RadioButton
+            android:id="@+id/disc_radio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:button="@null"
+            android:drawablePadding="30dp"
+            android:drawableRight="?checkbox_custom"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="20dp"
             android:text="Discount"
-            android:layout_weight="1"
             android:gravity="center"/>
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/sort_dis_img"
-            android:src="@drawable/empty"
-            android:layout_weight="1"
-            android:layout_gravity="center_horizontal" />
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/sort_arrive_ll"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:gravity="center">
-        <TextView
-            android:id="@+id/sort_arrive_txt"
+        <RadioButton
+            android:id="@+id/arr_radio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:button="@null"
+            android:drawablePadding="30dp"
+            android:drawableRight="?checkbox_custom"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="50dp"
             android:text="New Arrival"
-            android:layout_weight="1"
             android:gravity="center"/>
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/sort_arrive_img"
-            android:src="@drawable/empty"
-            android:layout_weight="1"
-            android:layout_gravity="center_horizontal" />
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/sort_htol_ll"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:gravity="center">
-        <TextView
-            android:id="@+id/sort_htol_txt"
+        <RadioButton
+            android:id="@+id/htol_radio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:button="@null"
+            android:drawablePadding="30dp"
+            android:drawableRight="?checkbox_custom"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="20dp"
             android:text="Price High to Low"
-            android:layout_weight="1"
             android:gravity="center"/>
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/sort_htol_img"
-            android:src="@drawable/empty"
-            android:layout_weight="1"
-            android:layout_gravity="center_horizontal" />
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/sort_ltoh_ll"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:gravity="center">
-        <TextView
-            android:id="@+id/sort_ltoh_txt"
+        <RadioButton
+            android:id="@+id/ltoh_radio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:button="@null"
+            android:drawablePadding="30dp"
+            android:drawableRight="?checkbox_custom"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="20dp"
             android:text="Price Low to High"
-            android:layout_weight="1"
             android:gravity="center"/>
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/sort_ltoh_img"
-            android:src="@drawable/empty"
-            android:layout_weight="1"
-            android:layout_gravity="center_horizontal" />
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/sort_pop_ll"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:gravity="center">
-        <TextView
-            android:id="@+id/sort_pop_txt"
+        <RadioButton
+            android:id="@+id/pop_radio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:button="@null"
+            android:drawablePadding="30dp"
+            android:drawableRight="?checkbox_custom"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
             android:text="Popularity"
-            android:layout_weight="1"
             android:gravity="center"/>
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/sort_pop_img"
-            android:src="@drawable/checked"
-            android:layout_weight="1"
-            android:layout_gravity="center_horizontal" />
-    </LinearLayout>
-
+    </RadioGroup>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="35dp"
         android:text="Apply"
-         android:textSize="12dp"
+        android:textSize="12dp"
         android:textColor="@color/color_text"
         android:id="@+id/sort_apply_btn"
         android:background="?button_bg_primary"
         android:layout_gravity="center_horizontal" />
-  <!--  <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="APPLY"
-        android:textSize="12dp"
-        android:textColor="@color/color_text"
-        android:background="@drawable/button_bg_colorprimary"
-        android:layout_weight="1"
-        android:id="@+id/filter_apply" />-->
-</LinearLayout>
-
+        </LinearLayout>
 </LinearLayout>

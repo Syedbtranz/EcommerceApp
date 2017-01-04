@@ -54,12 +54,15 @@
 
 
     </LinearLayout>
-
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="30dp"
+        android:padding="20dp"
         android:gravity="center">
         <EditText
             android:layout_width="match_parent"
@@ -172,8 +175,7 @@
             android:textColor="?attr/colorPrimary"
             android:background="?button_bg_primary_border"
             android:paddingRight="10dp"
-            android:layout_marginTop="20dp"
-            android:layout_gravity="bottom"
+            android:layout_margin="20dp"
             android:id="@+id/login_btn"
             />
         <!--<Button
@@ -188,6 +190,6 @@
             android:id="@+id/signup_btn"
             />-->
     </LinearLayout>
-
+</ScrollView>
 
 </LinearLayout>

@@ -371,6 +371,7 @@ public class UpdateProfileFragment extends Fragment {
                             "active"+isChecked, Toast.LENGTH_SHORT).show();
                 } else {
 //                    buttonView.setChecked(f);
+                    deActive();
                     Toast.makeText(activity,
                             "deactive"+isChecked, Toast.LENGTH_SHORT).show();
                 }
@@ -481,6 +482,7 @@ public class UpdateProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 deActivateAccountData();
+                alertDialog.dismiss();
             }
         });
         alertDialog.show();
@@ -552,14 +554,27 @@ public class UpdateProfileFragment extends Fragment {
                 Log.e("s",response);
                 loadingDialog.dismiss();
                 try {
-                    JSONArray jsonArray=new JSONArray(response);
-                    JSONObject jsonObject=jsonArray.getJSONObject(0);
+                    JSONObject jsonObject=new JSONObject(response);
+//                    JSONObject jsonObject=jsonArray.getJSONObject(0);
                     if(jsonObject!=null) {
-                        JSONObject jsonObj=jsonObject.getJSONObject(TagName.TAG_STATUS);
-                        String status=jsonObj.optString(TagName.TAG_MSG);
-                        if(status.equalsIgnoreCase("success")){
-                            Toast.makeText(activity,status,Toast.LENGTH_SHORT).show();
+                        JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                        int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+                        String message = jobstatus.optString(TagName.TAG_MSG);
 
+                        if (status==1) {
+                            JSONArray jarr=jsonObject.optJSONArray("editaccountinfo");
+                            JSONObject job=jarr.optJSONObject(0);
+                            JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+                            int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                            String message1 = jobstat.optString(TagName.TAG_MSG);
+                            if(status1==1) {
+                            Toast.makeText(activity,"Profile Updated Successfully",Toast.LENGTH_SHORT).show();
+                            }else{
+                                Toast.makeText(activity, "Profile Not Updated, Please try Again.", Toast.LENGTH_SHORT).show();
+                            }
+
+                        }else {
+                            Toast.makeText(activity, "Profile Not Updated.. Please try Again.", Toast.LENGTH_SHORT).show();
                         }
 
 
@@ -572,7 +587,7 @@ public class UpdateProfileFragment extends Fragment {
         }
 
         ProfileInfoAsync la = new ProfileInfoAsync();
-        la.execute(Utils.updateProfileUrl+userId+"/"+firstName+"/"+lastName+"/"+dob);
+        la.execute(Utils.instantUpdateProfileUrl+userId+"&fname="+firstName+"&lname="+lastName+"&dob="+dob);
 
     }
     public void updateAddressData(){
@@ -607,8 +622,8 @@ public class UpdateProfileFragment extends Fragment {
 //                    HttpEntity entity = response.getEntity();
 //
 //                    is = entity.getContent();
-
-                    URL url = new URL(params[0]);
+//                    java.net.URLEncoder.encode(params[0], "utf-8");
+                    URL url = new URL(java.net.URLEncoder.encode(params[0], "utf-8"));
 
                     urlConnection = (HttpURLConnection) url.openConnection();
 
@@ -642,16 +657,26 @@ public class UpdateProfileFragment extends Fragment {
                 Log.e("s",response);
                 loadingDialog.dismiss();
                 try {
-                    JSONArray jsonArray=new JSONArray(response);
-                    JSONObject jsonObject=jsonArray.getJSONObject(0);
+                    JSONObject jsonObject=new JSONObject(response);
+//                    JSONObject jsonObject=jsonArray.getJSONObject(0);
                     if(jsonObject!=null) {
-                        JSONObject jsonObj=jsonObject.getJSONObject(TagName.TAG_STATUS);
-                        String status=jsonObj.optString(TagName.TAG_MSG);
-                        if(status.equalsIgnoreCase("success")){
-                            Toast.makeText(activity,status,Toast.LENGTH_SHORT).show();
+                        JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                        int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+                        String message = jobstatus.optString(TagName.TAG_MSG);
 
+                        if (status==1) {
+                            JSONArray jarr = jsonObject.optJSONArray("editbillingaddress");
+                            JSONObject job1 = jarr.optJSONObject(0);
+                            JSONObject jobstat = job1.getJSONObject(TagName.TAG_STATUS);
+                            int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                            String message1 = jobstat.optString(TagName.TAG_MSG);
+                            if (status1 == 1) {
+                            Toast.makeText(activity,"Address Updated Successfully",Toast.LENGTH_SHORT).show();
+                            }else{
+                                Toast.makeText(activity, "Address Not Updated, Please try Again.", Toast.LENGTH_SHORT).show();
+                            }
                         }else{
-                            Toast.makeText(activity,status,Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, "Address Not Updated, Please try Again.", Toast.LENGTH_SHORT).show();
                         }
 
 
@@ -662,10 +687,11 @@ public class UpdateProfileFragment extends Fragment {
                 }
             }
         }
-        Log.e("Url",Utils.editbillingaddressUrl+userId+"/"+firstName+"/"+lastName+"/"+street+"/"+city+","+state+"/"+countrycode+"/"+postcode+"/"+mobile);
+
         AddressAsync la = new AddressAsync();
-        String restUrl =Utils.editbillingaddressUrl+userId+"/"+firstName+"/"+lastName+"/"+street+"/"+city+"%20"+state+"/"+countrycode+"/"+postcode+"/"+mobile;
-                la.execute(restUrl.replace(" ","%20"));
+        String restUrl =Utils.instantUpdateAddressUrl+userId.trim()+"&fname="+firstName.trim()+"&lname="+lastName.trim()+"&street="+street.trim()+"&city="+city.trim()+" "+state.trim()+"&country_id="+countrycode.trim()+"&postcode="+postcode.trim()+"&telephone="+mobile.trim();
+                Log.e("restUrl",restUrl);
+        la.execute(restUrl);
 
     }
     private void changePasswordData(String oldpsw,String newpsw){
@@ -682,8 +708,8 @@ public class UpdateProfileFragment extends Fragment {
             protected String doInBackground(String... params) {
                 String oldpsw = params[0];
                 String newpsw = params[1];
-                Log.e("uname",oldpsw);
-                Log.e("pass",newpsw);
+//                Log.e("uname",oldpsw);
+//                Log.e("pass",newpsw);
                 InputStream is = null;
 //                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 //                nameValuePairs.add(new BasicNameValuePair("username", uname));
@@ -821,16 +847,20 @@ public class UpdateProfileFragment extends Fragment {
                 loadingDialog.dismiss();
 
                 try {
-                    JSONArray jsonArray = new JSONArray(response);
-                    JSONObject jsonObject = jsonArray.getJSONObject(0);
+                    JSONObject jsonObject = new JSONObject(response);
+//                    JSONObject jsonObject = jsonArray.getJSONObject(0);
                     if (jsonObject != null) {
-                        JSONObject job = jsonObject.optJSONObject(TagName.TAG_STATUS);
-                        String status = job.optString(TagName.TAG_MSG);
-                        if (status.equalsIgnoreCase("success")) {
+                        JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                        int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+                        String message = jobstatus.optString(TagName.TAG_MSG);
+
+                        if (status==1) {
+                            JSONArray jarr=jsonObject.optJSONArray("countrylist");
+                            JSONObject job=jarr.optJSONObject(0);
                             if (countryList == null) {
                                 countryList = new ArrayList<ProductModel>();
                             }
-                            JSONArray jarray = jsonObject.getJSONArray("country");
+                            JSONArray jarray = job.getJSONArray("country");
                             for (int i = 0; i < jarray.length(); i++) {
                                 JSONObject job1 = jarray.optJSONObject(i);
                                 ProductModel item = new ProductModel();
@@ -846,14 +876,14 @@ public class UpdateProfileFragment extends Fragment {
 
                             // Drop down layout style - list view with radio button
 //        dataAdapter.(android.R.layout.simple_spinner_dropdown_item);
+
                             // attaching data adapter to spinner
                             countrySpinner.setAdapter(countryAdp);
                             countryAdp.notifyDataSetChanged();
                             countrySpinner.setSelection(getIndex(countrySpinner, country));
+                        }else {
+                            Toast.makeText(activity, "Network Error. Please try Again.", Toast.LENGTH_LONG).show();
                         }
-
-//
-
                     }
 
                 } catch (JSONException e) {
@@ -864,7 +894,7 @@ public class UpdateProfileFragment extends Fragment {
         }
 
         CountryListAsync la = new CountryListAsync();
-        la.execute(Utils.getCountryListUrl);
+        la.execute(Utils.instantCountryListUrl);
 
     }
     public void deActivateAccountData(){
@@ -934,17 +964,31 @@ public class UpdateProfileFragment extends Fragment {
                 Log.e("s",response);
                 loadingDialog.dismiss();
                 try {
-                    JSONArray jsonArray=new JSONArray(response);
-                    JSONObject jsonObject=jsonArray.getJSONObject(0);
+                    JSONObject jsonObject=new JSONObject(response);
+//                    JSONObject jsonObject=jsonArray.getJSONObject(0);
                     if(jsonObject!=null) {
-                        JSONObject jsonObj=jsonObject.getJSONObject(TagName.TAG_STATUS);
-                        String status=jsonObj.optString(TagName.TAG_MSG);
-                        if(status.equalsIgnoreCase("  ")){
-                            Toast.makeText(activity,status,Toast.LENGTH_SHORT).show();
+                        JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                        int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+                        String message = jobstatus.optString(TagName.TAG_MSG);
+
+                        if (status==1) {
+                            JSONArray jarr=jsonObject.optJSONArray("deacivateaccount");
+                            JSONObject job=jarr.optJSONObject(0);
+                            JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+                            int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                            String message1 = jobstat.optString(TagName.TAG_MSG);
+                            if(status1==1) {
+                            Toast.makeText(activity,"Account Deacivated successfully",Toast.LENGTH_SHORT).show();
                             SharedPreferences.Editor editor = sharedpreferences.edit();
                             editor.clear();
                             editor.commit();
                             activity.finish();
+                            }else{
+                                Toast.makeText(activity, "Account Not Deacivated, Please try Again.", Toast.LENGTH_SHORT).show();
+                            }
+
+                        }else {
+                            Toast.makeText(activity, "Account Not Deacivated.. Please try Again.", Toast.LENGTH_SHORT).show();
                         }
 
 
@@ -957,7 +1001,7 @@ public class UpdateProfileFragment extends Fragment {
         }
 
         DeActivateAsync la = new DeActivateAsync();
-        la.execute(Utils.deacivateaccountUrl+userId);
+        la.execute(Utils.instantDeactivateAccountUrl+userId);
 
     }
     @Override

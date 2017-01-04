@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:background="@color/color_text">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+    android:layout_height="match_parent"
+        android:background="@color/color_text">
     <android.support.v7.widget.CardView
         android:id="@+id/progress_ll"
         android:orientation="vertical"
@@ -26,6 +32,7 @@
     android:id="@+id/pdt_detail_root_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:fillViewport="true"
     android:orientation="vertical">
 
     <LinearLayout
@@ -50,7 +57,7 @@
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:button="@drawable/wishlist_checkbox"
+            android:button="?checkbox_wishlist"
             android:id="@+id/prdt_like_btn"/>
         <!--<ImageView
             android:id="@+id/prdt_like"
@@ -76,8 +83,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="256 users reviews, 2QA's"
-                android:id="@+id/textView" />
+                android:text="0 user reviews"
+                android:id="@+id/total_reviews_rating_txt" />
         </LinearLayout>
     </LinearLayout>
         <LinearLayout
@@ -96,7 +103,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="name"
         android:id="@+id/item_title"
         android:layout_gravity="center_horizontal" />
         <LinearLayout
@@ -162,9 +168,9 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="2000"
                 android:textStyle="bold"
                 android:gravity="center"
+                android:text="0"
                 android:id="@+id/product_final_price" />
 </LinearLayout>
             <LinearLayout
@@ -184,7 +190,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="5000"
+                    android:text="0"
                     android:singleLine="true"
                     android:gravity="center"
                     android:textStyle="bold"
@@ -197,7 +203,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
+        android:gravity="start"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp">
         <ImageView
@@ -205,12 +211,13 @@
             android:layout_height="wrap_content"
             android:src="@drawable/check_btn"
             android:scaleType="centerInside"
+            android:gravity="start"
             android:id="@+id/cash_on_delivery_image" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/cash_on_delivery"
-
+            android:gravity="start"
             />
         </LinearLayout>
     <LinearLayout
@@ -410,12 +417,40 @@
                     />
             </LinearLayout>
         </LinearLayout>
-        <TextView
-            android:layout_width="wrap_content"
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/cust_review_txt"
-            />
+            android:layout_margin="10dp"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/cust_review_txt"
+                android:layout_gravity="start"
+                android:layout_weight="1"
+                android:gravity="start|center"
+                />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:text="View All"
+                android:textSize="10sp"
+                android:padding="7dp"
+                android:drawableRight="@drawable/next_checkout_btn"
+                android:background="?attr/colorAccent"
+                android:textColor="@color/color_text"
+                android:id="@+id/viewiews_btn"
+
+                android:gravity="center"
+                android:layout_gravity="right"
+
+                />
+        </LinearLayout>
         <View
             android:layout_width="wrap_content"
             android:layout_height="1dp"
@@ -490,10 +525,91 @@
 
 
         </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/view_divider_color">
+            <!-- <TextView
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:text="ORDERID"
+                 android:textStyle="bold"
+                 android:layout_weight="1"
+                 android:gravity="center"
+                 />-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/title_write_review"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                android:paddingRight="20dp"
+                android:gravity="center"
+                android:id="@+id/write_review_btn" />
 
+            <!-- <TextView
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:text="QNTY"
+                 android:textStyle="bold"
+                 android:gravity="right|center"
+                 android:layout_weight="1.1"
 
+                 android:id="@+id/tkt_subject" />
 
+             <TextView
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:text="PRICE"
+                 android:textStyle="bold"
+                 android:layout_weight="1"
+                 android:gravity="center"
+                 android:id="@+id/tkt_staus" />-->
+            <!-- <TextView
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:text="ACTION"
+                 android:paddingLeft="20dp"
+                 android:textStyle="bold"
+                 android:layout_weight="1.1"
+                 android:gravity="center"
+                 android:id="@+id/tkt_status" />-->
+        </LinearLayout>
 
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_margin="5dp"
+            android:layout_gravity="center|bottom">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/review_rate_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center|bottom"/>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:text="View All Reviews"
+                android:textSize="10sp"
+                android:padding="7dp"
+                android:drawableRight="@drawable/next_checkout_btn"
+                android:background="?attr/colorAccent"
+                android:textColor="@color/color_text"
+                android:id="@+id/view_reviews_btn"
+
+                android:gravity="center"
+                android:layout_gravity="right"
+                />
+        </LinearLayout>
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -658,4 +774,7 @@
 
         </LinearLayout>
     </LinearLayout>
+
 </FrameLayout>
+
+</LinearLayout>

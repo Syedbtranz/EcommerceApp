@@ -81,13 +81,13 @@ public class WislistRecyclerAdapter extends RecyclerView.Adapter<WislistRecycler
         feedListRowHolder.price.setPaintFlags(feedListRowHolder.price.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
         feedListRowHolder.finalPrice.setText(String.valueOf(feedItem.getFinalPrice()));
         feedListRowHolder.offerTag.setText(feedItem.getTag());
-        if(feedItem.getTag().equalsIgnoreCase("new")){
-            feedListRowHolder.offerTag.setBackgroundColor(ContextCompat.getColor(acti.getActivity(), R.color.color_green));
-        }else  if(feedItem.getTag().equalsIgnoreCase("best offer")){
-            feedListRowHolder.offerTag.setBackgroundColor(ContextCompat.getColor(acti.getActivity(), R.color.color_blue));
-        }else  if(feedItem.getDiscount()!=0){
+        if(feedItem.getDiscount()!=0){
             feedListRowHolder.offerTag.setText("Sale "+feedItem.getDiscount()+"% Off");
             feedListRowHolder.offerTag.setBackgroundColor(ContextCompat.getColor(acti.getActivity(), R.color.color_red));
+        }else  if(feedItem.getTag().equalsIgnoreCase("best offer")){
+            feedListRowHolder.offerTag.setBackgroundColor(ContextCompat.getColor(acti.getActivity(), R.color.color_blue));
+        }else  if(feedItem.getTag().equalsIgnoreCase("new")){
+            feedListRowHolder.offerTag.setBackgroundColor(ContextCompat.getColor(acti.getActivity(), R.color.color_green));
         }else {
             feedListRowHolder.offerTag.setVisibility(View.INVISIBLE);
         }

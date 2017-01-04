@@ -13,6 +13,7 @@ import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
+import android.os.NetworkOnMainThreadException;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -44,8 +45,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.btranz.ecommerceapp.R;
+import com.btranz.ecommerceapp.adapter.CartServicesRecyclerAdapter;
 import com.btranz.ecommerceapp.adapter.WislistRecyclerAdapter;
 import com.btranz.ecommerceapp.fragment.CardsFragment;
+import com.btranz.ecommerceapp.fragment.CartFragment;
 import com.btranz.ecommerceapp.fragment.CategoriesFragment;
 import com.btranz.ecommerceapp.fragment.HelpCenterFragment;
 import com.btranz.ecommerceapp.fragment.HomeFragment;
@@ -70,6 +73,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -78,6 +82,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -87,6 +92,7 @@ import static android.R.id.message;
 //import com.btranz.ecamarceapp.utils.AppData;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+    int tempCount;
     private Boolean exit = false;
 //    EditText SearchET;
     ImageView SearchET;
@@ -98,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // shared preference
     SharedPreferences sharedpreferences;
     String PREFS_NAME = "MyPrefs";
+    SharedPreferences.Editor editor;
     public TextView viewTxt, toolbar_title;
     MenuItem item;
     public List<ProductModel> products;
@@ -105,10 +112,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public ArrayList<ProductModel> services;
     public ArrayList<ProductModel> popServices;
     public ArrayList<ProductModel> brandServices;
-    public ArrayList<ProductModel> wishlistServices;
+    public ArrayList<ProductModel> cartServices;
     String message, userId;
     HomeAsyncHttpTask taskHome;
-    WishlistAsyncTask taskWishlist;
+    AsyncHttpTask taskAsynk;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         AppEventsLogger.activateApp(this);
         sharedpreferences = this.getSharedPreferences(PREFS_NAME,
                 Context.MODE_PRIVATE);
+        editor = sharedpreferences.edit();
         userId = sharedpreferences.getString("userID", "");
         sendRequest();
         setContentView(R.layout.activity_main);
@@ -152,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         }
                     }else {
                         // splash.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.splash, null));
-                        splash.setBackgroundDrawable(getResources().getDrawable(R.drawable.splash));
+                        splash.setBackgroundResource(R.drawable.splash);
                     }
 
                     break;
@@ -170,7 +179,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         }
                     }else {
                         // splash.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.splash, null));
-                        splash.setBackgroundDrawable(getResources().getDrawable(R.drawable.splash_blue));
+//                        splash.setBackgroundDrawable(getResources().getDrawable(R.drawable.splash_blue));
+                        splash.setBackgroundResource(R.drawable.splash_blue);
                     }
 
                     break;
@@ -588,16 +598,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
     private void sendRequest() {
-        if (CheckNetworkConnection.isConnectionAvailable(getApplicationContext())) {
-            //Home
-            String user;
-            if(userId.equals("")){
-                user="0";
-            }else{
-                user=userId;
-            }
-            taskHome = new HomeAsyncHttpTask();
-            taskHome.execute(Utils.homeUrl+user);
+        try {
+            if (CheckNetworkConnection.isConnectionAvailable(getApplicationContext())) {
+                //Home
+                String user;
+                if (userId.equals("")) {
+                    user = "0";
+                } else {
+                    user = userId;
+                    taskAsynk = new AsyncHttpTask();
+                    taskAsynk.execute(Utils.instantGetCartUrl+user);
+                }
+                taskHome = new HomeAsyncHttpTask();
+                taskHome.execute(Utils.homeUrl + user);
 //            //offer banner
 //            task = new RequestImgTask(activity);
 //            task.execute(Utils.bannerUrl);
@@ -611,9 +624,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //            taskBrand = new BrandAsyncHttpTask();
 //            taskBrand.execute(Utils.brandUrl);
 
-        } else {
-            message = getResources().getString(R.string.no_internet_connection);
+            } else {
+                message = getResources().getString(R.string.no_internet_connection);
 //            showAlertDialog(message, true);
+            }
+        }catch (NetworkOnMainThreadException e){
+
         }
     }
     public void showAlertDialog(String message, final boolean finish) {
@@ -904,7 +920,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             e.printStackTrace();
         }
     }
-    public class WishlistAsyncTask extends AsyncTask<String, Void, Integer> {
+    public class AsyncHttpTask extends AsyncTask<String, Void, Integer> {
 
         @Override
         protected void onPreExecute() {
@@ -960,70 +976,94 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             /* Download complete. Lets update UI */
             if (result == 1) {
                 Log.e("onPostExecute", "onPostExecute");
-//                if(services.size()!=0) {
-//                    for (int i = 0; i < services.size(); i++) {
-//                        ProductModel item = services.get(i);
-//                        int count1 = tempCount + item.getCount();
+                if(cartServices.size()!=0) {
+                    for (int i = 0; i < cartServices.size(); i++) {
+                        ProductModel item = cartServices.get(i);
+                        int count1 = tempCount + item.getCount();
 //                        double amt1 = tempAmt + (item.getFinalPrice() * item.getCount());
 //                        Log.e("onPostExecute", " " + item.getFinalPrice());
+                        //cart badge
+//                        ((SecondActivity) getActivity()).writeBadge(services.size());
+//                        editor.putString("cartBadge", String.valueOf(services.size()));
+                        writeBadge(count1);
+                        editor.putString("cartBadge", String.valueOf(count1));
+                        editor.commit();
 //                        coutTxt.setText(String.valueOf(count1));
 //                        amtTxt.setText(String.valueOf(amt1));
-//                        tempCount = count1;
+                        tempCount = count1;
 //                        tempAmt = amt1;
-//                    }
-//                emptyWishlist.setVisibility(View.GONE);
-//                adapter = new WislistRecyclerAdapter(WishlistFragment.this, services, R.layout.wishlist_inflate);
-//                recyclerView.setAdapter(adapter);
-//                adapter.notifyDataSetChanged();
+                    }
+//                    emptyCart.setVisibility(View.GONE);
+//                    adapter = new CartServicesRecyclerAdapter(CartFragment.this, services);
+//                    recyclerView.setAdapter(adapter);
+//                    adapter.notifyDataSetChanged();
 //                recyclerView.setAdapter(new ServicesRecyclerAdapter(activity, services));
-//                }else{
+                }else{
 //                    emptyCart.setVisibility(View.VISIBLE);
-//                }
+                }
             } else {
                 Log.e("hello", "Failed to fetch data!");
-//                emptyWishlist.setVisibility(View.VISIBLE);
+                writeBadge(0);
+                editor.putString("cartBadge", String.valueOf(0));
+                editor.commit();
+//                emptyCart.setVisibility(View.VISIBLE);
             }
         }
     }
     private void parseResult(String result) {
         try {
-            JSONArray response = new JSONArray(result);
-            JSONObject jsonObject=response.getJSONObject(0);
+            JSONObject jsonObject = new JSONObject(result);
+//            JSONArray response = new JSONArray(result);
+//            JSONObject jsonObject=response.getJSONObject(0);
 
             if (jsonObject != null) {
                 JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
                 int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
 
                 if (status==1) {
-//            boolean status = response.getBoolean(TagName.TAG_STATUS);
+                    JSONArray jarr=jsonObject.optJSONArray("getcartproduct");
+                    JSONObject job=jarr.optJSONObject(0);
+                    JSONObject jobstat=job.getJSONObject(TagName.TAG_STATUS);
+                    int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                    String message1 = jobstat.optString(TagName.TAG_MSG);
+                    if(status1==1) {
 
-//                    if (status) {
-//                JSONObject jsonData = jsonObject
-//                        .getJSONObject(TagName.TAG_PRODUCT);
-//                    }
-                    JSONArray posts = jsonObject.optJSONArray(TagName.TAG_PRODUCT);
+                        JSONArray posts = job.optJSONArray(TagName.TAG_PRODUCT);
+//                        String quoteId = jsonObject.optString("quoteid");
+//                        Log.e("quoteId", quoteId);
+//                        editor.putString("quoteId", quoteId);
+//                        editor.commit();
 
             /*Initialize array if null*/
-                    if (null == wishlistServices) {
-                        wishlistServices = new ArrayList<ProductModel>();
-                    }
+                        if (null == cartServices) {
+                            cartServices = new ArrayList<ProductModel>();
+                        }
 
-                    for (int i = 0; i < posts.length(); i++) {
-                        JSONObject post = posts.optJSONObject(i);
+                        for (int i = 0; i < posts.length(); i++) {
+                            JSONObject post = posts.optJSONObject(i);
 
-                        ProductModel item = new ProductModel();
-                        item.setId(post.optInt(TagName.KEY_ID));
-                        item.setTitle(post.optString(TagName.KEY_NAME));
-                        item.setDescription(post.optString(TagName.KEY_DES));
-                        item.setCost(post.optDouble(TagName.KEY_PRICE));
-                        item.setFinalPrice(post.optDouble(TagName.KEY_FINAL_PRICE));
-//                        item.setCount(post.optInt(TagName.KEY_COUNT));
+                            ProductModel item = new ProductModel();
+                            item.setId(post.optInt(TagName.KEY_ID));
+                            item.setTitle(post.optString(TagName.KEY_NAME));
+                            item.setDescription(post.optString(TagName.KEY_DES));
+                            item.setCost(post.optDouble(TagName.KEY_PRICE));
+                            item.setFinalPrice(post.optDouble(TagName.KEY_FINAL_PRICE));
+                            item.setCount(post.optInt(TagName.KEY_COUNT));
 //                    Log.e("name", "name");
-                        item.setThumbnail(post.optString(TagName.KEY_THUMB));
-                        wishlistServices.add(item);
+                            item.setThumbnail(post.optString(TagName.KEY_THUMB));
+                            JSONObject post1 = post.optJSONObject(TagName.TAG_OFFER_ALL);
+                            item.setShare(post1.optString(TagName.KEY_SHARE));
+                            item.setTag(post1.optString(TagName.KEY_TAG));
+                            item.setDiscount(post1.optInt(TagName.KEY_DISC));
+                            item.setRating(post1.optInt(TagName.KEY_RATING));
+                            cartServices.add(item);
+                        }
+                    }else{
+//                        Toast.makeText(activity, "No Products", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    message = jobstatus.getString(TagName.TAG_MSG);
+//                    Toast.makeText(activity, "Net Work Error", Toast.LENGTH_SHORT).show();
+//                    message = jsonObject.getString(TagName.TAG_PRODUCT);
                 }
             }
         } catch (JSONException e) {

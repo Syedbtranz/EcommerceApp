@@ -21,6 +21,8 @@
         <item name="button_bg_accent_border">@drawable/button_bg_default_accent_barder</item>
         <item name="button_bg_primary_border">@drawable/button_bg_default_primary_barder</item>
         <item name="court_count_bg">@drawable/cart_count_bg_default_theme</item>
+        <item name="checkbox_custom">@drawable/custom_checkbox</item>
+        <item name="checkbox_wishlist">@drawable/wishlist_checkbox</item>
 
         <item name="colorPrimaryDark">@color/theme_default_colorPrimaryDark</item>
         <item name="colorPrimary">@color/theme_default_colorPrimary</item>
@@ -40,6 +42,8 @@
         <item name="button_bg_accent_border">@drawable/button_bg_blue_accent_barder</item>
         <item name="button_bg_primary_border">@drawable/button_bg_blue_primary_barder</item>
         <item name="court_count_bg">@drawable/cart_count_bg_blue_theme</item>
+        <item name="checkbox_custom">@drawable/custom_checkbox_blue</item>
+        <item name="checkbox_wishlist">@drawable/wishlist_checkbox_blue</item>
 
         <item name="colorPrimary">@color/theme_blue_colorPrimary</item>
         <item name="colorPrimaryDark">@color/theme_blue_colorPrimaryDark</item>
@@ -59,6 +63,8 @@
         <item name="button_bg_accent_border">@drawable/button_bg_yellow_accent_barder</item>
         <item name="button_bg_primary_border">@drawable/button_bg_yellow_primary_barder</item>
         <item name="court_count_bg">@drawable/cart_count_bg_yellow_theme</item>
+        <item name="checkbox_custom">@drawable/custom_checkbox_yellow</item>
+        <item name="checkbox_wishlist">@drawable/wishlist_checkbox_yellow</item>
 
         <item name="colorPrimary">@color/theme_yellow_colorPrimary</item>
         <item name="colorPrimaryDark">@color/theme_yellow_colorPrimaryDark</item>

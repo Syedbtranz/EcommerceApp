@@ -8,6 +8,7 @@ public class Post {
     private String postTitle;
 
     private String postSubTitle;
+    private String url;
 
     public String getPostTitle() {
         return postTitle;
@@ -25,8 +26,17 @@ public class Post {
         this.postSubTitle = postSubTitle;
     }
 
-    public Post(String postTitle, String postSubTitle) {
+    public Post(String postTitle, String postSubTitle, String url) {
         this.postTitle = postTitle;
         this.postSubTitle = postSubTitle;
+        this.url=url;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

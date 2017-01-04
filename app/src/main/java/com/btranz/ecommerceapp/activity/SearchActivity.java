@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -38,13 +39,16 @@ import com.btranz.ecommerceapp.utils.DatabaseHandler;
 import com.btranz.ecommerceapp.utils.TagName;
 import com.btranz.ecommerceapp.utils.Utils;
 
+import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -59,7 +63,8 @@ public class SearchActivity extends AppCompatActivity {
     SearchView searchView;
     private ListView recentSearchListView,searchingListview;
     private MyAppAdapter myAppAdapter,seachingAdapter;
-    private ArrayList<Post> recentSearchList, searchingList;
+    private ArrayList<Post> recentSearchList;
+    private ArrayList<Post>  searchingList;
     ArrayList<ProductModel> services;
     AsyncHttpTask task;
     AlertDialog alertDialog;
@@ -84,9 +89,10 @@ public class SearchActivity extends AppCompatActivity {
 //        sendRequest();
         initToolbar();
         myAppAdapter=new MyAppAdapter(recentSearchList,SearchActivity.this,R.layout.recent_search_inflate);
-        recentSearchListView.setAdapter(myAppAdapter);
+
         View footerView = ((LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.header_layout, null, false);
         recentSearchListView.addHeaderView(footerView);
+        recentSearchListView.setAdapter(myAppAdapter);
         clearHistory= (TextView)footerView.findViewById(R.id.clear_history);
         clearHistory.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,14 +106,15 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String qry= recentSearchList.get(position-1).getPostTitle();
+                String query= recentSearchList.get(position-1).getUrl();
                 if(db.hasSearchObject(qry)){
 
 //                    Toast.makeText(getApplicationContext(), "Item Added!", Toast.LENGTH_SHORT).show();
                     if(db.deleteSearchTitle(qry)){
-                        db.insertSearchItem(qry);
+                        db.insertSearchItem(qry,query);
                     }
                 }else{
-                    db.insertSearchItem(qry);
+                    db.insertSearchItem(qry,query);
 //                    Toast.makeText(getApplicationContext(), "Item Not Added!", Toast.LENGTH_SHORT).show();
                 }
 //                try {
@@ -126,37 +133,38 @@ public class SearchActivity extends AppCompatActivity {
 //                    db.insertSearchItem(qry);
 //                }
 
-               sendRequest(qry);
+               sendRequest(query);
             }
         });
     }
     public void searchingList(){
         searchingListview= (ListView) findViewById(R.id.searching_listView);
-        searchingList=new ArrayList<>();
-        searchingList.add(new Post("mobile", "in mobile"));
-        searchingList.add(new Post("computer", "All category"));
-        searchingList.add(new Post("refrizirator", "in Electornics"));
-        searchingList.add(new Post("shoes", "in shoes"));
-        searchingList.add(new Post("sandels", "in sandales"));
-        searchingList.add(new Post("loafers", "in sandales"));
-        searchingList.add(new Post("bottle", "in home needs"));
-        searchingList.add(new Post("cooker", "in home needs"));
-        seachingAdapter=new MyAppAdapter(searchingList,SearchActivity.this,R.layout.searching_inflate);
-        searchingListview.setAdapter(seachingAdapter);
+//        searchingList=new ArrayList<>();
+//        searchingList.add(new Post("mobile", "in mobile"));
+//        searchingList.add(new Post("computer", "All category"));
+//        searchingList.add(new Post("refrizirator", "in Electornics"));
+//        searchingList.add(new Post("shoes", "in shoes"));
+//        searchingList.add(new Post("sandels", "in sandales"));
+//        searchingList.add(new Post("loafers", "in sandales"));
+//        searchingList.add(new Post("bottle", "in home needs"));
+//        searchingList.add(new Post("cooker", "in home needs"));
+//        seachingAdapter=new MyAppAdapter(searchingList,SearchActivity.this,R.layout.searching_inflate);
+//        searchingListview.setAdapter(seachingAdapter);
 //        View footerView = ((LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.header_layout, null, false);
 //        searchingListview.addHeaderView(footerView);
         searchingListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String qry= searchingList.get(position).getPostTitle();
+                String query= searchingList.get(position).getUrl();
                 if(db.hasSearchObject(qry)){
 //                    db.getUpdatesSearchList(qry);
 //                    Toast.makeText(getApplicationContext(), "Item Added!", Toast.LENGTH_SHORT).show();
                     if(db.deleteSearchTitle(qry)){
-                        db.insertSearchItem(qry);
+                        db.insertSearchItem(qry,query);
                     }
                 }else{
-                    db.insertSearchItem(qry);
+                    db.insertSearchItem(qry,query);
 //                    Toast.makeText(getApplicationContext(), "Item Not Added!", Toast.LENGTH_SHORT).show();
                 }
 //                try {
@@ -174,7 +182,7 @@ public class SearchActivity extends AppCompatActivity {
 //                    e.printStackTrace();
 //                    db.insertSearchItem(qry);
 //                }
-              sendRequest(qry);
+              sendRequest(query);
             }
         });
     }
@@ -182,8 +190,8 @@ public void getSearchDbList(){
     searchList=db.getSearchList();
     for(int i=0;i<searchList.size();i++){
         String searchListStr=searchList.get(i);
-//        String cartListArr[]=cartListStr.split(Pattern.quote("***"));
-        recentSearchList.add(new Post(searchListStr, ""));
+        String cartListArr[]=searchListStr.split(Pattern.quote("***"));
+        recentSearchList.add(new Post(cartListArr[0], "",cartListArr[1]));
 //        Post item = new Post();
 //        item.setId(Integer.valueOf(cartListArr[0]));
 //        item.setTitle(cartListArr[1]);
@@ -369,10 +377,10 @@ public void getSearchDbList(){
                 if(db.hasSearchObject(query)){
 //                    Toast.makeText(getApplicationContext(), "Item Added!", Toast.LENGTH_SHORT).show();
                     if(db.deleteSearchTitle(query)){
-                        db.insertSearchItem(query);
+                        db.insertSearchItem(query,query);
                     }
                 }else{
-                    db.insertSearchItem(query);
+                    db.insertSearchItem(query,query);
 //                    Toast.makeText(getApplicationContext(), "Item Not Added!", Toast.LENGTH_SHORT).show();
                 }
 
@@ -407,13 +415,25 @@ public void getSearchDbList(){
                 if(!searchQuery.equals("")) {
                     recentSearchListView.setVisibility(View.GONE);
                     searchingListview.setVisibility(View.VISIBLE);
+                    if(searchingList==null) {
+                        searchingData(searchQuery);
+                    }else{
+                        if(searchingList.size()!=0){
+                            seachingAdapter.filter(searchQuery.toString().trim());
+                            searchingListview.invalidate();
+                        }else{
+                            searchingData(searchQuery);
+                        }
+
+                    }
+
                 }else{
+                    searchingList.clear();
                     searchingListview.setVisibility(View.GONE);
                     recentSearchListView.setVisibility(View.VISIBLE);
                 }
 
-                seachingAdapter.filter(searchQuery.toString().trim());
-                searchingListview.invalidate();
+
                 return true;
             }
         });
@@ -518,7 +538,7 @@ public void getSearchDbList(){
 
         @Override
         protected void onPostExecute(Integer result) {
-            loadingDialog.dismiss();
+
 //            progressLL.setVisibility(View.GONE);
 //            pb.setVisibility(View.GONE);
 //             Download complete. Lets update UI
@@ -536,7 +556,7 @@ public void getSearchDbList(){
 //                    message = getResources().getString(R.string.no_products);
 //                    showAlertDialog(message, true);
 //                }
-                finish();
+
                 Intent in=new Intent(SearchActivity.this,SecondActivity.class);
                 in.putExtra("key", TagName.FRAGMENT_PRODUCTS);
                 in.putExtra("prdtsUrl", Utils.searchUrl);
@@ -546,7 +566,8 @@ public void getSearchDbList(){
                 startActivity(in);
                 SearchActivity.this.overridePendingTransition(android.R.anim.fade_in,
                         android.R.anim.fade_out);
-
+                loadingDialog.dismiss();
+//                finish();
             } else {
                 Log.e("hello", "Failed to fetch data!");
 //                pb.setVisibility(View.GONE);
@@ -656,5 +677,142 @@ public void getSearchDbList(){
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+    public void searchingData(String queryData){
+        class SearchingAsync extends AsyncTask<String, Void, String> {
+//            Dialog loadingDialog;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+//                loadingDialog = ProgressDialog.show(SearchActivity.this, "", "Please wait...");
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+//                String oldpsw = params[0];
+//                String newpsw = params[1];
+//                Log.e("uname",oldpsw);
+//                Log.e("pass",newpsw);
+                InputStream is = null;
+//                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+//                nameValuePairs.add(new BasicNameValuePair("username", uname));
+//                nameValuePairs.add(new BasicNameValuePair("password", pass));
+                String result = null;
+                HttpURLConnection urlConnection = null;
+                try{
+//                    HttpClient httpClient = new DefaultHttpClient();
+//                    HttpGet httpPost = new HttpGet( Utils.instantChangePswUrl+userId+"&oldpassword="+oldpsw+"&newpassword="+newpsw);
+////                    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+//
+//                    HttpResponse response = httpClient.execute(httpPost);
+//
+//                    HttpEntity entity = response.getEntity();
+//
+//                    is = entity.getContent();
+
+                    URL url = new URL(params[0]);
+
+                    urlConnection = (HttpURLConnection) url.openConnection();
+
+                /* for Get request */
+                    urlConnection.setRequestMethod("GET");
+
+                    int statusCode = urlConnection.getResponseCode();
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"), 8);
+                    StringBuilder sb = new StringBuilder();
+
+                    String line = null;
+                    while ((line = reader.readLine()) != null)
+                    {
+                        sb.append(line + "\n");
+                    }
+                    result = sb.toString();
+                } catch (ClientProtocolException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return result;
+            }
+
+            @Override
+            protected void onPostExecute(String result){
+                String response = result.trim();
+                Log.e("s",response);
+//                loadingDialog.dismiss();
+                try {
+                    JSONObject jsonObject=new JSONObject(response);
+//                    JSONObject jsonObject=jsonArray.getJSONObject(0);
+                    if(jsonObject!=null) {
+                        JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                        int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+//                Log.e("MrE", "2");
+                        if (status==1) {
+                            JSONArray jarr = jsonObject.optJSONArray("autocompletesearch");
+                            JSONObject job = jarr.optJSONObject(0);
+                            JSONObject jobstat = job.getJSONObject(TagName.TAG_STATUS);
+                            int status1 = jobstat.optInt(TagName.TAG_STATUS_CODE);
+                            String message1 = jobstat.optString(TagName.TAG_MSG);
+                            if (status1 == 1) {
+                                //*Initialize array if null*//*
+                                if (null == searchingList) {
+                                    searchingList = new ArrayList<Post>();
+                                }
+                                try {
+                                    JSONArray jarry = job.optJSONArray("product");
+                                    for (int i = 0; i < jarry.length(); i++) {
+                                        JSONObject job1 = jarry.getJSONObject(i);
+                                        Post post = new Post(job1.optString("name"), job1.optString("categoryName"), job1.optString("urltag"));
+                                        searchingList.add(post);
+                                    }
+                                } catch (Exception e) {
+
+                                }
+                                seachingAdapter = new MyAppAdapter(searchingList, SearchActivity.this, R.layout.searching_inflate);
+                                searchingListview.setAdapter(seachingAdapter);
+                            }
+                        }
+
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        SearchingAsync la = new SearchingAsync();
+        la.execute(Utils.instantSearchAutoCompleteUrl+queryData);
+
+    }
+    @Override
+    public Resources.Theme getTheme() {
+        Resources res = getResources();
+        Resources.Theme theme = super.getTheme();
+
+        String theme_id = res.getString(R.string.theme);
+        switch (theme_id)
+        {
+            case "Default":
+
+                theme.applyStyle(R.style.AppTheme_Default, true);
+                break;
+
+            case "Blue":
+
+                theme.applyStyle(R.style.AppTheme_blue, true);
+                break;
+            case "Yellow":
+
+                theme.applyStyle(R.style.AppTheme_yellow, true);
+                break;
+
+        }
+        // you could also use a switch if you have many themes that could apply
+        return theme;
     }
 }

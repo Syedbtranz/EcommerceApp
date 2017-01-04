@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.RecyclerView;
 
 import android.support.v7.widget.Toolbar;
@@ -52,7 +53,6 @@ public class SecondActivity extends AppCompatActivity {
     public Toolbar mToolbar;
     public TextView toolbarTitle;
     public LinearLayout searchBar;
-
     FragmentActivity activity;
     private RecyclerView recyclerView;
 
@@ -119,6 +119,7 @@ String customerEmail, cartBadge;
     @Override
     protected void onResume() {
         super.onResume();
+
     }
 
     public void displayView(int id){
@@ -174,11 +175,11 @@ String customerEmail, cartBadge;
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         try {
-
+            super.onCreateOptionsMenu(menu);
 
             getMenuInflater().inflate(R.menu.menu, menu);
             item = menu.findItem(R.id.action_cart);
-//        sharedpreferences= getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        sharedpreferences= getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
             cartBadge = sharedpreferences.getString("cartBadge", "");
             if (cartBadge.equals("")) {
                 writeBadge(0);
@@ -211,27 +212,34 @@ String customerEmail, cartBadge;
         return super.onCreateOptionsMenu(menu);
     }
     public void writeBadge(int count) {
-//        item = menu.findItem(R.id.action_cart);
-        MenuItemCompat.setActionView(item, R.layout.cart_count);
-        RelativeLayout layout = (RelativeLayout) MenuItemCompat.getActionView(item);
-        // A TextView with number.
-        TextView tv = (TextView) layout.findViewById(R.id.cart_count_tv);
-        if (count == 0) {
-            tv.setVisibility(View.INVISIBLE);
-        } else {
-            tv.setVisibility(View.VISIBLE);
-            tv.setText(String.valueOf(count));
-        }
-        // An icon, it also must be clicked.
-        ImageView cartImage = (ImageView) layout.findViewById(R.id.cart_count_img);
-        View.OnClickListener onClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onOptionsItemSelected(item);
+//
+        try {
+//            Menu menu=new MenuBuilder(SecondActivity.this);
+//            getMenuInflater().inflate(R.menu.menu, menu);
+//            item = menu.findItem(R.id.action_cart);
+            MenuItemCompat.setActionView(item, R.layout.cart_count);
+            RelativeLayout layout = (RelativeLayout) MenuItemCompat.getActionView(item);
+            // A TextView with number.
+            TextView tv = (TextView) layout.findViewById(R.id.cart_count_tv);
+            if (count == 0) {
+                tv.setVisibility(View.INVISIBLE);
+            } else {
+                tv.setVisibility(View.VISIBLE);
+                tv.setText(String.valueOf(count));
             }
-        };
-        item.getActionView().setOnClickListener(onClickListener);
-        cartImage.setOnClickListener(onClickListener);
+            // An icon, it also must be clicked.
+            ImageView cartImage = (ImageView) layout.findViewById(R.id.cart_count_img);
+            View.OnClickListener onClickListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onOptionsItemSelected(item);
+                }
+            };
+            item.getActionView().setOnClickListener(onClickListener);
+            cartImage.setOnClickListener(onClickListener);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -269,19 +277,7 @@ String customerEmail, cartBadge;
     public void onBackPressed() {
         super.onBackPressed();
     }
-//    @Override
-//    protected void onResume() {
-//        if (services == null) {
-//            sendRequest();
-////            adapter = new ServicesRecyclerAdapter(activity, services);
-//            Log.e("onResume", "onResume");
-//        } else {
-//            Log.e("onResume else", "onResume else");
-//            recyclerView.setAdapter(new ServicesRecyclerAdapter(activity, services));
-//            recyclerView.scrollToPosition(0);
-//        }
-//        super.onResume();
-//    }
+
     public void runnable(final int size) {
         handler = new Handler();
         animateViewPager = new Runnable() {
@@ -521,7 +517,7 @@ String customerEmail, cartBadge;
     private void initToolbar() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbarTitle=(TextView)mToolbar.findViewById(R.id.toolbar_txt);
-        searchBar=(LinearLayout)findViewById(R.id.search_bar);
+        searchBar=(LinearLayout)findViewById(R.id.search_bar_ll);
         setSupportActionBar(mToolbar);
         //back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

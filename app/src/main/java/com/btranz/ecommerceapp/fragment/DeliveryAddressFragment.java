@@ -340,16 +340,20 @@ public class DeliveryAddressFragment extends Fragment {
                 loadingDialog.dismiss();
 
                 try {
-                    JSONArray jsonArray = new JSONArray(response);
-                    JSONObject jsonObject = jsonArray.getJSONObject(0);
+                    JSONObject jsonObject = new JSONObject(response);
+//                    JSONObject jsonObject = jsonArray.getJSONObject(0);
                     if (jsonObject != null) {
-                        JSONObject job = jsonObject.optJSONObject(TagName.TAG_STATUS);
-                        String status = job.optString(TagName.TAG_MSG);
-                        if (status.equalsIgnoreCase("success")) {
+                        JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                        int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+                        String message = jobstatus.optString(TagName.TAG_MSG);
+
+                        if (status==1) {
+                            JSONArray jarr=jsonObject.optJSONArray("countrylist");
+                            JSONObject job=jarr.optJSONObject(0);
                             if (countryList == null) {
                                 countryList = new ArrayList<ProductModel>();
                             }
-                            JSONArray jarray = jsonObject.getJSONArray("country");
+                            JSONArray jarray = job.getJSONArray("country");
                             for (int i = 0; i < jarray.length(); i++) {
                                 JSONObject job1 = jarray.optJSONObject(i);
                                 ProductModel item = new ProductModel();
@@ -370,6 +374,8 @@ public class DeliveryAddressFragment extends Fragment {
                             countrySpinner.setAdapter(countryAdp);
                             countryAdp.notifyDataSetChanged();
                             countrySpinner.setSelection(getIndex(countrySpinner, customertCountry));
+                        }else {
+                            Toast.makeText(activity, "Network Error. Please try Again.", Toast.LENGTH_LONG).show();
                         }
 
 //
@@ -384,7 +390,7 @@ public class DeliveryAddressFragment extends Fragment {
         }
 
         CountryListAsync la = new CountryListAsync();
-        la.execute(Utils.getCountryListUrl);
+        la.execute(Utils.instantCountryListUrl);
 
     }
     private void delivaryTypeCheck(){
@@ -394,15 +400,114 @@ public class DeliveryAddressFragment extends Fragment {
         }else{
             shippingRate="flatrate_flatrate";
         }
-        try {
+
+        class Async extends AsyncTask<String, Void, String> {
+            Dialog loadingDialog;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                loadingDialog = ProgressDialog.show(activity, "", "Please wait...");
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+//                String oldpsw = params[0];
+//                String newpsw = params[1];
+//                Log.e("uname",oldpsw);
+//                Log.e("pass",newpsw);
+                InputStream is = null;
+//                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+//                nameValuePairs.add(new BasicNameValuePair("username", uname));
+//                nameValuePairs.add(new BasicNameValuePair("password", pass));
+                String result = null;
+                HttpURLConnection urlConnection = null;
+                try{
+//                    HttpClient httpClient = new DefaultHttpClient();
+//                    HttpGet httpPost = new HttpGet( Utils.instantChangePswUrl+userId+"&oldpassword="+oldpsw+"&newpassword="+newpsw);
+////                    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+//
+//                    HttpResponse response = httpClient.execute(httpPost);
+//
+//                    HttpEntity entity = response.getEntity();
+//
+//                    is = entity.getContent();
+
+                    URL url = new URL(params[0]);
+                    Log.e("url",params[0]);
+
+                    urlConnection = (HttpURLConnection) url.openConnection();
+
+                /* for Get request */
+                    urlConnection.setRequestMethod("GET");
+
+                    int statusCode = urlConnection.getResponseCode();
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"), 8);
+                    StringBuilder sb = new StringBuilder();
+
+                    String line = null;
+                    while ((line = reader.readLine()) != null)
+                    {
+                        sb.append(line + "\n");
+                    }
+                    result = sb.toString();
+                } catch (ClientProtocolException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return result;
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                String response = result.trim();
+                Log.e("s", response);
+                loadingDialog.dismiss();
+
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+//                    JSONObject jsonObject = jsonArray.getJSONObject(0);
+                    if (jsonObject != null) {
+                        JSONObject jobstatus=jsonObject.getJSONObject(TagName.TAG_STATUS);
+                        int status = jobstatus.optInt(TagName.TAG_STATUS_CODE);
+                        String message = jobstatus.optString(TagName.TAG_MSG);
+
+                        if (status==1) {
+//                            JSONArray jarr=jsonObject.optJSONArray("applydeleverytype");
+//                            JSONObject job=jarr.optJSONObject(0);
+
+
+
+                        }else {
+                            Toast.makeText(activity, "Network Error. Please try Again.", Toast.LENGTH_SHORT).show();
+                        }
+
+//
+
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+
+        Async la = new Async();
+        la.execute(Utils.instantDeliveryTypeUrl+userId+"&quoteId="+quoteId+"&shipping="+shippingRate);
+       /* try {
             RequestQueue requestQueue = Volley.newRequestQueue(activity);
 
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, Utils.deliveryTypeUrl+userId+"/"+quoteId+"/"+shippingRate, new Response.Listener<String>() {
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, Utils.instantDeliveryTypeUrlUrl+userId+"&quoteId="+quoteId+"&shipping="+shippingRate, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     Log.i("VOLLEY", response);
 
-                   /* try {
+                   *//* try {
                         JSONObject jsonObject=new JSONObject(response);
                         if(jsonObject!=null) {
                             String status=jsonObject.optString(TagName.TAG_STATUS);
@@ -424,14 +529,14 @@ public class DeliveryAddressFragment extends Fragment {
 
                     } catch (JSONException e) {
                         e.printStackTrace();
-                    }*/
+                    }*//*
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
 
                     Log.e("VOLLEY", error.toString());
-                    Toast.makeText(activity,"Following detais are incorrect",Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(activity,"Following details are incorrect",Toast.LENGTH_SHORT).show();
                 }
             }) {
                 @Override
@@ -439,7 +544,7 @@ public class DeliveryAddressFragment extends Fragment {
                     return "application/json; charset=utf-8";
                 }
 
-             /*   @Override
+             *//*   @Override
                 public byte[] getBody() throws AuthFailureError {
                     try {
                         return mRequestBody == null ? null : mRequestBody.getBytes("utf-8");
@@ -447,9 +552,9 @@ public class DeliveryAddressFragment extends Fragment {
                         VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", mRequestBody, "utf-8");
                         return null;
                     }
-                }*/
+                }*//*
 
-                /*@Override
+                *//*@Override
                 protected Response<String> parseNetworkResponse(NetworkResponse response) {
                     String responseString = "";
                     if (response != null) {
@@ -459,13 +564,13 @@ public class DeliveryAddressFragment extends Fragment {
                         // can get more details such as response.headers
                     }
                     return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
-                }*/
+                }*//*
             };
 
             requestQueue.add(stringRequest);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
 

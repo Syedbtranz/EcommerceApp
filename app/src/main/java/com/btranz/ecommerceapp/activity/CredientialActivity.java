@@ -15,6 +15,7 @@ import com.btranz.ecommerceapp.fragment.CardsFragment;
 import com.btranz.ecommerceapp.fragment.LogRegFragment;
 import com.btranz.ecommerceapp.fragment.ProfileFragment;
 import com.btranz.ecommerceapp.fragment.ReferEarnFragment;
+import com.btranz.ecommerceapp.fragment.WriteReviewsRatingFragment;
 import com.btranz.ecommerceapp.utils.TagName;
 
 
@@ -85,6 +86,10 @@ public class CredientialActivity extends AppCompatActivity {
                 break;
             case TagName.CRED_PROFILE:
                 fragment = new ProfileFragment();
+//                title=getString(R.string.title_profile);
+                break;
+            case TagName.WRITE_REVIEW:
+                fragment = new WriteReviewsRatingFragment();
 //                title=getString(R.string.title_profile);
                 break;
         };
